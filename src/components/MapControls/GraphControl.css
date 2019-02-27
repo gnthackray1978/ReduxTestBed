@@ -1,0 +1,34 @@
+
+
+.navGridSquare {
+  background-color: transparent;
+
+  margin: 1px;
+  float: left;
+
+  line-height: 25px;
+  height: 25px;
+
+  padding: 0;
+  text-align: center;
+  width: 25px;
+  z-index: 1400;
+}
+
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.board-container {
+  margin-bottom: 30px;
+}
+
+
+.row-container{
+
+  margin-right: 30px;
+  display: block!important;
+  width: unset;
+}

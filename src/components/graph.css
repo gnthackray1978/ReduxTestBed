@@ -1,0 +1,7 @@
+
+
+.my-row { height: 33%; }
+
+.cont-width {max-width: 100%;}
+
+.toolbar-offset{left:200px;}/*HACK used so that tool bar buttons dont cover buttons from data toolbar*/

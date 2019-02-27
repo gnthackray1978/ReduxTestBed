@@ -1,0 +1,31 @@
+.left{
+     background-image : url('../../../public/Assets/left.png');
+  
+}
+.right{
+     background-image : url('../../../public/Assets/right.png');
+
+}
+.up{
+     background-image : url('../../../public/Assets/up.png');
+
+}
+.down{
+     background-image : url('../../../public/Assets/down.png');
+
+}
+.zoomin{
+     background-image : url('../../../public/Assets/plus.png');
+
+}
+.zoomout{
+     background-image : url('../../../public/Assets/minus.png');
+
+}
+
+.navButton{
+  width: inherit;
+  height: inherit;
+  background-color: transparent;
+  margin: 0;
+}

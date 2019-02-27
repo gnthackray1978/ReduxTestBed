@@ -1,0 +1,92 @@
+.left{
+     background-image : url('left.5d9e1fbb.png');
+  
+}
+.right{
+     background-image : url('right.ff1760be.png');
+
+}
+.up{
+     background-image : url('up.8d97c31a.png');
+
+}
+.down{
+     background-image : url('down.3c1e5e6f.png');
+
+}
+.zoomin{
+     background-image : url('plus.c91db9d4.png');
+
+}
+.zoomout{
+     background-image : url('minus.621e7e6d.png');
+
+}
+
+.navButton{
+  width: inherit;
+  height: inherit;
+  background-color: transparent;
+  margin: 0;
+}
+
+
+.navGridSquare {
+  background-color: transparent;
+
+  margin: 1px;
+  float: left;
+
+  line-height: 25px;
+  height: 25px;
+
+  padding: 0;
+  text-align: center;
+  width: 25px;
+  z-index: 1400;
+}
+
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.board-container {
+  margin-bottom: 30px;
+}
+
+
+.row-container{
+
+  margin-right: 30px;
+  display: block!important;
+  width: unset;
+}
+
+
+.my-row { height: 33%; }
+
+.cont-width {max-width: 100%;}
+
+.toolbar-offset{left:200px;}/*HACK used so that tool bar buttons dont cover buttons from data toolbar*/
+.inner {
+  width : 275;
+
+}
+.header-image {
+  width: 100%;
+  margin-top: -2em;
+  margin-bottom: 2em;
+}
+
+.about-profile-pic {
+  float: left;
+  margin: 0 1em 1em 0;
+}
+body, html{
+  margin: 0;
+  padding: 0;
+  widht: 100%;
+  height: 100%;
+}
