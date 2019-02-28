@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 import NavItem from 'react-bootstrap/NavItem';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import {PropTypes,func} from 'prop-types';
@@ -7,9 +8,9 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import ControlIcon from '@material-ui/icons/OpenWith';
 import InfoIcon from '@material-ui/icons/FeedBack';
-import './CustomButton.css';
+import './TopButtons.css';
 
-class CustomButton extends Component {
+class TopButtons extends Component {
 
   constructor(props) {
      super(props);
@@ -24,6 +25,16 @@ class CustomButton extends Component {
   render() {
 
     let buttons;
+
+
+    let navBarClass = "justify-content-end fixed-top toolbar-offset";
+    let navClass = "ml-auto";
+
+    if(this.props.isData){
+       navBarClass = "justify-content-end fixed-top";
+       navClass = "mr-auto";
+    }
+
 
     if(this.props.isData){
       buttons = <Nav.Link><div onClick={()=>{
@@ -42,12 +53,16 @@ class CustomButton extends Component {
     }
 
      return (
-       <Nav className ="mr-auto">
-         {buttons}
-       </Nav>
+       <Navbar className={navBarClass} >
+           <Nav className ={navClass}>
+             <Nav className ="mr-auto">
+               {buttons}
+             </Nav>
+           </Nav>
+       </Navbar>
      )
    }
 
 }
 
-export default CustomButton;
+export default TopButtons;

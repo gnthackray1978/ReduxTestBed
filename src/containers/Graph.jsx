@@ -4,7 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import { Jumbotron, Grid, Row, Col, Image, Button ,Container} from 'react-bootstrap';
 import GraphControl from './MapControls/GraphControl.jsx';
-import CustomButton from './ButtonBar/CustomButton.jsx';
+import TopButtons from './ButtonBar/TopButtons.jsx';
 
 
 
@@ -31,15 +31,13 @@ export default class Graph extends Component {
 
 
   render() {
+
+
+
     return (
       <div>
-
-        <Navbar className="justify-content-end fixed-top toolbar-offset" >
-            <Nav className ="ml-auto">
-              <CustomButton isData = {false} modeChanged = { this.handleInput }/>
-            </Nav>
-        </Navbar>
-
+        <TopButtons isData = {false} modeChanged = { this.handleInput }/>
+        
         <Container className="cont-width">
 
         <Row className="my-row">
@@ -50,7 +48,7 @@ export default class Graph extends Component {
 
             </Col>
             <Col xs={6} md={4} className="align-self-center">
-              <p>Graph</p>
+              <p>Graph!!</p>
             </Col>
             <Col xs={6} md={4}>
 

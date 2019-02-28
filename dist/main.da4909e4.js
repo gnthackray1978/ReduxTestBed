@@ -56778,12 +56778,12 @@ function reloadCSS() {
 }
 
 module.exports = reloadCSS;
-},{"./bundle-url":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"../src/components/MapControls/NavButton.css":[function(require,module,exports) {
+},{"./bundle-url":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"../src/containers/MapControls/NavButton.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"./..\\..\\..\\public\\Assets\\left.png":[["left.5d9e1fbb.png","Assets/left.png"],"Assets/left.png"],"./..\\..\\..\\public\\Assets\\right.png":[["right.ff1760be.png","Assets/right.png"],"Assets/right.png"],"./..\\..\\..\\public\\Assets\\up.png":[["up.8d97c31a.png","Assets/up.png"],"Assets/up.png"],"./..\\..\\..\\public\\Assets\\down.png":[["down.3c1e5e6f.png","Assets/down.png"],"Assets/down.png"],"./..\\..\\..\\public\\Assets\\plus.png":[["plus.c91db9d4.png","Assets/plus.png"],"Assets/plus.png"],"./..\\..\\..\\public\\Assets\\minus.png":[["minus.621e7e6d.png","Assets/minus.png"],"Assets/minus.png"],"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/components/MapControls/NavButton.jsx":[function(require,module,exports) {
+},{"./..\\..\\..\\public\\Assets\\left.png":[["left.5d9e1fbb.png","Assets/left.png"],"Assets/left.png"],"./..\\..\\..\\public\\Assets\\right.png":[["right.ff1760be.png","Assets/right.png"],"Assets/right.png"],"./..\\..\\..\\public\\Assets\\up.png":[["up.8d97c31a.png","Assets/up.png"],"Assets/up.png"],"./..\\..\\..\\public\\Assets\\down.png":[["down.3c1e5e6f.png","Assets/down.png"],"Assets/down.png"],"./..\\..\\..\\public\\Assets\\plus.png":[["plus.c91db9d4.png","Assets/plus.png"],"Assets/plus.png"],"./..\\..\\..\\public\\Assets\\minus.png":[["minus.621e7e6d.png","Assets/minus.png"],"Assets/minus.png"],"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/containers/MapControls/NavButton.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -56878,12 +56878,12 @@ function NavButton(_ref) {
 
 var _default = NavButton;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Button":"../node_modules/react-bootstrap/Button.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/icons/ArrowDownward":"../node_modules/@material-ui/icons/ArrowDownward.js","@material-ui/icons/ArrowUpward":"../node_modules/@material-ui/icons/ArrowUpward.js","@material-ui/icons/ArrowBack":"../node_modules/@material-ui/icons/ArrowBack.js","@material-ui/icons/ArrowForward":"../node_modules/@material-ui/icons/ArrowForward.js","@material-ui/icons/UnfoldLess":"../node_modules/@material-ui/icons/UnfoldLess.js","@material-ui/icons/UnfoldMore":"../node_modules/@material-ui/icons/UnfoldMore.js","./NavButton.css":"../src/components/MapControls/NavButton.css"}],"../src/components/MapControls/GraphControl.css":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Button":"../node_modules/react-bootstrap/Button.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/icons/ArrowDownward":"../node_modules/@material-ui/icons/ArrowDownward.js","@material-ui/icons/ArrowUpward":"../node_modules/@material-ui/icons/ArrowUpward.js","@material-ui/icons/ArrowBack":"../node_modules/@material-ui/icons/ArrowBack.js","@material-ui/icons/ArrowForward":"../node_modules/@material-ui/icons/ArrowForward.js","@material-ui/icons/UnfoldLess":"../node_modules/@material-ui/icons/UnfoldLess.js","@material-ui/icons/UnfoldMore":"../node_modules/@material-ui/icons/UnfoldMore.js","./NavButton.css":"../src/containers/MapControls/NavButton.css"}],"../src/containers/MapControls/GraphControl.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/components/MapControls/GraphControl.jsx":[function(require,module,exports) {
+},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/containers/MapControls/GraphControl.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -57026,7 +57026,7 @@ function (_Component) {
 
 var _default = GraphControl;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/Container.js","react-bootstrap/Col":"../node_modules/react-bootstrap/Col.js","react-bootstrap/Row":"../node_modules/react-bootstrap/Row.js","prop-types":"../node_modules/prop-types/index.js","./NavButton.jsx":"../src/components/MapControls/NavButton.jsx","./GraphControl.css":"../src/components/MapControls/GraphControl.css"}],"../node_modules/react-bootstrap/ButtonToolbar.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/Container.js","react-bootstrap/Col":"../node_modules/react-bootstrap/Col.js","react-bootstrap/Row":"../node_modules/react-bootstrap/Row.js","prop-types":"../node_modules/prop-types/index.js","./NavButton.jsx":"../src/containers/MapControls/NavButton.jsx","./GraphControl.css":"../src/containers/MapControls/GraphControl.css"}],"../node_modules/react-bootstrap/ButtonToolbar.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -57565,12 +57565,12 @@ var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.d
 })), 'Feedback');
 
 exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../src/components/ButtonBar/CustomButton.css":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../src/containers/ButtonBar/TopButtons.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/components/ButtonBar/CustomButton.jsx":[function(require,module,exports) {
+},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/containers/ButtonBar/TopButtons.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -57581,6 +57581,8 @@ exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 
 var _Nav = _interopRequireDefault(require("react-bootstrap/Nav"));
+
+var _Navbar = _interopRequireDefault(require("react-bootstrap/Navbar"));
 
 var _NavItem = _interopRequireDefault(require("react-bootstrap/NavItem"));
 
@@ -57596,7 +57598,7 @@ var _OpenWith = _interopRequireDefault(require("@material-ui/icons/OpenWith"));
 
 var _FeedBack = _interopRequireDefault(require("@material-ui/icons/FeedBack"));
 
-require("./CustomButton.css");
+require("./TopButtons.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -57622,23 +57624,30 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var CustomButton =
+var TopButtons =
 /*#__PURE__*/
 function (_Component) {
-  _inherits(CustomButton, _Component);
+  _inherits(TopButtons, _Component);
 
-  function CustomButton(props) {
-    _classCallCheck(this, CustomButton);
+  function TopButtons(props) {
+    _classCallCheck(this, TopButtons);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(CustomButton).call(this, props));
+    return _possibleConstructorReturn(this, _getPrototypeOf(TopButtons).call(this, props));
   }
 
-  _createClass(CustomButton, [{
+  _createClass(TopButtons, [{
     key: "render",
     value: function render() {
       var _this = this;
 
       var buttons;
+      var navBarClass = "justify-content-end fixed-top toolbar-offset";
+      var navClass = "ml-auto";
+
+      if (this.props.isData) {
+        navBarClass = "justify-content-end fixed-top";
+        navClass = "mr-auto";
+      }
 
       if (this.props.isData) {
         buttons = _react.default.createElement(_Nav.default.Link, null, _react.default.createElement("div", {
@@ -57662,27 +57671,31 @@ function (_Component) {
         })));
       }
 
-      return _react.default.createElement(_Nav.default, {
+      return _react.default.createElement(_Navbar.default, {
+        className: navBarClass
+      }, _react.default.createElement(_Nav.default, {
+        className: navClass
+      }, _react.default.createElement(_Nav.default, {
         className: "mr-auto"
-      }, buttons);
+      }, buttons)));
     }
   }]);
 
-  return CustomButton;
+  return TopButtons;
 }(_react.Component);
 
-_defineProperty(CustomButton, "defaultProps", {
+_defineProperty(TopButtons, "defaultProps", {
   isData: true
 });
 
-var _default = CustomButton;
+var _default = TopButtons;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap/NavItem":"../node_modules/react-bootstrap/NavItem.js","react-bootstrap/ButtonToolbar":"../node_modules/react-bootstrap/ButtonToolbar.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/icons/OpenWith":"../node_modules/@material-ui/icons/OpenWith.js","@material-ui/icons/FeedBack":"../node_modules/@material-ui/icons/FeedBack.js","./CustomButton.css":"../src/components/ButtonBar/CustomButton.css"}],"../src/components/graph.css":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/NavItem":"../node_modules/react-bootstrap/NavItem.js","react-bootstrap/ButtonToolbar":"../node_modules/react-bootstrap/ButtonToolbar.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/icons/OpenWith":"../node_modules/@material-ui/icons/OpenWith.js","@material-ui/icons/FeedBack":"../node_modules/@material-ui/icons/FeedBack.js","./TopButtons.css":"../src/containers/ButtonBar/TopButtons.css"}],"../src/containers/graph.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/components/Graph.jsx":[function(require,module,exports) {
+},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/containers/Graph.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -57702,7 +57715,7 @@ var _reactBootstrap = require("react-bootstrap");
 
 var _GraphControl = _interopRequireDefault(require("./MapControls/GraphControl.jsx"));
 
-var _CustomButton = _interopRequireDefault(require("./ButtonBar/CustomButton.jsx"));
+var _TopButtons = _interopRequireDefault(require("./ButtonBar/TopButtons.jsx"));
 
 require("./graph.css");
 
@@ -57763,14 +57776,10 @@ function (_Component) {
   _createClass(Graph, [{
     key: "render",
     value: function render() {
-      return _react.default.createElement("div", null, _react.default.createElement(_Navbar.default, {
-        className: "justify-content-end fixed-top toolbar-offset"
-      }, _react.default.createElement(_Nav.default, {
-        className: "ml-auto"
-      }, _react.default.createElement(_CustomButton.default, {
+      return _react.default.createElement("div", null, _react.default.createElement(_TopButtons.default, {
         isData: false,
         modeChanged: this.handleInput
-      }))), _react.default.createElement(_reactBootstrap.Container, {
+      }), _react.default.createElement(_reactBootstrap.Container, {
         className: "cont-width"
       }, _react.default.createElement(_reactBootstrap.Row, {
         className: "my-row"
@@ -57783,7 +57792,7 @@ function (_Component) {
         xs: 6,
         md: 4,
         className: "align-self-center"
-      }, _react.default.createElement("p", null, "Graph")), _react.default.createElement(_reactBootstrap.Col, {
+      }, _react.default.createElement("p", null, "Graph!!")), _react.default.createElement(_reactBootstrap.Col, {
         xs: 6,
         md: 4
       })), _react.default.createElement(_reactBootstrap.Row, {
@@ -57798,7 +57807,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = Graph;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","./MapControls/GraphControl.jsx":"../src/components/MapControls/GraphControl.jsx","./ButtonBar/CustomButton.jsx":"../src/components/ButtonBar/CustomButton.jsx","./graph.css":"../src/components/graph.css"}],"../node_modules/brcast/dist/brcast.es.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","./MapControls/GraphControl.jsx":"../src/containers/MapControls/GraphControl.jsx","./ButtonBar/TopButtons.jsx":"../src/containers/ButtonBar/TopButtons.jsx","./graph.css":"../src/containers/graph.css"}],"../node_modules/brcast/dist/brcast.es.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -62809,12 +62818,12 @@ Object.defineProperty(exports, "default", {
 });
 
 var _Grid = _interopRequireDefault(require("./Grid"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Grid":"../node_modules/@material-ui/core/Grid/Grid.js"}],"../src/components/SideDrawer.css":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Grid":"../node_modules/@material-ui/core/Grid/Grid.js"}],"../src/containers/SideDrawer.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/components/SideDrawer.jsx":[function(require,module,exports) {
+},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/containers/SideDrawer.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -62981,12 +62990,12 @@ SideDrawer.propTypes = {
 var _default = (0, _styles.withStyles)(styles)(SideDrawer);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","./SideDrawer.css":"../src/components/SideDrawer.css"}],"../src/components/data.css":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","./SideDrawer.css":"../src/containers/SideDrawer.css"}],"../src/containers/data.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/components/Data.jsx":[function(require,module,exports) {
+},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/containers/Data.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -62998,7 +63007,13 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _reactBootstrap = require("react-bootstrap");
 
+var _Navbar = _interopRequireDefault(require("react-bootstrap/Navbar"));
+
+var _Nav = _interopRequireDefault(require("react-bootstrap/Nav"));
+
 var _SideDrawer = _interopRequireDefault(require("./SideDrawer"));
+
+var _TopButtons = _interopRequireDefault(require("./ButtonBar/TopButtons.jsx"));
 
 require("./data.css");
 
@@ -63016,181 +63031,63 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var Data =
 /*#__PURE__*/
 function (_Component) {
   _inherits(Data, _Component);
 
-  function Data() {
-    var _getPrototypeOf2;
+  function Data(props) {
+    var _this;
 
     _classCallCheck(this, Data);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Data).call(this, props));
 
-    return _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Data)).call.apply(_getPrototypeOf2, [this].concat(args))); //   this.state = { modalShow: false };
-    //   this.getAlert = this.getAlert.bind(this);
-    //   console.log('-constructor:' + this.props.mode);
-  } // getAlert() {
-  //
-  //    if(this.state.modalShow)
-  //      this.setState({ modalShow: false });
-  //    else
-  //      this.setState({ modalShow: true });
-  // }
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "handleInput", function (e) {
+      console.log('Data mode changed ' + e);
 
+      _this.dataClick();
+    });
+
+    return _this;
+  }
 
   _createClass(Data, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      console.log('-componentDidMount:'); //   this.props.setClick(this.getAlert);
-    } // componentWillUnmount() {
-    //   console.log('-componentWillUnmount' + this.props.mode);
-    // }
-    // getSnapshotBeforeUpdate(){
-    //    console.log('-getSnapshotBeforeUpdate' + this.props.mode);
-    //    return null;
-    // }
-    // componentDidUpdate(){
-    //   //
-    //    console.log('-componentDidUpdate' + this.props.mode);
-    // }
-    // shouldComponentUpdate(){
-    //    console.log('-shouldComponentUpdate' + this.props.mode);
-    //    return true;
-    // }
-    // <Button variant="primary" onClick={() => this.setState({ modalShow: true })} >
-    //   Launch modal with grid
-    // </Button>
-
+      console.log('-componentDidMount:');
+    }
   }, {
     key: "render",
     value: function render() {
-      return _react.default.createElement("div", null, _react.default.createElement(_SideDrawer.default, {
-        onOpenClick: this.props.setClick
+      var _this2 = this;
+
+      return _react.default.createElement("div", null, _react.default.createElement(_TopButtons.default, {
+        isData: true,
+        modeChanged: this.handleInput
+      }), _react.default.createElement(_SideDrawer.default, {
+        onOpenClick: function onOpenClick(click) {
+          return _this2.dataClick = click;
+        }
       }));
     }
   }]);
 
   return Data;
-}(_react.Component); // class App extends React.Component {
-//   constructor(...args) {
-//     super(...args);
-//
-//     this.state = { modalShow: false };
-//   }
-//
-//   render() {
-//     let modalClose = () => this.setState({ modalShow: false });
-//
-//     return (
-//       <ButtonToolbar>
-//         <Button
-//           variant="primary"
-//           onClick={() => this.setState({ modalShow: true })}
-//         >
-//           Launch modal with grid
-//         </Button>
-//
-//         <SideDrawer show={this.state.modalShow} onHide={modalClose} />
-//       </ButtonToolbar>
-//     );
-//   }
-// }
-//render(<App />);
-
-
-exports.default = Data;
-},{"react":"../node_modules/react/index.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","./SideDrawer":"../src/components/SideDrawer.jsx","./data.css":"../src/components/data.css"}],"../src/components/ButtonBar/CustomNavbar.css":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
-
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/components/ButtonBar/CustomNavbar.jsx":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireWildcard(require("react"));
-
-var _Navbar = _interopRequireDefault(require("react-bootstrap/Navbar"));
-
-var _Nav = _interopRequireDefault(require("react-bootstrap/Nav"));
-
-var _propTypes = require("prop-types");
-
-var _GraphControl = _interopRequireDefault(require("../MapControls/GraphControl.jsx"));
-
-var _CustomButton = _interopRequireDefault(require("./CustomButton.jsx"));
-
-require("./CustomNavbar.css");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var CustomNavbar =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(CustomNavbar, _Component);
-
-  function CustomNavbar(props) {
-    _classCallCheck(this, CustomNavbar);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(CustomNavbar).call(this, props));
-  }
-
-  _createClass(CustomNavbar, [{
-    key: "render",
-    value: function render() {
-      return _react.default.createElement(_Navbar.default, {
-        className: "justify-content-end  fixed-top"
-      }, _react.default.createElement(_Nav.default, {
-        className: "mr-auto"
-      }, _react.default.createElement(_CustomButton.default, {
-        isData: true,
-        modeChanged: this.props.modeChanged
-      })));
-    }
-  }]);
-
-  return CustomNavbar;
 }(_react.Component);
 
-var _default = CustomNavbar;
-exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","prop-types":"../node_modules/prop-types/index.js","../MapControls/GraphControl.jsx":"../src/components/MapControls/GraphControl.jsx","./CustomButton.jsx":"../src/components/ButtonBar/CustomButton.jsx","./CustomNavbar.css":"../src/components/ButtonBar/CustomNavbar.css"}],"../node_modules/mitt/dist/mitt.es.js":[function(require,module,exports) {
+exports.default = Data;
+},{"react":"../node_modules/react/index.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","./SideDrawer":"../src/containers/SideDrawer.jsx","./ButtonBar/TopButtons.jsx":"../src/containers/ButtonBar/TopButtons.jsx","./data.css":"../src/containers/data.css"}],"../node_modules/mitt/dist/mitt.es.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -63256,7 +63153,7 @@ function mitt(all) {
 
 var _default = mitt;
 exports.default = _default;
-},{}],"../src/components/App.jsx":[function(require,module,exports) {
+},{}],"../src/containers/App.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -63266,13 +63163,9 @@ exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
-var _reactRouterDom = require("react-router-dom");
-
 var _Graph = _interopRequireDefault(require("./Graph"));
 
 var _Data = _interopRequireDefault(require("./Data"));
-
-var _CustomNavbar = _interopRequireDefault(require("./ButtonBar/CustomNavbar"));
 
 var _mitt = _interopRequireDefault(require("mitt"));
 
@@ -63290,15 +63183,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var App =
 /*#__PURE__*/
@@ -63306,40 +63197,15 @@ function (_Component) {
   _inherits(App, _Component);
 
   function App(props) {
-    var _this;
-
     _classCallCheck(this, App);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props));
-
-    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "handleInput", function (e) {
-      console.log('mode changed ' + e);
-
-      _this.setState({
-        mode: e
-      });
-
-      _this.dataClick();
-    });
-
-    _this.state = {
-      mode: 'graph'
-    };
-    return _this;
+    return _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props));
   }
 
   _createClass(App, [{
     key: "render",
     value: function render() {
-      var _this2 = this;
-
-      return _react.default.createElement("div", null, _react.default.createElement(_CustomNavbar.default, {
-        modeChanged: this.handleInput
-      }), _react.default.createElement(_Graph.default, null), _react.default.createElement(_Data.default, {
-        setClick: function setClick(click) {
-          return _this2.dataClick = click;
-        }
-      }));
+      return _react.default.createElement("div", null, _react.default.createElement(_Data.default, null), _react.default.createElement(_Graph.default, null));
     }
   }]);
 
@@ -63348,7 +63214,7 @@ function (_Component) {
 
 var _default = App;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","./Graph":"../src/components/Graph.jsx","./Data":"../src/components/Data.jsx","./ButtonBar/CustomNavbar":"../src/components/ButtonBar/CustomNavbar.jsx","mitt":"../node_modules/mitt/dist/mitt.es.js"}],"../src/main.css":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./Graph":"../src/containers/Graph.jsx","./Data":"../src/containers/Data.jsx","mitt":"../node_modules/mitt/dist/mitt.es.js"}],"../src/main.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -63360,7 +63226,7 @@ var _react = _interopRequireDefault(require("react"));
 
 var _reactDom = _interopRequireDefault(require("react-dom"));
 
-var _App = _interopRequireDefault(require("./components/App"));
+var _App = _interopRequireDefault(require("./containers/App"));
 
 require("./main.css");
 
@@ -63376,7 +63242,7 @@ _reactDom.default.render(_react.default.createElement(_App.default, null), docum
 // if (module.hot) {
 //   module.hot.accept();
 // }
-},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","./components/App":"../src/components/App.jsx","./main.css":"../src/main.css"}],"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","./containers/App":"../src/containers/App.jsx","./main.css":"../src/main.css"}],"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -63403,7 +63269,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "2239" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "20949" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
