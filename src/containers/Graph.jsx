@@ -5,39 +5,46 @@ import Nav from 'react-bootstrap/Nav';
 import { Jumbotron, Grid, Row, Col, Image, Button ,Container} from 'react-bootstrap';
 import GraphControl from './MapControls/GraphControl.jsx';
 import TopButtons from './ButtonBar/TopButtons.jsx';
-
+import { connect } from "react-redux";
 
 
 import './graph.css';
 
 
-export default class Graph extends Component {
+class Graph extends Component {
 
   constructor(props) {
      super(props);
-     this.state = {
-         modalShow: false
-     };
+//     this.state = {
+//         modalShow: false
+//     };
 
 
    }
 
   handleInput = (e) => {
     console.log('Graph mode changed ' + e);
-    this.setState({mode: e});
-    this.setState({modalShow: !this.state.modalShow});
+
+  //  this.setState({modalShow: !this.state.modalShow});
 
   }
 
+  // componentWillReceiveProps(nextProps) {
+  //     console.log('Graph- componentWillReceiveProps' + e);
+  //     console.log("componentWillReceiveProps triggering...");
+  //     console.log("nextProps.objectOfIds ", nextProps);
+  //     console.log("nextProps.reduxData.objectOfIds ", nextProps);
+  //
+  // }
 
   render() {
-
+    console.log('Graph - render');
 
 
     return (
       <div>
         <TopButtons isData = {false} modeChanged = { this.handleInput }/>
-        
+
         <Container className="cont-width">
 
         <Row className="my-row">
@@ -48,7 +55,7 @@ export default class Graph extends Component {
 
             </Col>
             <Col xs={6} md={4} className="align-self-center">
-              <p>Graph!!</p>
+              <p>{this.props.status}</p>
             </Col>
             <Col xs={6} md={4}>
 
@@ -56,7 +63,7 @@ export default class Graph extends Component {
           </Row>
 
           <Row className="my-row">
-              <GraphControl modalShow={this.state.modalShow}/>
+              <GraphControl modalShow={false}/>
           </Row>
 
 
@@ -66,3 +73,24 @@ export default class Graph extends Component {
     )
   }
 }
+
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+   term: state.term,
+   images: state.images,
+   status: state.status,
+   ...ownProps
+ };
+};
+
+
+const mapDispatchToProps = dispatch => {
+  return {
+    beginSearch: term => {
+      dispatch(beginSearch(term));
+    }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Graph);
