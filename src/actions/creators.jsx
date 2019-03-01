@@ -1,6 +1,5 @@
 
-
-const beginSearch = term => {
+export const beginSearch = term => {
 
   return async dispatch  => {
     dispatch({
@@ -13,7 +12,14 @@ const beginSearch = term => {
 };
 
 
-// term => {
-//  dispatch(beginSearch(term));
-// }
-export { beginSearch };
+export const reset = term => {
+
+  return async dispatch  => {
+    dispatch({
+      type: "DONE_SEARCH",
+      term
+    });
+
+  };
+
+};

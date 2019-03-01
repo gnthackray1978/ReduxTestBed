@@ -28422,7 +28422,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.beginSearch = void 0;
+exports.reset = exports.beginSearch = void 0;
 
 const beginSearch = term => {
   return async dispatch => {
@@ -28431,12 +28431,20 @@ const beginSearch = term => {
       term
     });
   };
-}; // term => {
-//  dispatch(beginSearch(term));
-// }
-
+};
 
 exports.beginSearch = beginSearch;
+
+const reset = term => {
+  return async dispatch => {
+    dispatch({
+      type: "DONE_SEARCH",
+      term
+    });
+  };
+};
+
+exports.reset = reset;
 },{}],"../node_modules/warning/warning.js":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -65881,7 +65889,7 @@ class App extends _react.Component {
 
   componentDidMount() {
     console.log('APP -componentDidMount:');
-    this.props.beginSearch_i("Mountains");
+    this.props.beginSearch_i("mountain");
   }
 
   render() {
@@ -65905,10 +65913,16 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
+  let beginSearch_i = term => {
+    dispatch((0, _creators.beginSearch)(term));
+  };
+
+  let test = term => {
+    dispatch((0, _creators.reset)(term));
+  };
+
   return {
-    beginSearch_i: term => {
-      dispatch((0, _creators.beginSearch)(term));
-    }
+    beginSearch_i: test
   };
 };
 

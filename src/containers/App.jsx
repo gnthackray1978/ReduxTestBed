@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { beginSearch } from "../actions/creators.jsx";
+import { beginSearch,reset } from "../actions/creators.jsx";
 
 import Graph from './Graph';
 import Data from './Data';
@@ -13,7 +13,7 @@ class App extends Component {
 
    componentDidMount() {
      console.log('APP -componentDidMount:');
-     this.props.beginSearch_i("Mountains");
+     this.props.beginSearch_i("mountain");
    }
 
    render() {
@@ -24,7 +24,7 @@ class App extends Component {
         <div >
           <Data/>
           <Graph/>
-         
+
         </div>
     );
   }
@@ -42,10 +42,18 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
+
+  let beginSearch_i = term => {
+    dispatch(beginSearch(term));
+  };
+
+  let test = term => {
+    dispatch(reset(term));
+  };
+
+
   return {
-    beginSearch_i: term => {
-      dispatch(beginSearch(term));
-    }
+    beginSearch_i :test
   };
 };
 
