@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { beginSearch,reset } from "../actions/creators.jsx";
+import { switchControlVisbility,beginSearch,reset } from "../actions/creators.jsx";
 
 import Graph from './Graph';
 import Data from './Data';
@@ -13,7 +13,7 @@ class App extends Component {
 
    componentDidMount() {
      console.log('APP -componentDidMount:');
-     this.props.beginSearch_i("mountain");
+     this.props.switchControlVisbility(false);
    }
 
    render() {
@@ -37,23 +37,20 @@ const mapStateToProps = state => {
   return {
     term: state.term,
     images: state.images,
-    status: state.status
+    status: state.status,
+    controlVisible: state.controlVisible,
   };
 };
 
 const mapDispatchToProps = dispatch => {
 
-  let beginSearch_i = term => {
-    dispatch(beginSearch(term));
-  };
-
-  let test = term => {
-    dispatch(reset(term));
-  };
-
-
   return {
-    beginSearch_i :test
+    beginSearch_i :term => {
+      dispatch(reset(term));
+    },
+    switchControlVisbility: controlVisible => {
+      dispatch(switchControlVisbility(controlVisible));
+    },
   };
 };
 

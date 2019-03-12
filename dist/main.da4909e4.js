@@ -28422,7 +28422,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reset = exports.beginSearch = void 0;
+exports.reset = exports.switchControlVisbility = exports.beginSearch = void 0;
 
 const beginSearch = term => {
   return async dispatch => {
@@ -28435,13 +28435,40 @@ const beginSearch = term => {
 
 exports.beginSearch = beginSearch;
 
+const switchControlVisbility = controlVisible => {
+  if (controlVisible) {
+    return async dispatch => {
+      dispatch({
+        type: "CONTROLS_OPEN"
+      });
+    };
+  } else {
+    return async dispatch => {
+      dispatch({
+        type: "CONTROLS_CLOSE"
+      });
+    };
+  }
+};
+
+exports.switchControlVisbility = switchControlVisbility;
+
 const reset = term => {
-  return async dispatch => {
-    dispatch({
-      type: "DONE_SEARCH",
-      term
-    });
-  };
+  if (term == "rubbish") {
+    return async dispatch => {
+      dispatch({
+        type: "RUBBISH_SEARCH",
+        term
+      });
+    };
+  } else {
+    return async dispatch => {
+      dispatch({
+        type: "DONE_SEARCH",
+        term
+      });
+    };
+  }
 };
 
 exports.reset = reset;
@@ -60500,6 +60527,8 @@ var _TopButtons = _interopRequireDefault(require("./ButtonBar/TopButtons.jsx"));
 
 var _reactRedux = require("react-redux");
 
+var _creators = require("../actions/creators.jsx");
+
 require("./graph.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -60516,8 +60545,13 @@ class Graph extends _react.Component {
     //         modalShow: false
     //     };
 
-    _defineProperty(this, "handleInput", e => {
-      console.log('Graph mode changed ' + e); //  this.setState({modalShow: !this.state.modalShow});
+    _defineProperty(this, "topButtonClicked", e => {
+      console.log('Graph mode changed ' + e);
+
+      if (e == "controls") {
+        if (this.props.controlVisible) this.props.switchControlVisbility(false);else this.props.switchControlVisbility(true);
+      } //  this.setState({modalShow: !this.state.modalShow});
+
     });
   }
 
@@ -60532,7 +60566,7 @@ class Graph extends _react.Component {
     console.log('Graph - render');
     return _react.default.createElement("div", null, _react.default.createElement(_TopButtons.default, {
       isData: false,
-      modeChanged: this.handleInput
+      modeChanged: this.topButtonClicked
     }), _react.default.createElement(_reactBootstrap.Container, {
       className: "cont-width"
     }, _react.default.createElement(_reactBootstrap.Row, {
@@ -60552,7 +60586,7 @@ class Graph extends _react.Component {
     })), _react.default.createElement(_reactBootstrap.Row, {
       className: "my-row"
     }, _react.default.createElement(_GraphControl.default, {
-      modalShow: false
+      modalShow: this.props.controlVisible
     }))));
   }
 
@@ -60562,32 +60596,26 @@ const mapStateToProps = (state, ownProps) => {
   return _objectSpread({
     term: state.term,
     images: state.images,
-    status: state.status
+    status: state.status,
+    controlVisible: state.controlVisible
   }, ownProps);
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    beginSearch: function (_beginSearch) {
-      function beginSearch(_x) {
-        return _beginSearch.apply(this, arguments);
-      }
-
-      beginSearch.toString = function () {
-        return _beginSearch.toString();
-      };
-
-      return beginSearch;
-    }(term => {
-      dispatch(beginSearch(term));
-    })
+    beginSearch: term => {
+      dispatch((0, _creators.beginSearch)(term));
+    },
+    switchControlVisbility: controlVisible => {
+      dispatch((0, _creators.switchControlVisbility)(controlVisible));
+    }
   };
 };
 
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Graph);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","./MapControls/GraphControl.jsx":"../src/containers/MapControls/GraphControl.jsx","./ButtonBar/TopButtons.jsx":"../src/containers/ButtonBar/TopButtons.jsx","react-redux":"../node_modules/react-redux/es/index.js","./graph.css":"../src/containers/graph.css"}],"../node_modules/brcast/dist/brcast.es.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","./MapControls/GraphControl.jsx":"../src/containers/MapControls/GraphControl.jsx","./ButtonBar/TopButtons.jsx":"../src/containers/ButtonBar/TopButtons.jsx","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx","./graph.css":"../src/containers/graph.css"}],"../node_modules/brcast/dist/brcast.es.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -65889,7 +65917,7 @@ class App extends _react.Component {
 
   componentDidMount() {
     console.log('APP -componentDidMount:');
-    this.props.beginSearch_i("mountain");
+    this.props.switchControlVisbility(false);
   }
 
   render() {
@@ -65908,21 +65936,19 @@ const mapStateToProps = state => {
   return {
     term: state.term,
     images: state.images,
-    status: state.status
+    status: state.status,
+    controlVisible: state.controlVisible
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  let beginSearch_i = term => {
-    dispatch((0, _creators.beginSearch)(term));
-  };
-
-  let test = term => {
-    dispatch((0, _creators.reset)(term));
-  };
-
   return {
-    beginSearch_i: test
+    beginSearch_i: term => {
+      dispatch((0, _creators.reset)(term));
+    },
+    switchControlVisbility: controlVisible => {
+      dispatch((0, _creators.switchControlVisbility)(controlVisible));
+    }
   };
 };
 
@@ -65995,6 +66021,21 @@ var _default = function _default() {
     case "ERROR_SEARCH":
       return _objectSpread({}, state, {
         status: "error"
+      });
+
+    case "RUBBISH_SEARCH":
+      return _objectSpread({}, state, {
+        status: "rubbish"
+      });
+
+    case "CONTROLS_OPEN":
+      return _objectSpread({}, state, {
+        controlVisible: true
+      });
+
+    case "CONTROLS_CLOSE":
+      return _objectSpread({}, state, {
+        controlVisible: false
       });
 
     default:

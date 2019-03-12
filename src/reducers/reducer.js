@@ -18,6 +18,26 @@ export default (state = {}, action) => {
         ...state,
         status: "error"
       };
+    case "RUBBISH_SEARCH":
+        return {
+          ...state,
+          status: "rubbish"
+        };
+
+    case "CONTROLS_OPEN":
+        return {
+          ...state,
+          controlVisible: true
+        };
+        
+    case "CONTROLS_CLOSE":
+        return {
+          ...state,
+          controlVisible: false
+        };
+
+
+
     default:
       return state;
   }

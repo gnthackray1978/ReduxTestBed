@@ -6,7 +6,7 @@ import { Jumbotron, Grid, Row, Col, Image, Button ,Container} from 'react-bootst
 import GraphControl from './MapControls/GraphControl.jsx';
 import TopButtons from './ButtonBar/TopButtons.jsx';
 import { connect } from "react-redux";
-
+import { switchControlVisbility,beginSearch,reset } from "../actions/creators.jsx";
 
 import './graph.css';
 
@@ -22,9 +22,16 @@ class Graph extends Component {
 
    }
 
-  handleInput = (e) => {
+  topButtonClicked = (e) => {
     console.log('Graph mode changed ' + e);
 
+    if(e == "controls"){
+      if(this.props.controlVisible)
+        this.props.switchControlVisbility(false);
+      else
+        this.props.switchControlVisbility(true);
+    }
+    
   //  this.setState({modalShow: !this.state.modalShow});
 
   }
@@ -43,7 +50,7 @@ class Graph extends Component {
 
     return (
       <div>
-        <TopButtons isData = {false} modeChanged = { this.handleInput }/>
+        <TopButtons isData = {false} modeChanged = { this.topButtonClicked }/>
 
         <Container className="cont-width">
 
@@ -63,7 +70,7 @@ class Graph extends Component {
           </Row>
 
           <Row className="my-row">
-              <GraphControl modalShow={false}/>
+              <GraphControl modalShow={this.props.controlVisible}/>
           </Row>
 
 
@@ -80,6 +87,7 @@ const mapStateToProps = (state, ownProps) => {
    term: state.term,
    images: state.images,
    status: state.status,
+   controlVisible: state.controlVisible,
    ...ownProps
  };
 };
@@ -89,7 +97,10 @@ const mapDispatchToProps = dispatch => {
   return {
     beginSearch: term => {
       dispatch(beginSearch(term));
-    }
+    },
+    switchControlVisbility: controlVisible => {
+      dispatch(switchControlVisbility(controlVisible));
+    },
   };
 };
 
