@@ -3,6 +3,7 @@
   "browserslist": [
    "since 2017-06"
   ],
+ 
   "version": "1.0.0",
   "description": "",
   "main": "main.js",

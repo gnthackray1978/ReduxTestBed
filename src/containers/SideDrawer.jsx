@@ -12,6 +12,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import Grid from '@material-ui/core/Grid';
 import './SideDrawer.css';
+import {GedLib} from "../DataLoader/GedLib.js";
 
 const styles = {
   list: {
@@ -53,6 +54,48 @@ const styles = {
       this.setState({ modalShow: state });
    }
 
+   loadGedDefault(){
+
+     let defaultGed = '../../Assets/default.ged';
+
+     // $.get(that.defaultGed, function (contents) {
+     //           treedate(contents);
+     //       }, 'text');
+
+      fetch(defaultGed)
+      .then(response => response.text())
+   .then(data => console.log('data is', data))
+   .catch(error => console.log('error is', error));
+
+
+   }
+
+   loadGetStandard(){
+     var that =this;
+
+     var handleFileSelect = function(evt) {
+         var files = evt.target.files; // FileList object
+         // Loop through the FileList and render image files as thumbnails.
+         for (var i = 0, f; f = files[i]; i++) {
+             var reader = new FileReader();
+             // Closure to capture the file information.
+             reader.onload = (function(theFile) {
+                 return function(e) {
+                     // loader.processFile(e.target.result);
+
+                     treedate(e.target.result);
+                 };
+             })(f);
+             // Read in the image file as a data URL.
+             reader.readAsText(f);
+         }
+     };
+
+
+   }
+
+
+
 
   render() {
 
@@ -68,7 +111,7 @@ const styles = {
                 <b className ={classes.label}>Hello there</b>
               </Grid>
               <Grid item xs={4}>
-                <Button onClick={()=>{ }}  className ={classes.label}>Default</Button>
+                <Button onClick={()=>{ this.loadGedDefault();}}  className ={classes.label}>Default</Button>
               </Grid>
               <Grid item xs={4}>
                 <Button onClick={()=>{ }} className ={classes.label}>Select</Button>
