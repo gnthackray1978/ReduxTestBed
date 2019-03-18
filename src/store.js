@@ -7,8 +7,13 @@ export default createStore(
   reducer,
   {
     term: "",
-    images: [],
-    status: "initial"
+    status: "initial",
+    order : 'asc',
+    orderBy : 'calories',
+    selection : [],
+    rawData : [],
+    page : 0,
+    rowsPerPage : 5
   },
   applyMiddleware(thunk)
 );

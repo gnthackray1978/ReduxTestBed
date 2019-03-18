@@ -1,3 +1,4 @@
+import {DateFunctions} from "../DateFunctions.js";
 
 export class GedLib {
 
@@ -13,7 +14,7 @@ export class GedLib {
 
       var gRow = {};
 
-      var split = $.trim(line).split(' ');
+      var split = line.trim().split(' ');
 
       gRow.split = split;
 
@@ -46,7 +47,7 @@ export class GedLib {
                   tmp = split.shift();
               }
 
-              gRow.value = $.trim(gRow.value);
+              gRow.value = gRow.value.trim();
           }
       }
 
@@ -135,19 +136,19 @@ export class GedLib {
                           while (idx <= results.length && nextLine.level > 1) {
 
                               if (gLine.tag == 'BAPL' || gLine.tag == 'BAPM' || gLine.tag == 'CHR') {
-                                  if (nextLine.tag == 'DATE') currentId.date = nextLine.value.yearDate();
+                                  if (nextLine.tag == 'DATE') currentId.date = DateFunctions.YearDate(nextLine.value);
                                   if (nextLine.tag == 'DATE') currentId.BaptismDate = nextLine.value;
                                   if (nextLine.tag == 'PLAC') currentId.BaptismPlace = nextLine.value;
                               }
 
                               if (gLine.tag == 'BIRT') {
-                                  if (nextLine.tag == 'DATE') currentId.date = nextLine.value.yearDate();
+                                  if (nextLine.tag == 'DATE') currentId.date = DateFunctions.YearDate(nextLine.value);
                                   if (nextLine.tag == 'DATE') currentId.BirthDate = nextLine.value;
                                   if (nextLine.tag == 'PLAC') currentId.BirthPlace = nextLine.value;
                               }
 
                               if (gLine.tag == 'MARR') {
-                                  if (nextLine.tag == 'DATE') currentId.date = nextLine.value.yearDate();
+                                  if (nextLine.tag == 'DATE') currentId.date = DateFunctions.YearDate(nextLine.value);
                                   if (nextLine.tag == 'DATE') currentId.MarDate = nextLine.value;
                                   if (nextLine.tag == 'PLAC') currentId.MarPlace = nextLine.value;
                               }
@@ -203,7 +204,7 @@ export class GedLib {
                           that.families[famidx].children[famChildIdx] = that.persons[idx];
 
                           if (that.families[famidx].date != undefined)
-                              that.families[famidx].date = that.persons[idx].BirthDate.yearDate();
+                              that.families[famidx].date =  DateFunctions.YearDate(that.persons[idx].BirthDate);
 
                           break;
                       }

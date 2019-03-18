@@ -1,9 +1,8 @@
 {
   "name": "sitetest",
   "browserslist": [
-   "since 2017-06"
+    "since 2017-06"
   ],
- 
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -28,6 +27,7 @@
     "react-dom": "^16.8.2",
     "react-redux": "^6.0.1",
     "react-router-dom": "^4.3.1",
+    "recompose": "^0.30.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"
   },

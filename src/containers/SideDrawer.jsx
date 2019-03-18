@@ -13,10 +13,15 @@ import MailIcon from '@material-ui/icons/Mail';
 import Grid from '@material-ui/core/Grid';
 import './SideDrawer.css';
 import {GedLib} from "../DataLoader/GedLib.js";
+import PersonList from "./PersonList.jsx";
+import { connect } from "react-redux";
+import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,gedParseComplete } from "../actions/creators.jsx";
+
+
 
 const styles = {
   list: {
-    width: 300,
+    width: 420,
   },
 
   fullList: {
@@ -37,9 +42,9 @@ const styles = {
 
    constructor(props) {
       super(props);
-     this.state = {
-       modalShow: this.props.show ,
-     };
+       this.state = {
+         modalShow: this.props.show ,
+       };
    }
 
    componentDidMount() {
@@ -47,6 +52,9 @@ const styles = {
      this.props.onOpenClick(()=>{
        this.setState({ modalShow: true });
      });
+
+     this.props.initYearIncrementor(5,3000);
+
    }
 
    toggleDrawer(state){
@@ -54,9 +62,26 @@ const styles = {
       this.setState({ modalShow: state });
    }
 
+   dataParseComplete(persons, range) {
+
+      if(persons == undefined || persons == null || persons.length ==0){
+          this.showGedError("Could not obtain list of persons");
+          return;
+      }
+
+  //    this.showGedContent();
+    //  this.showPersonSelectList(persons);
+  //    this.setFDDefaults(Number(range.s)+50,5,3000);
+      console.log('complete');
+   }
+
    loadGedDefault(){
 
      let defaultGed = '../../Assets/default.ged';
+
+
+
+     let tp = this;
 
      // $.get(that.defaultGed, function (contents) {
      //           treedate(contents);
@@ -64,8 +89,17 @@ const styles = {
 
       fetch(defaultGed)
       .then(response => response.text())
-   .then(data => console.log('data is', data))
-   .catch(error => console.log('error is', error));
+       .then(data => {
+         const _applicationGedLoader = new GedLib();
+              _applicationGedLoader.processFile(data,(message, show)=>{
+                tp.props.gedLoadingStatus(message, show);
+              },
+                      function (families, persons,range) {
+                         tp.props.gedParseComplete(persons,range);
+                        //_graphLoaderUI.dataParseComplete(persons,range);
+                    });
+       })
+       .catch(error => console.log('error is', error));
 
 
    }
@@ -108,7 +142,7 @@ const styles = {
             <div className = "inner">
             <Grid container spacing={24} className={classes.mygrid}>
               <Grid item xs={12}>
-                <b className ={classes.label}>Hello there</b>
+                <b className ={classes.label}>Data Selection</b>
               </Grid>
               <Grid item xs={4}>
                 <Button onClick={()=>{ this.loadGedDefault();}}  className ={classes.label}>Default</Button>
@@ -121,6 +155,7 @@ const styles = {
                   className ={classes.label}>Close</Button>
               </Grid>
             </Grid>
+            <PersonList></PersonList>
             </div>
           </div>
         </Drawer>
@@ -138,4 +173,44 @@ SideDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SideDrawer);
+
+const mapStateToProps = state => {
+  return {
+
+    status: state.status,
+    controlVisible: state.controlVisible,
+    timerStartYear : state.timerStartYear,
+    gedLoaded : state.gedLoaded,
+    getError :  state.getError,
+    rawGed :  state.rawGed,
+    incrementSize :  state.incrementSize,
+    timeSpeed :  state.timeSpeed,
+    gedLoadingMessage :  state.gedLoadingMessage,
+    gedLoadingMessagesDisplayed :  state.gedLoadingMessagesDisplayed,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+
+  return {
+
+    switchControlVisbility: controlVisible => {
+      dispatch(switchControlVisbility(controlVisible));
+    },
+
+    gedParseComplete: (persons, range) => {
+      dispatch(gedParseComplete(persons, range));
+    },
+
+    initYearIncrementor: (increment,speed) => {
+      dispatch(initYearIncrementor(increment,speed));
+    },
+
+    gedLoadingStatus: (message, show) => {
+      dispatch(gedLoadingStatus(message, show));
+    },
+
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SideDrawer));
