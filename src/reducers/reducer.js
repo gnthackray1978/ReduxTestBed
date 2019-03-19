@@ -48,21 +48,19 @@ export default (state = {}, action) => {
           controlVisible: false
         };
 
-    case "NO_GED_DATA":
-          return {
-            ...state,
-            gedLoaded: action.gedLoaded,
-            gedError : action.gedError
-          };
-
-    case "GED_DATA_LOADED":
-          return {
-            ...state,
-            timerStartYear : action.timerStartYear,
-             gedLoaded : action.gedLoaded,
-             getError : action.getError,
-             rawGed : action.rawGed
-          };
+    // case "NO_GED_DATA":
+    //       return {
+    //         ...state,
+    //         gedLoaded: action.gedLoaded,
+    //         gedError : action.gedError
+    //       };
+    //
+    // case "GED_DATA_LOADED":
+    //       return {
+    //         ...state,
+    //         timerStartYear : action.timerStartYear,
+    //         gedLoaded : action.gedLoaded,
+    //       };
 
     case "YEAR_INCREMENT_INIT":
           return {
@@ -76,6 +74,12 @@ export default (state = {}, action) => {
             ...state,
             gedLoadingMessage : action.gedLoadingMessage,
             gedLoadingMessagesDisplayed : action.gedLoadingMessagesDisplayed
+          };
+    case "GED_LOAD_ERROR":
+          return {
+            ...state,
+            gedLoaded :action.gedLoaded,
+            gedError :action.gedError
           };
 
     case "SET_ROWSPERPAGE":
@@ -106,7 +110,10 @@ export default (state = {}, action) => {
     case "SET_DATA":
           return {
             ...state,
-            rawData : action.rawData
+            persons : action.persons,
+            families: action.families,
+            gedDataRange: action.gedDataRange,
+            gedLoaded :true
           };
 
     // case "INIT_PERSON_LIST" :

@@ -28422,7 +28422,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reset = exports.setData = exports.setOrder = exports.setSelected = exports.setPage = exports.setRowsPerPage = exports.gedLoadingStatus = exports.initYearIncrementor = exports.gedParseComplete = exports.switchControlVisbility = exports.beginSearch = void 0;
+exports.reset = exports.setGedData = exports.setOrder = exports.setSelected = exports.setPage = exports.setRowsPerPage = exports.gedLoadFailed = exports.gedLoadingStatus = exports.initYearIncrementor = exports.switchControlVisbility = exports.beginSearch = void 0;
 
 const beginSearch = term => {
   return async dispatch => {
@@ -28453,30 +28453,6 @@ const switchControlVisbility = controlVisible => {
 
 exports.switchControlVisbility = switchControlVisbility;
 
-const gedParseComplete = (persons, range) => {
-  if (persons == undefined || persons == null || persons.length == 0) {
-    return async dispatch => {
-      dispatch({
-        type: "NO_GED_DATA",
-        gedLoaded: false,
-        gedError: 'No Data'
-      });
-    };
-  }
-
-  return async dispatch => {
-    dispatch({
-      type: "GED_DATA_LOADED",
-      timerStartYear: Number(range.s) + 50,
-      gedLoaded: true,
-      getError: '',
-      rawGed: persons
-    });
-  };
-};
-
-exports.gedParseComplete = gedParseComplete;
-
 const initYearIncrementor = (increment, speed) => {
   return async dispatch => {
     dispatch({
@@ -28500,6 +28476,18 @@ const gedLoadingStatus = (message, show) => {
 };
 
 exports.gedLoadingStatus = gedLoadingStatus;
+
+const gedLoadFailed = message => {
+  return async dispatch => {
+    dispatch({
+      type: "GED_LOAD_ERROR",
+      gedLoaded: false,
+      gedError: message
+    });
+  };
+};
+
+exports.gedLoadFailed = gedLoadFailed;
 
 const setRowsPerPage = rowsPerPage => {
   return async dispatch => {
@@ -28539,70 +28527,33 @@ const setOrder = (order, orderBy) => {
     dispatch({
       type: "SET_ORDER",
       order: order,
-      orderBy: orderby
+      orderBy: orderBy
     });
   };
-}; // export const testcreator = (order,orderBy,selected,data,page,rowsPerPage) =>{
+}; // export const setData = (rawData) =>{
 //   return async dispatch  => {
 //     dispatch({
-//       type: "TEST",
-//       order : order,
-//       orderBy : orderBy,
-//       selected : selected,
-//       rawData : data,
-//       page : page,
-//       rowsPerPage : rowsPerPage
-//
+//       type: "SET_DATA",
+//       rawData : rawData
 //     });
-//   };
-// }
-// order: 'asc',
-// orderBy: 'calories',
-// selected: [],
-// data: [
-//   createData('Cupcake', 305, 3.7, 67, 4.3),
-//   createData('Donut', 452, 25.0, 51, 4.9),
-//   createData('Eclair', 262, 16.0, 24, 6.0),
-//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//   createData('Gingerbread', 356, 16.0, 49, 3.9),
-//   createData('Honeycomb', 408, 3.2, 87, 6.5),
-//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//   createData('Jelly Bean', 375, 0.0, 94, 0.0),
-//   createData('KitKat', 518, 26.0, 65, 7.0),
-//   createData('Lollipop', 392, 0.2, 98, 0.0),
-//   createData('Marshmallow', 318, 0, 81, 2.0),
-//   createData('Nougat', 360, 19.0, 9, 37.0),
-//   createData('Oreo', 437, 18.0, 63, 4.0),
-// ],
-// page: 0,
-// rowsPerPage: 5,
-// export const initPersonList = (order,orderBy,selected,data,page,rowsPerPage) =>{
-//   return async dispatch  => {
-//     dispatch({
-//       type: "INIT_PERSON_LIST",
-//       order : order,
-//       orderBy : orderBy,
-//       selected : selected,
-//       rawData : data,
-//       page : page,
-//       rowsPerPage : rowsPerPage
-//     });//'asc','calories',d,[],0,5
 //   };
 // }
 
 
 exports.setOrder = setOrder;
 
-const setData = rawData => {
+const setGedData = (persons, families, range) => {
   return async dispatch => {
     dispatch({
       type: "SET_DATA",
-      rawData: rawData
+      persons: persons,
+      families: families,
+      gedDataRange: range
     });
   };
 };
 
-exports.setData = setData;
+exports.setGedData = setGedData;
 
 const reset = term => {
   if (term == "rubbish") {
@@ -65793,13 +65744,10 @@ exports.DateFunctions = void 0;
 class DateFunctions {
   constructor() {}
 
-  static YearDate() {
+  static YearDate(dateParam) {
     // var str = "abt 1978 between 1943";
-    var pattern = /[1][5-9][0-9][0-9]+/g;
-    if (this.match == undefined) this.match = function (pat) {
-      return true;
-    };
-    var matches = this.match(pattern);
+    let pattern = /[1][5-9][0-9][0-9]+/g;
+    let matches = pattern.exec(dateParam);
 
     if (matches != null && matches.length > 0) {
       return Number(matches[0]);
@@ -65822,15 +65770,14 @@ exports.GedLib = void 0;
 var _DateFunctions = require("../DateFunctions.js");
 
 class GedLib {
-  constructor() {
-    this.cacheFamilies = [];
-    this.cachePersons = [];
-    this.families = [];
-    this.persons = [];
-    this.loader = null;
+  constructor() {// this.cacheFamilies = [];
+    // this.cachePersons = [];
+    // this.families = [];
+    // this.persons = [];
+    // this.loader = null;
   }
 
-  parseLine(line) {
+  static parseLine(line) {
     var gRow = {};
     var split = line.trim().split(' ');
     gRow.split = split;
@@ -65865,6 +65812,9 @@ class GedLib {
   }
 
   processFile(file, progressFunction, newloader) {
+    let families = [];
+    let persons = [];
+
     var asynchCall = function asynchCall(func, callback) {
       setTimeout(function () {
         func();
@@ -65890,7 +65840,7 @@ class GedLib {
       var currentId = {};
 
       while (idx < results.length) {
-        var gLine = that.parseLine(results[idx]);
+        var gLine = GedLib.parseLine(results[idx]);
 
         try {
           if (gLine.id != '') {
@@ -65912,8 +65862,8 @@ class GedLib {
             currentId.Occupation = '';
             currentId.DeathLocation = '';
             currentId.name = '';
-            if (currentId.type == 'FAM') that.families.push(currentId);
-            if (currentId.type == 'INDI') that.persons.push(currentId);
+            if (currentId.type == 'FAM') families.push(currentId);
+            if (currentId.type == 'INDI') persons.push(currentId);
           } else {
             if (currentId.type == 'FAM') {
               if (gLine.tag == 'HUSB') currentId.husbId = gLine.value;
@@ -65922,12 +65872,12 @@ class GedLib {
             }
 
             if (currentId.type == 'INDI') {
-              if (gLine.tag == 'NAME') currentId.name = gLine.value;
+              if (gLine.tag == 'NAME') currentId.name = gLine.value.replace("/", "").replace("/", "");
               if (gLine.tag == 'FAMS') currentId.famId = gLine.value;
             }
 
             if (idx <= results.length) {
-              var nextLine = that.parseLine(results[idx + 1]);
+              var nextLine = GedLib.parseLine(results[idx + 1]);
 
               while (idx <= results.length && nextLine.level > 1) {
                 if (gLine.tag == 'BAPL' || gLine.tag == 'BAPM' || gLine.tag == 'CHR') {
@@ -65960,7 +65910,7 @@ class GedLib {
                 }
 
                 results.splice(idx + 1, 1);
-                nextLine = that.parseLine(results[idx + 1]); //because we have take a row out of the array dont need to increment anything
+                nextLine = GedLib.parseLine(results[idx + 1]); //because we have take a row out of the array dont need to increment anything
               }
             }
           }
@@ -65976,18 +65926,18 @@ class GedLib {
       var famidx = 0;
       var idx = 0;
 
-      while (idx < that.persons.length) {
+      while (idx < persons.length) {
         famidx = 0;
 
-        while (famidx < that.families.length) {
-          if (that.families[famidx].husbId == that.persons[idx].id) that.families[famidx].husband = that.persons[idx];
-          if (that.families[famidx].wifeId == that.persons[idx].id) that.families[famidx].wife = that.persons[idx];
+        while (famidx < families.length) {
+          if (families[famidx].husbId == persons[idx].id) families[famidx].husband = persons[idx];
+          if (families[famidx].wifeId == persons[idx].id) families[famidx].wife = persons[idx];
           famChildIdx = 0;
 
-          while (famChildIdx < that.families[famidx].children.length) {
-            if (that.families[famidx].children[famChildIdx] == that.persons[idx].id) {
-              that.families[famidx].children[famChildIdx] = that.persons[idx];
-              if (that.families[famidx].date != undefined) that.families[famidx].date = _DateFunctions.DateFunctions.YearDate(that.persons[idx].BirthDate);
+          while (famChildIdx < families[famidx].children.length) {
+            if (families[famidx].children[famChildIdx] == persons[idx].id) {
+              families[famidx].children[famChildIdx] = persons[idx];
+              if (families[famidx].date != undefined) families[famidx].date = _DateFunctions.DateFunctions.YearDate(persons[idx].BirthDate);
               break;
             }
 
@@ -66005,23 +65955,23 @@ class GedLib {
       // sort family children
       var famidx = 0;
 
-      while (famidx < that.families.length) {
-        that.families[famidx].children.sort(function (a, b) {
+      while (famidx < families.length) {
+        families[famidx].children.sort(function (a, b) {
           return a.date - b.date;
         });
-        if (that.families[famidx].husbId != '0') that.families[famidx].husband.children = that.families[famidx].children;
-        if (that.families[famidx].wifeId != '0') that.families[famidx].wife.children = that.families[famidx].children;
-        if (that.families[famidx].husband == undefined) that.families[famidx].husband = {
+        if (families[famidx].husbId != '0') families[famidx].husband.children = families[famidx].children;
+        if (families[famidx].wifeId != '0') families[famidx].wife.children = families[famidx].children;
+        if (families[famidx].husband == undefined) families[famidx].husband = {
           id: 0
         };
-        if (that.families[famidx].wife == undefined) that.families[famidx].wife = {
+        if (families[famidx].wife == undefined) families[famidx].wife = {
           id: 0
         };
         famidx++;
       } // sort families
 
 
-      that.families.sort(function (a, b) {
+      families.sort(function (a, b) {
         return a.date - b.date;
       });
     };
@@ -66032,22 +65982,22 @@ class GedLib {
       asynchCall(parseSpouses, function () {
         progressFunction('parsing families', true);
         asynchCall(parseChildren, function () {
-          var rng = that.findDateRange();
-          that.cacheFamilies = JSON.parse(JSON.stringify(that.families));
-          that.cachePersons = JSON.parse(JSON.stringify(that.persons));
-          newloader(that.families, that.persons, rng);
+          var rng = GedLib.findDateRange(persons); //    that.cacheFamilies = JSON.parse(JSON.stringify(that.families));
+          //    that.cachePersons = JSON.parse(JSON.stringify(that.persons));
+
+          newloader(families, persons, rng);
         });
       });
     });
   }
 
-  findDateRange() {
+  static findDateRange(persons) {
     var startDate = 2000;
     var endDate = 0;
     var idx = 0;
 
-    while (idx < this.persons.length) {
-      var date = this.persons[idx].date;
+    while (idx < persons.length) {
+      var date = persons[idx].date;
 
       if (date && date < startDate && date != 0) {
         startDate = date;
@@ -75730,20 +75680,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-let counter = 0;
-
-function createData(name, calories, fat, carbs, protein) {
-  counter += 1;
-  return {
-    id: counter,
-    name,
-    calories,
-    fat,
-    carbs,
-    protein
-  };
-}
-
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -75771,7 +75707,7 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [{
-  id: 'calories',
+  id: 'date',
   numeric: true,
   disablePadding: false,
   label: 'Birth Year'
@@ -75821,7 +75757,7 @@ class PersonListHead extends _react.default.Component {
 PersonListHead.propTypes = {
   numSelected: _propTypes.default.number.isRequired,
   onRequestSort: _propTypes.default.func.isRequired,
-  onSelectAllClick: _propTypes.default.func.isRequired,
+  //onSelectAllClick: PropTypes.func.isRequired,
   order: _propTypes.default.string.isRequired,
   orderBy: _propTypes.default.string.isRequired,
   rowCount: _propTypes.default.number.isRequired
@@ -75915,16 +75851,7 @@ class PersonList extends _react.default.Component {
         order = 'asc';
       }
 
-      this.props.setOrder(order, orderby);
-    });
-
-    _defineProperty(this, "handleSelectAllClick", event => {
-      if (event.target.checked) {
-        this.props.setSelected(state.data.map(n => n.id));
-        return;
-      }
-
-      this.props.setSelected([]);
+      this.props.setOrder(order, orderBy);
     });
 
     _defineProperty(this, "handleClick", (event, id) => {
@@ -75957,23 +75884,17 @@ class PersonList extends _react.default.Component {
     _defineProperty(this, "isSelected", id => this.props.selected.indexOf(id) !== -1);
   }
 
-  componentWillMount() {
-    console.log('componentWillMount personlist :');
-    let d = [createData('Cupcake', 305, 3.7, 67, 4.3), createData('Donut', 452, 25.0, 51, 4.9), createData('Eclair', 262, 16.0, 24, 6.0), createData('Frozen yoghurt', 159, 6.0, 24, 4.0), createData('Gingerbread', 356, 16.0, 49, 3.9), createData('Honeycomb', 408, 3.2, 87, 6.5), createData('Ice cream sandwich', 237, 9.0, 37, 4.3), createData('Jelly Bean', 375, 0.0, 94, 0.0), createData('KitKat', 518, 26.0, 65, 7.0), createData('Lollipop', 392, 0.2, 98, 0.0), createData('Marshmallow', 318, 0, 81, 2.0), createData('Nougat', 360, 19.0, 9, 37.0), createData('Oreo', 437, 18.0, 63, 4.0)];
-    this.props.setData(d);
-  }
-
   render() {
     const classes = this.props.classes;
     const _this$props2 = this.props,
-          data = _this$props2.data,
+          persons = _this$props2.persons,
           order = _this$props2.order,
           orderBy = _this$props2.orderBy,
           selected = _this$props2.selected,
           rowsPerPage = _this$props2.rowsPerPage,
           page = _this$props2.page;
     console.log('render :' + order + ' -' + orderBy + ' -' + selected + ' -' + rowsPerPage + ' -' + page);
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, persons.length - page * rowsPerPage);
     return _react.default.createElement(_Paper.default, {
       className: classes.root
     }, _react.default.createElement(PersonListToolbar, {
@@ -75987,10 +75908,9 @@ class PersonList extends _react.default.Component {
       numSelected: selected.length,
       order: order,
       orderBy: orderBy,
-      onSelectAllClick: this.handleSelectAllClick,
       onRequestSort: this.handleRequestSort,
-      rowCount: data.length
-    }), _react.default.createElement(_TableBody.default, null, stableSort(data, getSorting(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
+      rowCount: persons.length
+    }), _react.default.createElement(_TableBody.default, null, stableSort(persons, getSorting(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
       const isSelected = this.isSelected(n.id);
       return _react.default.createElement(_TableRow.default, {
         hover: true,
@@ -76003,7 +75923,7 @@ class PersonList extends _react.default.Component {
       }, _react.default.createElement(_TableCell.default, {
         align: "left",
         width: "125"
-      }, n.calories), _react.default.createElement(_TableCell.default, {
+      }, n.date), _react.default.createElement(_TableCell.default, {
         component: "th",
         scope: "row",
         padding: "none"
@@ -76029,9 +75949,9 @@ class PersonList extends _react.default.Component {
       variant: "outlined"
     }), _react.default.createElement(_TablePagination.default, {
       className: classes.tablePagination,
-      rowsPerPageOptions: [5],
+      rowsPerPageOptions: [rowsPerPage],
       component: "div",
-      count: data.length,
+      count: persons.length,
       rowsPerPage: rowsPerPage,
       page: page,
       backIconButtonProps: {
@@ -76059,7 +75979,13 @@ const mapStateToProps = state => {
     selected: state.selection,
     order: state.order,
     orderBy: state.orderBy,
-    data: state.rawData
+    persons: state.persons.map(x => {
+      return {
+        id: x.id,
+        name: x.name,
+        date: x.date
+      };
+    })
   };
 };
 
@@ -76076,9 +76002,6 @@ const mapDispatchToProps = dispatch => {
     },
     setOrder: (order, orderBy) => {
       dispatch((0, _creators.setOrder)(order, orderBy));
-    },
-    setData: rawData => {
-      dispatch((0, _creators.setData)(rawData));
     }
   };
 };
@@ -76197,7 +76120,11 @@ class SideDrawer extends _react.Component {
       _applicationGedLoader.processFile(data, (message, show) => {
         tp.props.gedLoadingStatus(message, show);
       }, function (families, persons, range) {
-        tp.props.gedParseComplete(persons, range); //_graphLoaderUI.dataParseComplete(persons,range);
+        if (persons == undefined || persons == null || persons.length == 0) {
+          tp.props.gedLoadFailed('No Data');
+        } else {
+          tp.props.setGedData(persons, families, range);
+        }
       });
     }).catch(error => console.log('error is', error));
   }
@@ -76282,12 +76209,14 @@ const mapStateToProps = state => {
     controlVisible: state.controlVisible,
     timerStartYear: state.timerStartYear,
     gedLoaded: state.gedLoaded,
-    getError: state.getError,
-    rawGed: state.rawGed,
+    getError: state.gedError,
     incrementSize: state.incrementSize,
     timeSpeed: state.timeSpeed,
     gedLoadingMessage: state.gedLoadingMessage,
-    gedLoadingMessagesDisplayed: state.gedLoadingMessagesDisplayed
+    gedLoadingMessagesDisplayed: state.gedLoadingMessagesDisplayed,
+    persons: state.persons,
+    families: state.families,
+    gedDataRange: state.gedDataRange
   };
 };
 
@@ -76296,14 +76225,17 @@ const mapDispatchToProps = dispatch => {
     switchControlVisbility: controlVisible => {
       dispatch((0, _creators.switchControlVisbility)(controlVisible));
     },
-    gedParseComplete: (persons, range) => {
-      dispatch((0, _creators.gedParseComplete)(persons, range));
+    gedLoadFailed: message => {
+      dispatch((0, _creators.gedLoadFailed)(message));
     },
     initYearIncrementor: (increment, speed) => {
       dispatch((0, _creators.initYearIncrementor)(increment, speed));
     },
     gedLoadingStatus: (message, show) => {
       dispatch((0, _creators.gedLoadingStatus)(message, show));
+    },
+    setGedData: (persons, families, range) => {
+      dispatch((0, _creators.setGedData)(persons, families, range));
     }
   };
 };
@@ -76603,20 +76535,19 @@ var _default = function _default() {
       return _objectSpread({}, state, {
         controlVisible: false
       });
-
-    case "NO_GED_DATA":
-      return _objectSpread({}, state, {
-        gedLoaded: action.gedLoaded,
-        gedError: action.gedError
-      });
-
-    case "GED_DATA_LOADED":
-      return _objectSpread({}, state, {
-        timerStartYear: action.timerStartYear,
-        gedLoaded: action.gedLoaded,
-        getError: action.getError,
-        rawGed: action.rawGed
-      });
+    // case "NO_GED_DATA":
+    //       return {
+    //         ...state,
+    //         gedLoaded: action.gedLoaded,
+    //         gedError : action.gedError
+    //       };
+    //
+    // case "GED_DATA_LOADED":
+    //       return {
+    //         ...state,
+    //         timerStartYear : action.timerStartYear,
+    //         gedLoaded : action.gedLoaded,
+    //       };
 
     case "YEAR_INCREMENT_INIT":
       return _objectSpread({}, state, {
@@ -76628,6 +76559,12 @@ var _default = function _default() {
       return _objectSpread({}, state, {
         gedLoadingMessage: action.gedLoadingMessage,
         gedLoadingMessagesDisplayed: action.gedLoadingMessagesDisplayed
+      });
+
+    case "GED_LOAD_ERROR":
+      return _objectSpread({}, state, {
+        gedLoaded: action.gedLoaded,
+        gedError: action.gedError
       });
 
     case "SET_ROWSPERPAGE":
@@ -76653,7 +76590,10 @@ var _default = function _default() {
 
     case "SET_DATA":
       return _objectSpread({}, state, {
-        rawData: action.rawData
+        persons: action.persons,
+        families: action.families,
+        gedDataRange: action.gedDataRange,
+        gedLoaded: true
       });
     // case "INIT_PERSON_LIST" :
     //       console.log("INIT_PERSON_LIST" );
@@ -76694,11 +76634,21 @@ var _default = (0, _redux.createStore)(_reducer.default, {
   term: "",
   status: "initial",
   order: 'asc',
-  orderBy: 'calories',
+  orderBy: 'date',
   selection: [],
   rawData: [],
+  persons: [],
+  families: [],
+  gedDataRange: {
+    s: 0,
+    e: 2000
+  },
   page: 0,
-  rowsPerPage: 5
+  rowsPerPage: 9,
+  gedLoaded: true,
+  gedError: '',
+  gedLoadingMessage: '',
+  gedLoadingMessagesDisplayed: false
 }, (0, _redux.applyMiddleware)(_reduxThunk.default));
 
 exports.default = _default;

@@ -3,14 +3,14 @@ import {DateFunctions} from "../DateFunctions.js";
 export class GedLib {
 
   constructor(){
-    this.cacheFamilies = [];
-    this.cachePersons = [];
-    this.families = [];
-    this.persons = [];
-    this.loader = null;
+    // this.cacheFamilies = [];
+    // this.cachePersons = [];
+    // this.families = [];
+    // this.persons = [];
+    // this.loader = null;
   }
 
-  parseLine(line) {
+  static parseLine(line) {
 
       var gRow = {};
 
@@ -57,6 +57,9 @@ export class GedLib {
 
   processFile(file,progressFunction, newloader) {
 
+      let families = [];
+      let persons = [];
+
       var asynchCall = function (func, callback) {
          setTimeout(function() {
               func();
@@ -82,7 +85,7 @@ export class GedLib {
           var currentId = {};
 
           while (idx < results.length) {
-              var gLine = that.parseLine(results[idx]);
+              var gLine = GedLib.parseLine(results[idx]);
               try {
                   if (gLine.id != '') {
                       currentId = {};
@@ -104,9 +107,9 @@ export class GedLib {
                       currentId.DeathLocation = '';
                       currentId.name = '';
 
-                      if (currentId.type == 'FAM') that.families.push(currentId);
+                      if (currentId.type == 'FAM') families.push(currentId);
 
-                      if (currentId.type == 'INDI') that.persons.push(currentId);
+                      if (currentId.type == 'INDI') persons.push(currentId);
                   } else {
 
                       if (currentId.type == 'FAM') {
@@ -123,7 +126,7 @@ export class GedLib {
                       if (currentId.type == 'INDI') {
 
 
-                          if (gLine.tag == 'NAME') currentId.name = gLine.value;
+                          if (gLine.tag == 'NAME') currentId.name = gLine.value.replace("/", "").replace("/", "");
                           if (gLine.tag == 'FAMS') currentId.famId = gLine.value;
 
 
@@ -131,7 +134,7 @@ export class GedLib {
 
 
                       if (idx <= results.length) {
-                          var nextLine = that.parseLine(results[idx + 1]);
+                          var nextLine = GedLib.parseLine(results[idx + 1]);
 
                           while (idx <= results.length && nextLine.level > 1) {
 
@@ -168,7 +171,7 @@ export class GedLib {
                               }
 
                               results.splice(idx + 1, 1);
-                              nextLine = that.parseLine(results[idx + 1]);
+                              nextLine = GedLib.parseLine(results[idx + 1]);
 
                               //because we have take a row out of the array dont need to increment anything
                           }
@@ -188,23 +191,23 @@ export class GedLib {
           var famidx = 0;
 
           var idx = 0;
-          while (idx < that.persons.length) {
+          while (idx < persons.length) {
 
               famidx = 0;
 
-              while (famidx < that.families.length) {
+              while (famidx < families.length) {
 
-                  if (that.families[famidx].husbId == that.persons[idx].id) that.families[famidx].husband = that.persons[idx];
+                  if (families[famidx].husbId == persons[idx].id) families[famidx].husband = persons[idx];
 
-                  if (that.families[famidx].wifeId == that.persons[idx].id) that.families[famidx].wife = that.persons[idx];
+                  if (families[famidx].wifeId == persons[idx].id) families[famidx].wife = persons[idx];
 
                   famChildIdx = 0;
-                  while (famChildIdx < that.families[famidx].children.length) {
-                      if (that.families[famidx].children[famChildIdx] == that.persons[idx].id) {
-                          that.families[famidx].children[famChildIdx] = that.persons[idx];
+                  while (famChildIdx < families[famidx].children.length) {
+                      if (families[famidx].children[famChildIdx] == persons[idx].id) {
+                          families[famidx].children[famChildIdx] = persons[idx];
 
-                          if (that.families[famidx].date != undefined)
-                              that.families[famidx].date =  DateFunctions.YearDate(that.persons[idx].BirthDate);
+                          if (families[famidx].date != undefined)
+                              families[famidx].date =  DateFunctions.YearDate(persons[idx].BirthDate);
 
                           break;
                       }
@@ -222,25 +225,25 @@ export class GedLib {
       var parseChildren = function(){
           // sort family children
           var famidx = 0;
-          while (famidx < that.families.length) {
+          while (famidx < families.length) {
 
-              that.families[famidx].children.sort(function(a, b) {
+              families[famidx].children.sort(function(a, b) {
                   return a.date - b.date;
               });
 
-              if (that.families[famidx].husbId != '0')
-                  that.families[famidx].husband.children = that.families[famidx].children;
+              if (families[famidx].husbId != '0')
+                  families[famidx].husband.children = families[famidx].children;
 
-              if (that.families[famidx].wifeId != '0')
-                  that.families[famidx].wife.children = that.families[famidx].children;
+              if (families[famidx].wifeId != '0')
+                  families[famidx].wife.children = families[famidx].children;
 
-              if (that.families[famidx].husband == undefined) that.families[famidx].husband = { id: 0 };
-              if (that.families[famidx].wife == undefined) that.families[famidx].wife = { id: 0 };
+              if (families[famidx].husband == undefined) families[famidx].husband = { id: 0 };
+              if (families[famidx].wife == undefined) families[famidx].wife = { id: 0 };
 
               famidx++;
           }
           // sort families
-          that.families.sort(function(a, b) {
+          families.sort(function(a, b) {
               return a.date - b.date;
           });
       };
@@ -254,12 +257,12 @@ export class GedLib {
               progressFunction('parsing families',true);
               asynchCall(parseChildren, function(){
 
-                  var rng = that.findDateRange();
+                  var rng = GedLib.findDateRange(persons);
 
-                  that.cacheFamilies = JSON.parse(JSON.stringify(that.families));
-                  that.cachePersons = JSON.parse(JSON.stringify(that.persons));
+              //    that.cacheFamilies = JSON.parse(JSON.stringify(that.families));
+              //    that.cachePersons = JSON.parse(JSON.stringify(that.persons));
 
-                  newloader(that.families, that.persons, rng);
+                  newloader(families, persons, rng);
               });
           });
       });
@@ -267,14 +270,14 @@ export class GedLib {
 
   }
 
-  findDateRange() {
+  static findDateRange(persons) {
 
       var startDate =2000;
       var endDate =0;
 
       var idx = 0;
-      while (idx < this.persons.length) {
-          var date = this.persons[idx].date;
+      while (idx < persons.length) {
+          var date = persons[idx].date;
 
           if (date && date < startDate && date !=0) {
               startDate = date;

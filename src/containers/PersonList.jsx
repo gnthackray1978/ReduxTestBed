@@ -23,12 +23,6 @@ import { connect } from "react-redux";
 import {setData ,setOrder,setSelected,setPage,setRowsPerPage } from "../actions/creators.jsx";
 
 
-let counter = 0;
-function createData(name, calories, fat, carbs, protein) {
-  counter += 1;
-  return { id: counter, name, calories, fat, carbs, protein };
-}
-
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -54,7 +48,7 @@ function getSorting(order, orderBy) {
 }
 
 const rows = [
-  { id: 'calories', numeric: true, disablePadding: false, label: 'Birth Year' },
+  { id: 'date', numeric: true, disablePadding: false, label: 'Birth Year' },
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' }
 
 ];
@@ -111,7 +105,7 @@ class PersonListHead extends React.Component {
 PersonListHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
+  //onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.string.isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
@@ -210,30 +204,6 @@ class PersonList extends React.Component {
      super(props);
   }
 
-
-  componentWillMount() {
-    console.log('componentWillMount personlist :');
-
-
-  let d = [
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Donut', 452, 25.0, 51, 4.9),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Honeycomb', 408, 3.2, 87, 6.5),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Jelly Bean', 375, 0.0, 94, 0.0),
-    createData('KitKat', 518, 26.0, 65, 7.0),
-    createData('Lollipop', 392, 0.2, 98, 0.0),
-    createData('Marshmallow', 318, 0, 81, 2.0),
-    createData('Nougat', 360, 19.0, 9, 37.0),
-    createData('Oreo', 437, 18.0, 63, 4.0),
-  ];
-
-   this.props.setData(d);
-  }
-
   handleRequestSort = (event, property) => {
     const orderBy = property;
     let order = 'desc';
@@ -241,16 +211,10 @@ class PersonList extends React.Component {
     if (this.props.orderBy === property && this.props.order === 'desc') {
       order = 'asc';
     }
-    this.props.setOrder(order, orderby);
+    this.props.setOrder(order, orderBy);
   };
 
-  handleSelectAllClick = event => {
-    if (event.target.checked) {
-      this.props.setSelected(state.data.map(n => n.id));
-      return;
-    }
-    this.props.setSelected([]);
-  };
+
 
   handleClick = (event, id) => {
     const { selected } = this.props;
@@ -288,11 +252,13 @@ class PersonList extends React.Component {
   render() {
 
     const { classes } = this.props;
-    const { data, order, orderBy, selected, rowsPerPage, page } = this.props;
+    const { persons, order, orderBy, selected, rowsPerPage, page } = this.props;
+
+
 
     console.log('render :' + order +' -'+ orderBy +' -'+ selected +' -'+ rowsPerPage +' -'+ page);
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, persons.length - page * rowsPerPage);
 
     return (
       <Paper className={classes.root}>
@@ -303,12 +269,12 @@ class PersonList extends React.Component {
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={this.handleSelectAllClick}
+
               onRequestSort={this.handleRequestSort}
-              rowCount={data.length}
+              rowCount={persons.length}
             />
             <TableBody>
-              {stableSort(data, getSorting(order, orderBy))
+              {stableSort(persons, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(n => {
                   const isSelected = this.isSelected(n.id);
@@ -322,7 +288,7 @@ class PersonList extends React.Component {
                       key={n.id}
                       selected={isSelected}
                     >
-                      <TableCell align="left" width = "125">{n.calories}</TableCell>
+                      <TableCell align="left" width = "125">{n.date}</TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {n.name}
                       </TableCell>
@@ -352,9 +318,9 @@ class PersonList extends React.Component {
         />
         <TablePagination
           className={classes.tablePagination}
-          rowsPerPageOptions={[5]}
+          rowsPerPageOptions={[rowsPerPage]}
           component="div"
-          count={data.length}
+          count={persons.length}
           rowsPerPage={rowsPerPage}
           page={page}
           backIconButtonProps={{
@@ -386,7 +352,9 @@ const mapStateToProps = state => {
     selected :  state.selection,
     order :  state.order,
     orderBy : state.orderBy,
-    data : state.rawData,
+    persons : state.persons.map(x => {
+     return { id: x.id, name: x.name, date : x.date};
+    })
 
   };
 };
@@ -409,10 +377,6 @@ const mapDispatchToProps = dispatch => {
 
     setOrder: (order, orderBy) => {
       dispatch(setOrder(order,orderBy));
-    },
-
-    setData : rawData => {
-      dispatch(setData(rawData));
     }
   };
 };

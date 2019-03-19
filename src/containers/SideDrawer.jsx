@@ -15,7 +15,7 @@ import './SideDrawer.css';
 import {GedLib} from "../DataLoader/GedLib.js";
 import PersonList from "./PersonList.jsx";
 import { connect } from "react-redux";
-import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,gedParseComplete } from "../actions/creators.jsx";
+import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,setGedData ,gedLoadFailed} from "../actions/creators.jsx";
 
 
 
@@ -94,10 +94,15 @@ const styles = {
               _applicationGedLoader.processFile(data,(message, show)=>{
                 tp.props.gedLoadingStatus(message, show);
               },
-                      function (families, persons,range) {
-                         tp.props.gedParseComplete(persons,range);
-                        //_graphLoaderUI.dataParseComplete(persons,range);
-                    });
+                  function (families, persons,range) {
+                    if(persons == undefined || persons == null || persons.length ==0){
+                      tp.props.gedLoadFailed('No Data');
+                    }
+                    else{
+                      tp.props.setGedData(persons, families,range);
+                    }
+
+                });
        })
        .catch(error => console.log('error is', error));
 
@@ -181,12 +186,14 @@ const mapStateToProps = state => {
     controlVisible: state.controlVisible,
     timerStartYear : state.timerStartYear,
     gedLoaded : state.gedLoaded,
-    getError :  state.getError,
-    rawGed :  state.rawGed,
+    getError :  state.gedError,
     incrementSize :  state.incrementSize,
     timeSpeed :  state.timeSpeed,
     gedLoadingMessage :  state.gedLoadingMessage,
     gedLoadingMessagesDisplayed :  state.gedLoadingMessagesDisplayed,
+    persons : state.persons,
+    families: state.families,
+    gedDataRange: state.gedDataRange
   };
 };
 
@@ -198,8 +205,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(switchControlVisbility(controlVisible));
     },
 
-    gedParseComplete: (persons, range) => {
-      dispatch(gedParseComplete(persons, range));
+    gedLoadFailed: (message) => {
+      dispatch(gedLoadFailed(message));
     },
 
     initYearIncrementor: (increment,speed) => {
@@ -210,6 +217,9 @@ const mapDispatchToProps = dispatch => {
       dispatch(gedLoadingStatus(message, show));
     },
 
+    setGedData: (persons, families,range) => {
+      dispatch(setGedData(persons, families,range));
+    },
   };
 };
 

@@ -4,17 +4,12 @@ export class DateFunctions  {
 
   }
 
-  static YearDate() {
+  static YearDate(dateParam) {
 
     // var str = "abt 1978 between 1943";
-    var pattern = /[1][5-9][0-9][0-9]+/g;
+    let pattern = /[1][5-9][0-9][0-9]+/g;
 
-    if (this.match == undefined)
-        this.match = function (pat) {
-            return true;
-        };
-
-    var matches = this.match(pattern);
+    let matches = pattern.exec(dateParam);
 
     if (matches != null && matches.length > 0) {
         return Number(matches[0]);

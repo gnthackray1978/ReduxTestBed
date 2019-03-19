@@ -9,11 +9,18 @@ export default createStore(
     term: "",
     status: "initial",
     order : 'asc',
-    orderBy : 'calories',
+    orderBy : 'date',
     selection : [],
     rawData : [],
+    persons :[],
+    families :[],
+    gedDataRange: {s:0, e:2000},
     page : 0,
-    rowsPerPage : 5
+    rowsPerPage : 9,
+    gedLoaded :true,
+    gedError :'',
+    gedLoadingMessage : '',
+    gedLoadingMessagesDisplayed : false
   },
   applyMiddleware(thunk)
 );
