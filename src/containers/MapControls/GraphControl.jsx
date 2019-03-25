@@ -7,6 +7,10 @@ import {PropTypes,func} from 'prop-types';
 
 import NavButton from './NavButton.jsx';
 import './GraphControl.css';
+import { connect } from "react-redux";
+import { switchControlVisbility} from "../../actions/creators.jsx";
+
+
 
 class GraphControl extends Component {
 
@@ -71,4 +75,24 @@ class GraphControl extends Component {
 
 }
 
-export default GraphControl;
+const mapStateToProps = state => {
+  return {
+
+    status: state.status,
+
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+
+  return {
+
+    switchControlVisbility: controlVisible => {
+      dispatch(switchControlVisbility(controlVisible));
+    },
+
+  };
+};
+
+//export default GraphControl;
+export default connect(mapStateToProps, mapDispatchToProps)(GraphControl);

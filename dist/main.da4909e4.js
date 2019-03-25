@@ -28422,7 +28422,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reset = exports.setGedData = exports.setOrder = exports.setSelected = exports.setPage = exports.setRowsPerPage = exports.gedLoadFailed = exports.gedLoadingStatus = exports.initYearIncrementor = exports.switchControlVisbility = exports.beginSearch = void 0;
+exports.reset = exports.setGedData = exports.activateLayout = exports.setLayout = exports.setOrder = exports.setSelected = exports.setPage = exports.setRowsPerPage = exports.gedLoadFailed = exports.setContext = exports.gedLoadingStatus = exports.initYearIncrementor = exports.switchControlVisbility = exports.beginSearch = void 0;
 
 const beginSearch = term => {
   return async dispatch => {
@@ -28477,6 +28477,17 @@ const gedLoadingStatus = (message, show) => {
 
 exports.gedLoadingStatus = gedLoadingStatus;
 
+const setContext = context => {
+  return async dispatch => {
+    dispatch({
+      type: "SET_CONTEXT",
+      context: context
+    });
+  };
+};
+
+exports.setContext = setContext;
+
 const gedLoadFailed = message => {
   return async dispatch => {
     dispatch({
@@ -28530,17 +28541,33 @@ const setOrder = (order, orderBy) => {
       orderBy: orderBy
     });
   };
-}; // export const setData = (rawData) =>{
-//   return async dispatch  => {
-//     dispatch({
-//       type: "SET_DATA",
-//       rawData : rawData
-//     });
-//   };
-// }
-
+};
 
 exports.setOrder = setOrder;
+
+const setLayout = layout => {
+  return async dispatch => {
+    dispatch({
+      type: "SET_LAYOUT",
+      layout: layout
+    });
+  };
+};
+
+exports.setLayout = setLayout;
+
+const activateLayout = (isActive, graphActiveLayout, graphActiveSelection) => {
+  return async dispatch => {
+    dispatch({
+      type: "ACTIVATE_GRAPH",
+      graphActive: isActive,
+      graphActiveLayout: graphActiveLayout,
+      graphActiveSelection: graphActiveSelection
+    });
+  };
+};
+
+exports.activateLayout = activateLayout;
 
 const setGedData = (persons, families, range) => {
   return async dispatch => {
@@ -60359,6 +60386,10 @@ var _NavButton = _interopRequireDefault(require("./NavButton.jsx"));
 
 require("./GraphControl.css");
 
+var _reactRedux = require("react-redux");
+
+var _creators = require("../../actions/creators.jsx");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
@@ -60448,9 +60479,25 @@ class GraphControl extends _react.Component {
 
 }
 
-var _default = GraphControl;
+const mapStateToProps = state => {
+  return {
+    status: state.status
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    switchControlVisbility: controlVisible => {
+      dispatch((0, _creators.switchControlVisbility)(controlVisible));
+    }
+  };
+}; //export default GraphControl;
+
+
+var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(GraphControl);
+
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/Container.js","react-bootstrap/Col":"../node_modules/react-bootstrap/Col.js","react-bootstrap/Row":"../node_modules/react-bootstrap/Row.js","prop-types":"../node_modules/prop-types/index.js","./NavButton.jsx":"../src/containers/MapControls/NavButton.jsx","./GraphControl.css":"../src/containers/MapControls/GraphControl.css"}],"../node_modules/react-bootstrap/ButtonToolbar.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/Container.js","react-bootstrap/Col":"../node_modules/react-bootstrap/Col.js","react-bootstrap/Row":"../node_modules/react-bootstrap/Row.js","prop-types":"../node_modules/prop-types/index.js","./NavButton.jsx":"../src/containers/MapControls/NavButton.jsx","./GraphControl.css":"../src/containers/MapControls/GraphControl.css","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../node_modules/react-bootstrap/ButtonToolbar.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -61084,12 +61131,7 @@ _defineProperty(TopButtons, "defaultProps", {
 
 var _default = TopButtons;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/NavItem":"../node_modules/react-bootstrap/NavItem.js","react-bootstrap/ButtonToolbar":"../node_modules/react-bootstrap/ButtonToolbar.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/icons/OpenWith":"../node_modules/@material-ui/icons/OpenWith.js","@material-ui/icons/FeedBack":"../node_modules/@material-ui/icons/FeedBack.js","./TopButtons.css":"../src/containers/ButtonBar/TopButtons.css"}],"../src/containers/graph.css":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
-
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/containers/Graph.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/NavItem":"../node_modules/react-bootstrap/NavItem.js","react-bootstrap/ButtonToolbar":"../node_modules/react-bootstrap/ButtonToolbar.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/icons/OpenWith":"../node_modules/@material-ui/icons/OpenWith.js","@material-ui/icons/FeedBack":"../node_modules/@material-ui/icons/FeedBack.js","./TopButtons.css":"../src/containers/ButtonBar/TopButtons.css"}],"../node_modules/@material-ui/core/utils/requirePropFactory.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -61097,111 +61139,2010 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _react = _interopRequireWildcard(require("react"));
-
-var _reactRouterDom = require("react-router-dom");
-
-var _Navbar = _interopRequireDefault(require("react-bootstrap/Navbar"));
-
-var _Nav = _interopRequireDefault(require("react-bootstrap/Nav"));
-
-var _reactBootstrap = require("react-bootstrap");
-
-var _GraphControl = _interopRequireDefault(require("./MapControls/GraphControl.jsx"));
-
-var _TopButtons = _interopRequireDefault(require("./ButtonBar/TopButtons.jsx"));
-
-var _reactRedux = require("react-redux");
-
-var _creators = require("../actions/creators.jsx");
-
-require("./graph.css");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-class Graph extends _react.Component {
-  constructor(props) {
-    super(props); //     this.state = {
-    //         modalShow: false
-    //     };
-
-    _defineProperty(this, "topButtonClicked", e => {
-      console.log('Graph mode changed ' + e);
-
-      if (e == "controls") {
-        if (this.props.controlVisible) this.props.switchControlVisbility(false);else this.props.switchControlVisbility(true);
-      } //  this.setState({modalShow: !this.state.modalShow});
-
-    });
+function requirePropFactory(componentNameInError) {
+  /* istanbul ignore if */
+  if ("development" === 'production') {
+    return function () {
+      return null;
+    };
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //     console.log('Graph- componentWillReceiveProps' + e);
-  //     console.log("componentWillReceiveProps triggering...");
-  //     console.log("nextProps.objectOfIds ", nextProps);
-  //     console.log("nextProps.reduxData.objectOfIds ", nextProps);
-  //
-  // }
-  render() {
-    console.log('Graph - render');
-    return _react.default.createElement("div", null, _react.default.createElement(_TopButtons.default, {
-      isData: false,
-      modeChanged: this.topButtonClicked
-    }), _react.default.createElement(_reactBootstrap.Container, {
-      className: "cont-width"
-    }, _react.default.createElement(_reactBootstrap.Row, {
-      className: "my-row"
-    }), _react.default.createElement(_reactBootstrap.Row, {
-      className: "my-row"
-    }, _react.default.createElement(_reactBootstrap.Col, {
-      xs: 6,
-      md: 4
-    }), _react.default.createElement(_reactBootstrap.Col, {
-      xs: 6,
-      md: 4,
-      className: "align-self-center"
-    }, _react.default.createElement("p", null, this.props.status)), _react.default.createElement(_reactBootstrap.Col, {
-      xs: 6,
-      md: 4
-    })), _react.default.createElement(_reactBootstrap.Row, {
-      className: "my-row"
-    }, _react.default.createElement(_GraphControl.default, {
-      modalShow: this.props.controlVisible
-    }))));
-  }
+  var requireProp = function requireProp(requiredProp) {
+    return function (props, propName, componentName, location, propFullName) {
+      var propFullNameSafe = propFullName || propName;
 
+      if (typeof props[propName] !== 'undefined' && !props[requiredProp]) {
+        return new Error("The property `".concat(propFullNameSafe, "` of ") + "`".concat(componentNameInError, "` must be used on `").concat(requiredProp, "`."));
+      }
+
+      return null;
+    };
+  };
+
+  return requireProp;
 }
 
-const mapStateToProps = (state, ownProps) => {
-  return _objectSpread({
-    term: state.term,
-    images: state.images,
-    status: state.status,
-    controlVisible: state.controlVisible
-  }, ownProps);
+var _default = requirePropFactory;
+exports.default = _default;
+},{}],"../node_modules/@material-ui/core/Grid/Grid.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.styles = void 0;
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _utils = require("@material-ui/utils");
+
+var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
+
+var _createBreakpoints = require("../styles/createBreakpoints");
+
+var _requirePropFactory = _interopRequireDefault(require("../utils/requirePropFactory")); // A grid component using the following libs as inspiration.
+//
+// For the implementation:
+// - http://v4-alpha.getbootstrap.com/layout/flexbox-grid/
+// - https://github.com/kristoferjoseph/flexboxgrid/blob/master/src/css/flexboxgrid.css
+// - https://github.com/roylee0704/react-flexbox-grid
+// - https://material.angularjs.org/latest/layout/introduction
+//
+// Follow this flexbox Guide to better understand the underlying model:
+// - https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+
+
+var GUTTERS = [0, 8, 16, 24, 32, 40];
+var GRID_SIZES = ['auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+function generateGrid(globalStyles, theme, breakpoint) {
+  var styles = {};
+  GRID_SIZES.forEach(function (size) {
+    var key = "grid-".concat(breakpoint, "-").concat(size);
+
+    if (size === true) {
+      // For the auto layouting
+      styles[key] = {
+        flexBasis: 0,
+        flexGrow: 1,
+        maxWidth: '100%'
+      };
+      return;
+    }
+
+    if (size === 'auto') {
+      styles[key] = {
+        flexBasis: 'auto',
+        flexGrow: 0,
+        maxWidth: 'none'
+      };
+      return;
+    } // Keep 7 significant numbers.
+
+
+    var width = "".concat(Math.round(size / 12 * 10e7) / 10e5, "%"); // Close to the bootstrap implementation:
+    // https://github.com/twbs/bootstrap/blob/8fccaa2439e97ec72a4b7dc42ccc1f649790adb0/scss/mixins/_grid.scss#L41
+
+    styles[key] = {
+      flexBasis: width,
+      flexGrow: 0,
+      maxWidth: width
+    };
+  }); // No need for a media query for the first size.
+
+  if (breakpoint === 'xs') {
+    (0, _extends2.default)(globalStyles, styles);
+  } else {
+    globalStyles[theme.breakpoints.up(breakpoint)] = styles;
+  }
+}
+
+function generateGutter(theme, breakpoint) {
+  var styles = {};
+  GUTTERS.forEach(function (spacing, index) {
+    if (index === 0) {
+      // Skip the default style.
+      return;
+    }
+
+    styles["spacing-".concat(breakpoint, "-").concat(spacing)] = {
+      margin: -spacing / 2,
+      width: "calc(100% + ".concat(spacing, "px)"),
+      '& > $item': {
+        padding: spacing / 2
+      }
+    };
+  });
+  return styles;
+} // Default CSS values
+// flex: '0 1 auto',
+// flexDirection: 'row',
+// alignItems: 'flex-start',
+// flexWrap: 'nowrap',
+// justifyContent: 'flex-start',
+
+
+var styles = function styles(theme) {
+  return (0, _extends2.default)({
+    /* Styles applied to the root element if `container={true}`. */
+    container: {
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexWrap: 'wrap',
+      width: '100%'
+    },
+
+    /* Styles applied to the root element if `item={true}`. */
+    item: {
+      boxSizing: 'border-box',
+      margin: '0' // For instance, it's useful when used with a `figure` element.
+
+    },
+
+    /* Styles applied to the root element if `zeroMinWidth={true}`. */
+    zeroMinWidth: {
+      minWidth: 0
+    },
+
+    /* Styles applied to the root element if `direction="column"`. */
+    'direction-xs-column': {
+      flexDirection: 'column'
+    },
+
+    /* Styles applied to the root element if `direction="column-reverse"`. */
+    'direction-xs-column-reverse': {
+      flexDirection: 'column-reverse'
+    },
+
+    /* Styles applied to the root element if `direction="rwo-reverse"`. */
+    'direction-xs-row-reverse': {
+      flexDirection: 'row-reverse'
+    },
+
+    /* Styles applied to the root element if `wrap="nowrap"`. */
+    'wrap-xs-nowrap': {
+      flexWrap: 'nowrap'
+    },
+
+    /* Styles applied to the root element if `wrap="reverse"`. */
+    'wrap-xs-wrap-reverse': {
+      flexWrap: 'wrap-reverse'
+    },
+
+    /* Styles applied to the root element if `alignItems="center"`. */
+    'align-items-xs-center': {
+      alignItems: 'center'
+    },
+
+    /* Styles applied to the root element if `alignItems="flex-start"`. */
+    'align-items-xs-flex-start': {
+      alignItems: 'flex-start'
+    },
+
+    /* Styles applied to the root element if `alignItems="flex-end"`. */
+    'align-items-xs-flex-end': {
+      alignItems: 'flex-end'
+    },
+
+    /* Styles applied to the root element if `alignItems="baseline"`. */
+    'align-items-xs-baseline': {
+      alignItems: 'baseline'
+    },
+
+    /* Styles applied to the root element if `alignContent="center"`. */
+    'align-content-xs-center': {
+      alignContent: 'center'
+    },
+
+    /* Styles applied to the root element if `alignContent="flex-start"`. */
+    'align-content-xs-flex-start': {
+      alignContent: 'flex-start'
+    },
+
+    /* Styles applied to the root element if `alignContent="flex-end"`. */
+    'align-content-xs-flex-end': {
+      alignContent: 'flex-end'
+    },
+
+    /* Styles applied to the root element if `alignContent="space-between"`. */
+    'align-content-xs-space-between': {
+      alignContent: 'space-between'
+    },
+
+    /* Styles applied to the root element if `alignContent="space-around"`. */
+    'align-content-xs-space-around': {
+      alignContent: 'space-around'
+    },
+
+    /* Styles applied to the root element if `justify="center"`. */
+    'justify-xs-center': {
+      justifyContent: 'center'
+    },
+
+    /* Styles applied to the root element if `justify="flex-end"`. */
+    'justify-xs-flex-end': {
+      justifyContent: 'flex-end'
+    },
+
+    /* Styles applied to the root element if `justify="space-between"`. */
+    'justify-xs-space-between': {
+      justifyContent: 'space-between'
+    },
+
+    /* Styles applied to the root element if `justify="space-around"`. */
+    'justify-xs-space-around': {
+      justifyContent: 'space-around'
+    },
+
+    /* Styles applied to the root element if `justify="space-evenly"`. */
+    'justify-xs-space-evenly': {
+      justifyContent: 'space-evenly'
+    }
+  }, generateGutter(theme, 'xs'), _createBreakpoints.keys.reduce(function (accumulator, key) {
+    // Use side effect over immutability for better performance.
+    generateGrid(accumulator, theme, key);
+    return accumulator;
+  }, {}));
 };
 
-const mapDispatchToProps = dispatch => {
+exports.styles = styles;
+
+function Grid(props) {
+  var _classNames;
+
+  var alignContent = props.alignContent,
+      alignItems = props.alignItems,
+      classes = props.classes,
+      classNameProp = props.className,
+      Component = props.component,
+      container = props.container,
+      direction = props.direction,
+      item = props.item,
+      justify = props.justify,
+      lg = props.lg,
+      md = props.md,
+      sm = props.sm,
+      spacing = props.spacing,
+      wrap = props.wrap,
+      xl = props.xl,
+      xs = props.xs,
+      zeroMinWidth = props.zeroMinWidth,
+      other = (0, _objectWithoutProperties2.default)(props, ["alignContent", "alignItems", "classes", "className", "component", "container", "direction", "item", "justify", "lg", "md", "sm", "spacing", "wrap", "xl", "xs", "zeroMinWidth"]);
+  var className = (0, _classnames.default)((_classNames = {}, (0, _defineProperty2.default)(_classNames, classes.container, container), (0, _defineProperty2.default)(_classNames, classes.item, item), (0, _defineProperty2.default)(_classNames, classes.zeroMinWidth, zeroMinWidth), (0, _defineProperty2.default)(_classNames, classes["spacing-xs-".concat(String(spacing))], container && spacing !== 0), (0, _defineProperty2.default)(_classNames, classes["direction-xs-".concat(String(direction))], direction !== Grid.defaultProps.direction), (0, _defineProperty2.default)(_classNames, classes["wrap-xs-".concat(String(wrap))], wrap !== Grid.defaultProps.wrap), (0, _defineProperty2.default)(_classNames, classes["align-items-xs-".concat(String(alignItems))], alignItems !== Grid.defaultProps.alignItems), (0, _defineProperty2.default)(_classNames, classes["align-content-xs-".concat(String(alignContent))], alignContent !== Grid.defaultProps.alignContent), (0, _defineProperty2.default)(_classNames, classes["justify-xs-".concat(String(justify))], justify !== Grid.defaultProps.justify), (0, _defineProperty2.default)(_classNames, classes["grid-xs-".concat(String(xs))], xs !== false), (0, _defineProperty2.default)(_classNames, classes["grid-sm-".concat(String(sm))], sm !== false), (0, _defineProperty2.default)(_classNames, classes["grid-md-".concat(String(md))], md !== false), (0, _defineProperty2.default)(_classNames, classes["grid-lg-".concat(String(lg))], lg !== false), (0, _defineProperty2.default)(_classNames, classes["grid-xl-".concat(String(xl))], xl !== false), _classNames), classNameProp);
+  return _react.default.createElement(Component, (0, _extends2.default)({
+    className: className
+  }, other));
+}
+
+"development" !== "production" ? Grid.propTypes = {
+  /**
+   * Defines the `align-content` style property.
+   * It's applied for all screen sizes.
+   */
+  alignContent: _propTypes.default.oneOf(['stretch', 'center', 'flex-start', 'flex-end', 'space-between', 'space-around']),
+
+  /**
+   * Defines the `align-items` style property.
+   * It's applied for all screen sizes.
+   */
+  alignItems: _propTypes.default.oneOf(['flex-start', 'center', 'flex-end', 'stretch', 'baseline']),
+
+  /**
+   * The content of the component.
+   */
+  children: _propTypes.default.node,
+
+  /**
+   * Override or extend the styles applied to the component.
+   * See [CSS API](#css-api) below for more details.
+   */
+  classes: _propTypes.default.object.isRequired,
+
+  /**
+   * @ignore
+   */
+  className: _propTypes.default.string,
+
+  /**
+   * The component used for the root node.
+   * Either a string to use a DOM element or a component.
+   */
+  component: _utils.componentPropType,
+
+  /**
+   * If `true`, the component will have the flex *container* behavior.
+   * You should be wrapping *items* with a *container*.
+   */
+  container: _propTypes.default.bool,
+
+  /**
+   * Defines the `flex-direction` style property.
+   * It is applied for all screen sizes.
+   */
+  direction: _propTypes.default.oneOf(['row', 'row-reverse', 'column', 'column-reverse']),
+
+  /**
+   * If `true`, the component will have the flex *item* behavior.
+   * You should be wrapping *items* with a *container*.
+   */
+  item: _propTypes.default.bool,
+
+  /**
+   * Defines the `justify-content` style property.
+   * It is applied for all screen sizes.
+   */
+  justify: _propTypes.default.oneOf(['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly']),
+
+  /**
+   * Defines the number of grids the component is going to use.
+   * It's applied for the `lg` breakpoint and wider screens if not overridden.
+   */
+  lg: _propTypes.default.oneOf([false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+
+  /**
+   * Defines the number of grids the component is going to use.
+   * It's applied for the `md` breakpoint and wider screens if not overridden.
+   */
+  md: _propTypes.default.oneOf([false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+
+  /**
+   * Defines the number of grids the component is going to use.
+   * It's applied for the `sm` breakpoint and wider screens if not overridden.
+   */
+  sm: _propTypes.default.oneOf([false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+
+  /**
+   * Defines the space between the type `item` component.
+   * It can only be used on a type `container` component.
+   */
+  spacing: _propTypes.default.oneOf(GUTTERS),
+
+  /**
+   * Defines the `flex-wrap` style property.
+   * It's applied for all screen sizes.
+   */
+  wrap: _propTypes.default.oneOf(['nowrap', 'wrap', 'wrap-reverse']),
+
+  /**
+   * Defines the number of grids the component is going to use.
+   * It's applied for the `xl` breakpoint and wider screens.
+   */
+  xl: _propTypes.default.oneOf([false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+
+  /**
+   * Defines the number of grids the component is going to use.
+   * It's applied for all the screen sizes with the lowest priority.
+   */
+  xs: _propTypes.default.oneOf([false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+
+  /**
+   * If `true`, it sets `min-width: 0` on the item.
+   * Refer to the limitations section of the documentation to better understand the use case.
+   */
+  zeroMinWidth: _propTypes.default.bool
+} : void 0;
+Grid.defaultProps = {
+  alignContent: 'stretch',
+  alignItems: 'stretch',
+  component: 'div',
+  container: false,
+  direction: 'row',
+  item: false,
+  justify: 'flex-start',
+  lg: false,
+  md: false,
+  sm: false,
+  spacing: 0,
+  wrap: 'wrap',
+  xl: false,
+  xs: false,
+  zeroMinWidth: false
+};
+var StyledGrid = (0, _withStyles.default)(styles, {
+  name: 'MuiGrid'
+})(Grid);
+
+if ("development" !== 'production') {
+  var requireProp = (0, _requirePropFactory.default)('Grid');
+  StyledGrid.propTypes = (0, _extends2.default)({}, StyledGrid.propTypes, {
+    alignContent: requireProp('container'),
+    alignItems: requireProp('container'),
+    direction: requireProp('container'),
+    justify: requireProp('container'),
+    lg: requireProp('item'),
+    md: requireProp('item'),
+    sm: requireProp('item'),
+    spacing: requireProp('container'),
+    wrap: requireProp('container'),
+    xs: requireProp('item'),
+    zeroMinWidth: requireProp('zeroMinWidth')
+  });
+}
+
+var _default = StyledGrid;
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","@material-ui/utils":"../node_modules/@material-ui/utils/index.es.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../styles/createBreakpoints":"../node_modules/@material-ui/core/styles/createBreakpoints.js","../utils/requirePropFactory":"../node_modules/@material-ui/core/utils/requirePropFactory.js"}],"../node_modules/@material-ui/core/Grid/index.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function get() {
+    return _Grid.default;
+  }
+});
+
+var _Grid = _interopRequireDefault(require("./Grid"));
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Grid":"../node_modules/@material-ui/core/Grid/Grid.js"}],"../node_modules/@material-ui/core/FormControl/FormControlContext.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+/**
+ * @ignore - internal component.
+ */
+
+
+var FormControlContext = _react.default.createContext();
+
+var _default = FormControlContext;
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js"}],"../node_modules/@material-ui/core/FormControl/withFormControlContext.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = withFormControlContext;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _hoistNonReactStatics = _interopRequireDefault(require("hoist-non-react-statics"));
+
+var _FormControlContext = _interopRequireDefault(require("./FormControlContext"));
+
+var _utils = require("@material-ui/utils");
+
+function withFormControlContext(Component) {
+  var EnhancedComponent = function EnhancedComponent(props) {
+    return _react.default.createElement(_FormControlContext.default.Consumer, null, function (context) {
+      return _react.default.createElement(Component, (0, _extends2.default)({
+        muiFormControl: context
+      }, props));
+    });
+  };
+
+  if ("development" !== 'production') {
+    EnhancedComponent.displayName = "WithFormControlContext(".concat((0, _utils.getDisplayName)(Component), ")");
+  }
+
+  (0, _hoistNonReactStatics.default)(EnhancedComponent, Component);
+  return EnhancedComponent;
+}
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","react":"../node_modules/react/index.js","hoist-non-react-statics":"../node_modules/@material-ui/core/node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js","./FormControlContext":"../node_modules/@material-ui/core/FormControl/FormControlContext.js","@material-ui/utils":"../node_modules/@material-ui/utils/index.es.js"}],"../node_modules/@material-ui/core/internal/SwitchBase.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.styles = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
+
+var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
+
+var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _withFormControlContext = _interopRequireDefault(require("../FormControl/withFormControlContext"));
+
+var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
+
+var _IconButton = _interopRequireDefault(require("../IconButton")); // @inheritedComponent IconButton
+
+
+var styles = {
+  root: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    transition: 'none',
+    '&:hover': {
+      // Disable the hover effect for the IconButton.
+      backgroundColor: 'transparent'
+    }
+  },
+  checked: {},
+  disabled: {},
+  input: {
+    cursor: 'inherit',
+    position: 'absolute',
+    opacity: 0,
+    width: '100%',
+    height: '100%',
+    top: 0,
+    left: 0,
+    margin: 0,
+    padding: 0
+  }
+};
+/**
+ * @ignore - internal component.
+ */
+
+exports.styles = styles;
+
+var SwitchBase =
+/*#__PURE__*/
+function (_React$Component) {
+  (0, _inherits2.default)(SwitchBase, _React$Component);
+
+  function SwitchBase(props) {
+    var _this;
+
+    (0, _classCallCheck2.default)(this, SwitchBase);
+    _this = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(SwitchBase).call(this));
+
+    _this.handleFocus = function (event) {
+      if (_this.props.onFocus) {
+        _this.props.onFocus(event);
+      }
+
+      var muiFormControl = _this.props.muiFormControl;
+
+      if (muiFormControl && muiFormControl.onFocus) {
+        muiFormControl.onFocus(event);
+      }
+    };
+
+    _this.handleBlur = function (event) {
+      if (_this.props.onBlur) {
+        _this.props.onBlur(event);
+      }
+
+      var muiFormControl = _this.props.muiFormControl;
+
+      if (muiFormControl && muiFormControl.onBlur) {
+        muiFormControl.onBlur(event);
+      }
+    };
+
+    _this.handleInputChange = function (event) {
+      var checked = event.target.checked;
+
+      if (!_this.isControlled) {
+        _this.setState({
+          checked: checked
+        });
+      }
+
+      if (_this.props.onChange) {
+        _this.props.onChange(event, checked);
+      }
+    };
+
+    _this.isControlled = props.checked != null;
+    _this.state = {};
+
+    if (!_this.isControlled) {
+      // not controlled, use internal state
+      _this.state.checked = props.defaultChecked !== undefined ? props.defaultChecked : false;
+    }
+
+    return _this;
+  }
+
+  (0, _createClass2.default)(SwitchBase, [{
+    key: "render",
+    value: function render() {
+      var _classNames;
+
+      var _this$props = this.props,
+          autoFocus = _this$props.autoFocus,
+          checkedProp = _this$props.checked,
+          checkedIcon = _this$props.checkedIcon,
+          classes = _this$props.classes,
+          classNameProp = _this$props.className,
+          defaultChecked = _this$props.defaultChecked,
+          disabledProp = _this$props.disabled,
+          icon = _this$props.icon,
+          id = _this$props.id,
+          inputProps = _this$props.inputProps,
+          inputRef = _this$props.inputRef,
+          muiFormControl = _this$props.muiFormControl,
+          name = _this$props.name,
+          onBlur = _this$props.onBlur,
+          onChange = _this$props.onChange,
+          onFocus = _this$props.onFocus,
+          readOnly = _this$props.readOnly,
+          required = _this$props.required,
+          tabIndex = _this$props.tabIndex,
+          type = _this$props.type,
+          value = _this$props.value,
+          other = (0, _objectWithoutProperties2.default)(_this$props, ["autoFocus", "checked", "checkedIcon", "classes", "className", "defaultChecked", "disabled", "icon", "id", "inputProps", "inputRef", "muiFormControl", "name", "onBlur", "onChange", "onFocus", "readOnly", "required", "tabIndex", "type", "value"]);
+      var disabled = disabledProp;
+
+      if (muiFormControl) {
+        if (typeof disabled === 'undefined') {
+          disabled = muiFormControl.disabled;
+        }
+      }
+
+      var checked = this.isControlled ? checkedProp : this.state.checked;
+      var hasLabelFor = type === 'checkbox' || type === 'radio';
+      return _react.default.createElement(_IconButton.default, (0, _extends2.default)({
+        component: "span",
+        className: (0, _classnames.default)(classes.root, (_classNames = {}, (0, _defineProperty2.default)(_classNames, classes.checked, checked), (0, _defineProperty2.default)(_classNames, classes.disabled, disabled), _classNames), classNameProp),
+        disabled: disabled,
+        tabIndex: null,
+        role: undefined,
+        onFocus: this.handleFocus,
+        onBlur: this.handleBlur
+      }, other), checked ? checkedIcon : icon, _react.default.createElement("input", (0, _extends2.default)({
+        autoFocus: autoFocus,
+        checked: checkedProp,
+        defaultChecked: defaultChecked,
+        className: classes.input,
+        disabled: disabled,
+        id: hasLabelFor && id,
+        name: name,
+        onChange: this.handleInputChange,
+        readOnly: readOnly,
+        ref: inputRef,
+        required: required,
+        tabIndex: tabIndex,
+        type: type,
+        value: value
+      }, inputProps)));
+    }
+  }]);
+  return SwitchBase;
+}(_react.default.Component); // NB: If changed, please update Checkbox, Switch and Radio
+// so that the API documentation is updated.
+
+
+"development" !== "production" ? SwitchBase.propTypes = {
+  /**
+   * If `true`, the input will be focused during the first mount.
+   */
+  autoFocus: _propTypes.default.bool,
+
+  /**
+   * If `true`, the component is checked.
+   */
+  checked: _propTypes.default.oneOfType([_propTypes.default.bool, _propTypes.default.string]),
+
+  /**
+   * The icon to display when the component is checked.
+   */
+  checkedIcon: _propTypes.default.node.isRequired,
+
+  /**
+   * Override or extend the styles applied to the component.
+   * See [CSS API](#css-api) below for more details.
+   */
+  classes: _propTypes.default.object.isRequired,
+
+  /**
+   * @ignore
+   */
+  className: _propTypes.default.string,
+
+  /**
+   * @ignore
+   */
+  defaultChecked: _propTypes.default.bool,
+
+  /**
+   * If `true`, the switch will be disabled.
+   */
+  disabled: _propTypes.default.bool,
+
+  /**
+   * If `true`, the ripple effect will be disabled.
+   */
+  disableRipple: _propTypes.default.bool,
+
+  /**
+   * The icon to display when the component is unchecked.
+   */
+  icon: _propTypes.default.node.isRequired,
+
+  /**
+   * The id of the `input` element.
+   */
+  id: _propTypes.default.string,
+
+  /**
+   * Attributes applied to the `input` element.
+   */
+  inputProps: _propTypes.default.object,
+
+  /**
+   * Use that property to pass a ref callback to the native input component.
+   */
+  inputRef: _propTypes.default.oneOfType([_propTypes.default.func, _propTypes.default.object]),
+
+  /**
+   * @ignore
+   */
+  muiFormControl: _propTypes.default.object,
+
+  /*
+   * @ignore
+   */
+  name: _propTypes.default.string,
+
+  /**
+   * @ignore
+   */
+  onBlur: _propTypes.default.func,
+
+  /**
+   * Callback fired when the state is changed.
+   *
+   * @param {object} event The event source of the callback.
+   * You can pull out the new value by accessing `event.target.checked`.
+   * @param {boolean} checked The `checked` value of the switch
+   */
+  onChange: _propTypes.default.func,
+
+  /**
+   * @ignore
+   */
+  onFocus: _propTypes.default.func,
+
+  /**
+   * It prevents the user from changing the value of the field
+   * (not from interacting with the field).
+   */
+  readOnly: _propTypes.default.bool,
+
+  /**
+   * If `true`, the input will be required.
+   */
+  required: _propTypes.default.bool,
+
+  /**
+   * @ignore
+   */
+  tabIndex: _propTypes.default.oneOfType([_propTypes.default.number, _propTypes.default.string]),
+
+  /**
+   * The input component property `type`.
+   */
+  type: _propTypes.default.string.isRequired,
+
+  /**
+   * The value of the component.
+   */
+  value: _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.number, _propTypes.default.bool])
+} : void 0;
+
+var _default = (0, _withStyles.default)(styles, {
+  name: 'MuiPrivateSwitchBase'
+})((0, _withFormControlContext.default)(SwitchBase));
+
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","../FormControl/withFormControlContext":"../node_modules/@material-ui/core/FormControl/withFormControlContext.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../IconButton":"../node_modules/@material-ui/core/IconButton/index.js"}],"../node_modules/@material-ui/core/internal/svg-icons/RadioButtonUnchecked.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _pure = _interopRequireDefault(require("recompose/pure"));
+
+var _SvgIcon = _interopRequireDefault(require("../../SvgIcon"));
+
+var _ref = _react.default.createElement("path", {
+  d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+});
+/**
+ * @ignore - internal component.
+ */
+
+
+var RadioButtonUnchecked = function RadioButtonUnchecked(props) {
+  return _react.default.createElement(_SvgIcon.default, props, _ref);
+};
+
+RadioButtonUnchecked = (0, _pure.default)(RadioButtonUnchecked);
+RadioButtonUnchecked.muiName = 'SvgIcon';
+var _default = RadioButtonUnchecked;
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","recompose/pure":"../node_modules/recompose/pure.js","../../SvgIcon":"../node_modules/@material-ui/core/SvgIcon/index.js"}],"../node_modules/@material-ui/core/internal/svg-icons/RadioButtonChecked.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _pure = _interopRequireDefault(require("recompose/pure"));
+
+var _SvgIcon = _interopRequireDefault(require("../../SvgIcon"));
+
+var _ref = _react.default.createElement("path", {
+  d: "M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+});
+/**
+ * @ignore - internal component.
+ */
+
+
+var RadioButtonChecked = function RadioButtonChecked(props) {
+  return _react.default.createElement(_SvgIcon.default, props, _ref);
+};
+
+RadioButtonChecked = (0, _pure.default)(RadioButtonChecked);
+RadioButtonChecked.muiName = 'SvgIcon';
+var _default = RadioButtonChecked;
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","recompose/pure":"../node_modules/recompose/pure.js","../../SvgIcon":"../node_modules/@material-ui/core/SvgIcon/index.js"}],"../node_modules/@material-ui/core/Radio/Radio.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.styles = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _SwitchBase = _interopRequireDefault(require("../internal/SwitchBase"));
+
+var _RadioButtonUnchecked = _interopRequireDefault(require("../internal/svg-icons/RadioButtonUnchecked"));
+
+var _RadioButtonChecked = _interopRequireDefault(require("../internal/svg-icons/RadioButtonChecked"));
+
+var _helpers = require("../utils/helpers");
+
+var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
+
+var styles = function styles(theme) {
   return {
-    beginSearch: term => {
-      dispatch((0, _creators.beginSearch)(term));
+    /* Styles applied to the root element. */
+    root: {
+      color: theme.palette.text.secondary
     },
-    switchControlVisbility: controlVisible => {
-      dispatch((0, _creators.switchControlVisbility)(controlVisible));
+
+    /* Styles applied to the root element if `checked={true}`. */
+    checked: {},
+
+    /* Styles applied to the root element if `disabled={true}`. */
+    disabled: {},
+
+    /* Styles applied to the root element if `color="primary"`. */
+    colorPrimary: {
+      '&$checked': {
+        color: theme.palette.primary.main
+      },
+      '&$disabled': {
+        color: theme.palette.action.disabled
+      }
+    },
+
+    /* Styles applied to the root element if `color="secondary"`. */
+    colorSecondary: {
+      '&$checked': {
+        color: theme.palette.secondary.main
+      },
+      '&$disabled': {
+        color: theme.palette.action.disabled
+      }
     }
   };
 };
 
-var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Graph);
+exports.styles = styles;
+
+var _ref = _react.default.createElement(_RadioButtonUnchecked.default, null);
+
+var _ref2 = _react.default.createElement(_RadioButtonChecked.default, null);
+
+function Radio(props) {
+  var classes = props.classes,
+      color = props.color,
+      other = (0, _objectWithoutProperties2.default)(props, ["classes", "color"]);
+  return _react.default.createElement(_SwitchBase.default, (0, _extends2.default)({
+    type: "radio",
+    icon: _ref,
+    checkedIcon: _ref2,
+    classes: {
+      root: (0, _classnames.default)(classes.root, classes["color".concat((0, _helpers.capitalize)(color))]),
+      checked: classes.checked,
+      disabled: classes.disabled
+    }
+  }, other));
+}
+
+"development" !== "production" ? Radio.propTypes = {
+  /**
+   * If `true`, the component is checked.
+   */
+  checked: _propTypes.default.oneOfType([_propTypes.default.bool, _propTypes.default.string]),
+
+  /**
+   * The icon to display when the component is checked.
+   */
+  checkedIcon: _propTypes.default.node,
+
+  /**
+   * Override or extend the styles applied to the component.
+   * See [CSS API](#css-api) below for more details.
+   */
+  classes: _propTypes.default.object.isRequired,
+
+  /**
+   * The color of the component. It supports those theme colors that make sense for this component.
+   */
+  color: _propTypes.default.oneOf(['primary', 'secondary', 'default']),
+
+  /**
+   * If `true`, the switch will be disabled.
+   */
+  disabled: _propTypes.default.bool,
+
+  /**
+   * If `true`, the ripple effect will be disabled.
+   */
+  disableRipple: _propTypes.default.bool,
+
+  /**
+   * The icon to display when the component is unchecked.
+   */
+  icon: _propTypes.default.node,
+
+  /**
+   * The id of the `input` element.
+   */
+  id: _propTypes.default.string,
+
+  /**
+   * Attributes applied to the `input` element.
+   */
+  inputProps: _propTypes.default.object,
+
+  /**
+   * Use that property to pass a ref callback to the native input component.
+   */
+  inputRef: _propTypes.default.oneOfType([_propTypes.default.func, _propTypes.default.object]),
+
+  /**
+   * Callback fired when the state is changed.
+   *
+   * @param {object} event The event source of the callback.
+   * You can pull out the new value by accessing `event.target.value`.
+   * @param {boolean} checked The `checked` value of the switch
+   */
+  onChange: _propTypes.default.func,
+
+  /**
+   * The input component property `type`.
+   */
+  type: _propTypes.default.string,
+
+  /**
+   * The value of the component.
+   */
+  value: _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.number, _propTypes.default.bool])
+} : void 0;
+Radio.defaultProps = {
+  color: 'secondary'
+};
+
+var _default = (0, _withStyles.default)(styles, {
+  name: 'MuiRadio'
+})(Radio);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","./MapControls/GraphControl.jsx":"../src/containers/MapControls/GraphControl.jsx","./ButtonBar/TopButtons.jsx":"../src/containers/ButtonBar/TopButtons.jsx","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx","./graph.css":"../src/containers/graph.css"}],"../node_modules/@material-ui/core/utils/reactHelpers.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","../internal/SwitchBase":"../node_modules/@material-ui/core/internal/SwitchBase.js","../internal/svg-icons/RadioButtonUnchecked":"../node_modules/@material-ui/core/internal/svg-icons/RadioButtonUnchecked.js","../internal/svg-icons/RadioButtonChecked":"../node_modules/@material-ui/core/internal/svg-icons/RadioButtonChecked.js","../utils/helpers":"../node_modules/@material-ui/core/utils/helpers.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js"}],"../node_modules/@material-ui/core/Radio/index.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function get() {
+    return _Radio.default;
+  }
+});
+
+var _Radio = _interopRequireDefault(require("./Radio"));
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Radio":"../node_modules/@material-ui/core/Radio/Radio.js"}],"../node_modules/@material-ui/core/FormGroup/FormGroup.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.styles = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
+
+var styles = {
+  /* Styles applied to the root element. */
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'wrap'
+  },
+
+  /* Styles applied to the root element if `row={true}`. */
+  row: {
+    flexDirection: 'row'
+  }
+};
+/**
+ * `FormGroup` wraps controls such as `Checkbox` and `Switch`.
+ * It provides compact row layout.
+ * For the `Radio`, you should be using the `RadioGroup` component instead of this one.
+ */
+
+exports.styles = styles;
+
+function FormGroup(props) {
+  var classes = props.classes,
+      className = props.className,
+      children = props.children,
+      row = props.row,
+      other = (0, _objectWithoutProperties2.default)(props, ["classes", "className", "children", "row"]);
+  return _react.default.createElement("div", (0, _extends2.default)({
+    className: (0, _classnames.default)(classes.root, (0, _defineProperty2.default)({}, classes.row, row), className)
+  }, other), children);
+}
+
+"development" !== "production" ? FormGroup.propTypes = {
+  /**
+   * The content of the component.
+   */
+  children: _propTypes.default.node,
+
+  /**
+   * Override or extend the styles applied to the component.
+   * See [CSS API](#css-api) below for more details.
+   */
+  classes: _propTypes.default.object.isRequired,
+
+  /**
+   * @ignore
+   */
+  className: _propTypes.default.string,
+
+  /**
+   * Display group of elements in a compact row.
+   */
+  row: _propTypes.default.bool
+} : void 0;
+FormGroup.defaultProps = {
+  row: false
+};
+
+var _default = (0, _withStyles.default)(styles, {
+  name: 'MuiFormGroup'
+})(FormGroup);
+
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js"}],"../node_modules/@material-ui/core/FormGroup/index.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function get() {
+    return _FormGroup.default;
+  }
+});
+
+var _FormGroup = _interopRequireDefault(require("./FormGroup"));
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./FormGroup":"../node_modules/@material-ui/core/FormGroup/FormGroup.js"}],"../node_modules/@material-ui/core/RadioGroup/RadioGroup.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
+
+var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
+
+var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _warning = _interopRequireDefault(require("warning"));
+
+var _FormGroup = _interopRequireDefault(require("../FormGroup"));
+
+var _helpers = require("../utils/helpers"); // @inheritedComponent FormGroup
+
+
+var RadioGroup =
+/*#__PURE__*/
+function (_React$Component) {
+  (0, _inherits2.default)(RadioGroup, _React$Component);
+
+  function RadioGroup(props) {
+    var _this;
+
+    (0, _classCallCheck2.default)(this, RadioGroup);
+    _this = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(RadioGroup).call(this));
+    _this.radios = [];
+
+    _this.focus = function () {
+      if (!_this.radios || !_this.radios.length) {
+        return;
+      }
+
+      var focusRadios = _this.radios.filter(function (n) {
+        return !n.disabled;
+      });
+
+      if (!focusRadios.length) {
+        return;
+      }
+
+      var selectedRadio = (0, _helpers.find)(focusRadios, function (n) {
+        return n.checked;
+      });
+
+      if (selectedRadio) {
+        selectedRadio.focus();
+        return;
+      }
+
+      focusRadios[0].focus();
+    };
+
+    _this.handleChange = function (event) {
+      if (!_this.isControlled) {
+        _this.setState({
+          value: event.target.value
+        });
+      }
+
+      if (_this.props.onChange) {
+        _this.props.onChange(event, event.target.value);
+      }
+    };
+
+    _this.isControlled = props.value != null;
+
+    if (!_this.isControlled) {
+      _this.state = {
+        value: props.defaultValue
+      };
+    }
+
+    return _this;
+  }
+
+  (0, _createClass2.default)(RadioGroup, [{
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      var _this$props = this.props,
+          children = _this$props.children,
+          name = _this$props.name,
+          valueProp = _this$props.value,
+          onChange = _this$props.onChange,
+          other = (0, _objectWithoutProperties2.default)(_this$props, ["children", "name", "value", "onChange"]);
+      var value = this.isControlled ? valueProp : this.state.value;
+      this.radios = [];
+      return _react.default.createElement(_FormGroup.default, (0, _extends2.default)({
+        role: "radiogroup"
+      }, other), _react.default.Children.map(children, function (child) {
+        if (!_react.default.isValidElement(child)) {
+          return null;
+        }
+
+        "development" !== "production" ? (0, _warning.default)(child.type !== _react.default.Fragment, ["Material-UI: the RadioGroup component doesn't accept a Fragment as a child.", 'Consider providing an array instead.'].join('\n')) : void 0;
+        return _react.default.cloneElement(child, {
+          name: name,
+          inputRef: function inputRef(node) {
+            if (node) {
+              _this2.radios.push(node);
+            }
+          },
+          checked: value === child.props.value,
+          onChange: (0, _helpers.createChainedFunction)(child.props.onChange, _this2.handleChange)
+        });
+      }));
+    }
+  }]);
+  return RadioGroup;
+}(_react.default.Component);
+
+"development" !== "production" ? RadioGroup.propTypes = {
+  /**
+   * The content of the component.
+   */
+  children: _propTypes.default.node,
+
+  /**
+   * The default input value, useful when not controlling the component.
+   */
+  defaultValue: _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.number, _propTypes.default.bool]),
+
+  /**
+   * The name used to reference the value of the control.
+   */
+  name: _propTypes.default.string,
+
+  /**
+   * @ignore
+   */
+  onBlur: _propTypes.default.func,
+
+  /**
+   * Callback fired when a radio button is selected.
+   *
+   * @param {object} event The event source of the callback.
+   * You can pull out the new value by accessing `event.target.value`.
+   * @param {string} value The `value` of the selected radio button
+   */
+  onChange: _propTypes.default.func,
+
+  /**
+   * @ignore
+   */
+  onKeyDown: _propTypes.default.func,
+
+  /**
+   * Value of the selected radio button.
+   */
+  value: _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.number, _propTypes.default.bool])
+} : void 0;
+var _default = RadioGroup;
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","warning":"../node_modules/warning/warning.js","../FormGroup":"../node_modules/@material-ui/core/FormGroup/index.js","../utils/helpers":"../node_modules/@material-ui/core/utils/helpers.js"}],"../node_modules/@material-ui/core/RadioGroup/index.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function get() {
+    return _RadioGroup.default;
+  }
+});
+
+var _RadioGroup = _interopRequireDefault(require("./RadioGroup"));
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./RadioGroup":"../node_modules/@material-ui/core/RadioGroup/RadioGroup.js"}],"../node_modules/@material-ui/core/Typography/Typography.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.styles = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _utils = require("@material-ui/utils");
+
+var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
+
+var _helpers = require("../utils/helpers");
+
+var styles = function styles(theme) {
+  return {
+    /* Styles applied to the root element. */
+    root: {
+      display: 'block',
+      margin: 0
+    },
+
+    /* Styles applied to the root element if `variant="display4"`. */
+    display4: theme.typography.display4,
+
+    /* Styles applied to the root element if `variant="display3"`. */
+    display3: theme.typography.display3,
+
+    /* Styles applied to the root element if `variant="display2"`. */
+    display2: theme.typography.display2,
+
+    /* Styles applied to the root element if `variant="display1"`. */
+    display1: theme.typography.display1,
+
+    /* Styles applied to the root element if `variant="headline"`. */
+    headline: theme.typography.headline,
+
+    /* Styles applied to the root element if `variant="title"`. */
+    title: theme.typography.title,
+
+    /* Styles applied to the root element if `variant="subheading"`. */
+    subheading: theme.typography.subheading,
+
+    /* Styles applied to the root element if `variant="body2"`. */
+    body2: theme.typography.body2,
+
+    /* Styles applied to the root element if `variant="body1"`. */
+    body1: theme.typography.body1,
+
+    /* Styles applied to the root element if `variant="caption"`. */
+    caption: theme.typography.caption,
+
+    /* Styles applied to the root element if `variant="button"`. */
+    button: theme.typography.button,
+
+    /* Styles applied to the root element if `variant="h1"`. */
+    h1: theme.typography.h1,
+
+    /* Styles applied to the root element if `variant="h2"`. */
+    h2: theme.typography.h2,
+
+    /* Styles applied to the root element if `variant="h3"`. */
+    h3: theme.typography.h3,
+
+    /* Styles applied to the root element if `variant="h4"`. */
+    h4: theme.typography.h4,
+
+    /* Styles applied to the root element if `variant="h5"`. */
+    h5: theme.typography.h5,
+
+    /* Styles applied to the root element if `variant="h6"`. */
+    h6: theme.typography.h6,
+
+    /* Styles applied to the root element if `variant="subtitle1"`. */
+    subtitle1: theme.typography.subtitle1,
+
+    /* Styles applied to the root element if `variant="subtitle2"`. */
+    subtitle2: theme.typography.subtitle2,
+
+    /* Styles applied to the root element if `variant="overline"`. */
+    overline: theme.typography.overline,
+
+    /* Styles applied to the root element if `variant="srOnly"`. Only accessible to screen readers. */
+    srOnly: {
+      position: 'absolute',
+      height: 1,
+      width: 1,
+      overflow: 'hidden'
+    },
+
+    /* Styles applied to the root element if `align="left"`. */
+    alignLeft: {
+      textAlign: 'left'
+    },
+
+    /* Styles applied to the root element if `align="center"`. */
+    alignCenter: {
+      textAlign: 'center'
+    },
+
+    /* Styles applied to the root element if `align="right"`. */
+    alignRight: {
+      textAlign: 'right'
+    },
+
+    /* Styles applied to the root element if `align="justify"`. */
+    alignJustify: {
+      textAlign: 'justify'
+    },
+
+    /* Styles applied to the root element if `align="nowrap"`. */
+    noWrap: {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap'
+    },
+
+    /* Styles applied to the root element if `gutterBottom={true}`. */
+    gutterBottom: {
+      marginBottom: '0.35em'
+    },
+
+    /* Styles applied to the root element if `paragraph={true}`. */
+    paragraph: {
+      marginBottom: 16
+    },
+
+    /* Styles applied to the root element if `color="inherit"`. */
+    colorInherit: {
+      color: 'inherit'
+    },
+
+    /* Styles applied to the root element if `color="primary"`. */
+    colorPrimary: {
+      color: theme.palette.primary.main
+    },
+
+    /* Styles applied to the root element if `color="secondary"`. */
+    colorSecondary: {
+      color: theme.palette.secondary.main
+    },
+
+    /* Styles applied to the root element if `color="textPrimary"`. */
+    colorTextPrimary: {
+      color: theme.palette.text.primary
+    },
+
+    /* Styles applied to the root element if `color="textSecondary"`. */
+    colorTextSecondary: {
+      color: theme.palette.text.secondary
+    },
+
+    /* Styles applied to the root element if `color="error"`. */
+    colorError: {
+      color: theme.palette.error.main
+    },
+
+    /* Styles applied to the root element if `inline={true}`. */
+    inline: {
+      display: 'inline'
+    }
+  };
+};
+
+exports.styles = styles;
+var nextVariants = {
+  display4: 'h1',
+  display3: 'h2',
+  display2: 'h3',
+  display1: 'h4',
+  headline: 'h5',
+  title: 'h6',
+  subheading: 'subtitle1'
+};
+
+function getVariant(theme, variantProp) {
+  var typography = theme.typography;
+  var variant = variantProp;
+
+  if (!variant) {
+    variant = typography.useNextVariants ? 'body2' : 'body1';
+  } // complete v2 switch
+
+
+  if (typography.useNextVariants) {
+    variant = nextVariants[variant] || variant;
+  }
+
+  return variant;
+}
+
+var defaultHeadlineMapping = {
+  h1: 'h1',
+  h2: 'h2',
+  h3: 'h3',
+  h4: 'h4',
+  h5: 'h5',
+  h6: 'h6',
+  subtitle1: 'h6',
+  subtitle2: 'h6',
+  body1: 'p',
+  body2: 'p',
+  // deprecated
+  display4: 'h1',
+  display3: 'h1',
+  display2: 'h1',
+  display1: 'h1',
+  headline: 'h1',
+  title: 'h2',
+  subheading: 'h3'
+};
+
+function Typography(props) {
+  var _classNames;
+
+  var align = props.align,
+      classes = props.classes,
+      classNameProp = props.className,
+      color = props.color,
+      componentProp = props.component,
+      gutterBottom = props.gutterBottom,
+      headlineMapping = props.headlineMapping,
+      inline = props.inline,
+      internalDeprecatedVariant = props.internalDeprecatedVariant,
+      noWrap = props.noWrap,
+      paragraph = props.paragraph,
+      theme = props.theme,
+      variantProp = props.variant,
+      other = (0, _objectWithoutProperties2.default)(props, ["align", "classes", "className", "color", "component", "gutterBottom", "headlineMapping", "inline", "internalDeprecatedVariant", "noWrap", "paragraph", "theme", "variant"]);
+  var variant = getVariant(theme, variantProp);
+  var className = (0, _classnames.default)(classes.root, (_classNames = {}, (0, _defineProperty2.default)(_classNames, classes[variant], variant !== 'inherit'), (0, _defineProperty2.default)(_classNames, classes["color".concat((0, _helpers.capitalize)(color))], color !== 'default'), (0, _defineProperty2.default)(_classNames, classes.noWrap, noWrap), (0, _defineProperty2.default)(_classNames, classes.gutterBottom, gutterBottom), (0, _defineProperty2.default)(_classNames, classes.paragraph, paragraph), (0, _defineProperty2.default)(_classNames, classes["align".concat((0, _helpers.capitalize)(align))], align !== 'inherit'), (0, _defineProperty2.default)(_classNames, classes.inline, inline), _classNames), classNameProp);
+  var Component = componentProp || (paragraph ? 'p' : headlineMapping[variant] || defaultHeadlineMapping[variant]) || 'span';
+  return _react.default.createElement(Component, (0, _extends2.default)({
+    className: className
+  }, other));
+}
+
+"development" !== "production" ? Typography.propTypes = {
+  /**
+   * Set the text-align on the component.
+   */
+  align: _propTypes.default.oneOf(['inherit', 'left', 'center', 'right', 'justify']),
+
+  /**
+   * The content of the component.
+   */
+  children: _propTypes.default.node,
+
+  /**
+   * Override or extend the styles applied to the component.
+   * See [CSS API](#css-api) below for more details.
+   */
+  classes: _propTypes.default.object.isRequired,
+
+  /**
+   * @ignore
+   */
+  className: _propTypes.default.string,
+
+  /**
+   * The color of the component. It supports those theme colors that make sense for this component.
+   */
+  color: _propTypes.default.oneOf(['default', 'error', 'inherit', 'primary', 'secondary', 'textPrimary', 'textSecondary']),
+
+  /**
+   * The component used for the root node.
+   * Either a string to use a DOM element or a component.
+   * By default, it maps the variant to a good default headline component.
+   */
+  component: _utils.componentPropType,
+
+  /**
+   * If `true`, the text will have a bottom margin.
+   */
+  gutterBottom: _propTypes.default.bool,
+
+  /**
+   * We are empirically mapping the variant property to a range of different DOM element types.
+   * For instance, subtitle1 to `<h6>`.
+   * If you wish to change that mapping, you can provide your own.
+   * Alternatively, you can use the `component` property.
+   * The default mapping is the following:
+   */
+  headlineMapping: _propTypes.default.object,
+
+  /**
+   *  Controls whether the Typography is inline or not.
+   */
+  inline: _propTypes.default.bool,
+
+  /**
+   * A deprecated variant is used from an internal component. Users don't need
+   * a deprecation warning here if they switched to the v2 theme. They already
+   * get the mapping that will be applied in the next major release.
+   *
+   * @internal
+   */
+  internalDeprecatedVariant: _propTypes.default.bool,
+
+  /**
+   * If `true`, the text will not wrap, but instead will truncate with an ellipsis.
+   */
+  noWrap: _propTypes.default.bool,
+
+  /**
+   * If `true`, the text will have a bottom margin.
+   */
+  paragraph: _propTypes.default.bool,
+
+  /**
+   * @ignore
+   */
+  theme: _propTypes.default.object.isRequired,
+
+  /**
+   * Applies the theme typography styles.
+   * Use `body1` as the default value with the legacy implementation and `body2` with the new one.
+   */
+  variant: (0, _utils.chainPropTypes)(_propTypes.default.oneOf(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'subtitle1', 'subtitle2', 'body1', 'body2', 'caption', 'button', 'overline', 'srOnly', 'inherit', // deprecated
+  'display4', 'display3', 'display2', 'display1', 'headline', 'title', 'subheading']), function (props) {
+    var deprecatedVariants = ['display4', 'display3', 'display2', 'display1', 'headline', 'title', 'subheading'];
+
+    if (props.theme.typography.useNextVariants && !props.internalDeprecatedVariant && deprecatedVariants.indexOf(props.variant) !== -1) {
+      return new Error('Material-UI: you are using a deprecated typography variant: ' + "`".concat(props.variant, "` that will be removed in the next major release.\n") + 'Please read the migration guide under https://material-ui.com/style/typography#migration-to-typography-v2.');
+    }
+
+    return null;
+  })
+} : void 0;
+Typography.defaultProps = {
+  align: 'inherit',
+  color: 'default',
+  gutterBottom: false,
+  headlineMapping: defaultHeadlineMapping,
+  inline: false,
+  noWrap: false,
+  paragraph: false
+};
+
+var _default = (0, _withStyles.default)(styles, {
+  name: 'MuiTypography',
+  withTheme: true
+})(Typography);
+
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","@material-ui/utils":"../node_modules/@material-ui/utils/index.es.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../utils/helpers":"../node_modules/@material-ui/core/utils/helpers.js"}],"../node_modules/@material-ui/core/Typography/index.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function get() {
+    return _Typography.default;
+  }
+});
+
+var _Typography = _interopRequireDefault(require("./Typography"));
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Typography":"../node_modules/@material-ui/core/Typography/Typography.js"}],"../node_modules/@material-ui/core/FormControlLabel/FormControlLabel.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.styles = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _withFormControlContext = _interopRequireDefault(require("../FormControl/withFormControlContext"));
+
+var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
+
+var _Typography = _interopRequireDefault(require("../Typography"));
+
+var _helpers = require("../utils/helpers");
+
+var styles = function styles(theme) {
+  return {
+    /* Styles applied to the root element. */
+    root: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      cursor: 'pointer',
+      // For correct alignment with the text.
+      verticalAlign: 'middle',
+      // Remove grey highlight
+      WebkitTapHighlightColor: 'transparent',
+      marginLeft: -14,
+      marginRight: 16,
+      // used for row presentation of radio/checkbox
+      '&$disabled': {
+        cursor: 'default'
+      }
+    },
+
+    /* Styles applied to the root element if `labelPlacement="start"`. */
+    labelPlacementStart: {
+      flexDirection: 'row-reverse',
+      marginLeft: 16,
+      // used for row presentation of radio/checkbox
+      marginRight: -14
+    },
+
+    /* Styles applied to the root element if `labelPlacement="top"`. */
+    labelPlacementTop: {
+      flexDirection: 'column-reverse',
+      marginLeft: 16
+    },
+
+    /* Styles applied to the root element if `labelPlacement="bottom"`. */
+    labelPlacementBottom: {
+      flexDirection: 'column',
+      marginLeft: 16
+    },
+
+    /* Styles applied to the root element if `disabled={true}`. */
+    disabled: {},
+
+    /* Styles applied to the label's Typography component. */
+    label: {
+      '&$disabled': {
+        color: theme.palette.text.disabled
+      }
+    }
+  };
+};
+/**
+ * Drop in replacement of the `Radio`, `Switch` and `Checkbox` component.
+ * Use this component if you want to display an extra label.
+ */
+
+
+exports.styles = styles;
+
+function FormControlLabel(props) {
+  var _classNames;
+
+  var checked = props.checked,
+      classes = props.classes,
+      classNameProp = props.className,
+      control = props.control,
+      disabledProp = props.disabled,
+      inputRef = props.inputRef,
+      label = props.label,
+      labelPlacement = props.labelPlacement,
+      muiFormControl = props.muiFormControl,
+      name = props.name,
+      onChange = props.onChange,
+      value = props.value,
+      other = (0, _objectWithoutProperties2.default)(props, ["checked", "classes", "className", "control", "disabled", "inputRef", "label", "labelPlacement", "muiFormControl", "name", "onChange", "value"]);
+  var disabled = disabledProp;
+
+  if (typeof disabled === 'undefined' && typeof control.props.disabled !== 'undefined') {
+    disabled = control.props.disabled;
+  }
+
+  if (typeof disabled === 'undefined' && muiFormControl) {
+    disabled = muiFormControl.disabled;
+  }
+
+  var controlProps = {
+    disabled: disabled
+  };
+  ['checked', 'name', 'onChange', 'value', 'inputRef'].forEach(function (key) {
+    if (typeof control.props[key] === 'undefined' && typeof props[key] !== 'undefined') {
+      controlProps[key] = props[key];
+    }
+  });
+  return _react.default.createElement("label", (0, _extends2.default)({
+    className: (0, _classnames.default)(classes.root, (_classNames = {}, (0, _defineProperty2.default)(_classNames, classes["labelPlacement".concat((0, _helpers.capitalize)(labelPlacement))], labelPlacement !== 'end'), (0, _defineProperty2.default)(_classNames, classes.disabled, disabled), _classNames), classNameProp)
+  }, other), _react.default.cloneElement(control, controlProps), _react.default.createElement(_Typography.default, {
+    component: "span",
+    className: (0, _classnames.default)(classes.label, (0, _defineProperty2.default)({}, classes.disabled, disabled))
+  }, label));
+}
+
+"development" !== "production" ? FormControlLabel.propTypes = {
+  /**
+   * If `true`, the component appears selected.
+   */
+  checked: _propTypes.default.oneOfType([_propTypes.default.bool, _propTypes.default.string]),
+
+  /**
+   * Override or extend the styles applied to the component.
+   * See [CSS API](#css-api) below for more details.
+   */
+  classes: _propTypes.default.object.isRequired,
+
+  /**
+   * @ignore
+   */
+  className: _propTypes.default.string,
+
+  /**
+   * A control element. For instance, it can be be a `Radio`, a `Switch` or a `Checkbox`.
+   */
+  control: _propTypes.default.element,
+
+  /**
+   * If `true`, the control will be disabled.
+   */
+  disabled: _propTypes.default.bool,
+
+  /**
+   * Use that property to pass a ref callback to the native input component.
+   */
+  inputRef: _propTypes.default.oneOfType([_propTypes.default.func, _propTypes.default.object]),
+
+  /**
+   * The text to be used in an enclosing label element.
+   */
+  label: _propTypes.default.node,
+
+  /**
+   * The position of the label.
+   */
+  labelPlacement: _propTypes.default.oneOf(['end', 'start', 'top', 'bottom']),
+
+  /**
+   * @ignore
+   */
+  muiFormControl: _propTypes.default.object,
+
+  /*
+   * @ignore
+   */
+  name: _propTypes.default.string,
+
+  /**
+   * Callback fired when the state is changed.
+   *
+   * @param {object} event The event source of the callback.
+   * You can pull out the new value by accessing `event.target.checked`.
+   * @param {boolean} checked The `checked` value of the switch
+   */
+  onChange: _propTypes.default.func,
+
+  /**
+   * The value of the component.
+   */
+  value: _propTypes.default.string
+} : void 0;
+FormControlLabel.defaultProps = {
+  labelPlacement: 'end'
+};
+
+var _default = (0, _withStyles.default)(styles, {
+  name: 'MuiFormControlLabel'
+})((0, _withFormControlContext.default)(FormControlLabel));
+
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","../FormControl/withFormControlContext":"../node_modules/@material-ui/core/FormControl/withFormControlContext.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../Typography":"../node_modules/@material-ui/core/Typography/index.js","../utils/helpers":"../node_modules/@material-ui/core/utils/helpers.js"}],"../node_modules/@material-ui/core/FormControlLabel/index.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function get() {
+    return _FormControlLabel.default;
+  }
+});
+
+var _FormControlLabel = _interopRequireDefault(require("./FormControlLabel"));
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./FormControlLabel":"../node_modules/@material-ui/core/FormControlLabel/FormControlLabel.js"}],"../node_modules/@material-ui/core/InputBase/utils.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.hasValue = hasValue;
+exports.isFilled = isFilled;
+exports.isAdornedStart = isAdornedStart; // Supports determination of isControlled().
+// Controlled input accepts its current value as a prop.
+//
+// @see https://facebook.github.io/react/docs/forms.html#controlled-components
+// @param value
+// @returns {boolean} true if string (including '') or number (including zero)
+
+function hasValue(value) {
+  return value != null && !(Array.isArray(value) && value.length === 0);
+} // Determine if field is empty or filled.
+// Response determines if label is presented above field or as placeholder.
+//
+// @param obj
+// @param SSR
+// @returns {boolean} False when not present or empty string.
+//                    True when any number or string with length.
+
+
+function isFilled(obj) {
+  var SSR = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  return obj && (hasValue(obj.value) && obj.value !== '' || SSR && hasValue(obj.defaultValue) && obj.defaultValue !== '');
+} // Determine if an Input is adorned on start.
+// It's corresponding to the left with LTR.
+//
+// @param obj
+// @returns {boolean} False when no adornments.
+//                    True when adorned at the start.
+
+
+function isAdornedStart(obj) {
+  return obj.startAdornment;
+}
+},{}],"../node_modules/@material-ui/core/utils/reactHelpers.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -61241,7 +63182,3514 @@ function setRef(ref, value) {
     ref.current = value;
   }
 }
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js"}],"../node_modules/@material-ui/core/RootRef/RootRef.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js"}],"../node_modules/@material-ui/core/FormControl/FormControl.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.styles = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
+
+var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+
+var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _utils = require("@material-ui/utils");
+
+var _utils2 = require("../InputBase/utils");
+
+var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
+
+var _helpers = require("../utils/helpers");
+
+var _reactHelpers = require("../utils/reactHelpers");
+
+var _FormControlContext = _interopRequireDefault(require("./FormControlContext"));
+
+var styles = {
+  /* Styles applied to the root element. */
+  root: {
+    display: 'inline-flex',
+    flexDirection: 'column',
+    position: 'relative',
+    // Reset fieldset default style.
+    minWidth: 0,
+    padding: 0,
+    margin: 0,
+    border: 0,
+    verticalAlign: 'top' // Fix alignment issue on Safari.
+
+  },
+
+  /* Styles applied to the root element if `margin="normal"`. */
+  marginNormal: {
+    marginTop: 16,
+    marginBottom: 8
+  },
+
+  /* Styles applied to the root element if `margin="dense"`. */
+  marginDense: {
+    marginTop: 8,
+    marginBottom: 4
+  },
+
+  /* Styles applied to the root element if `fullWidth={true}`. */
+  fullWidth: {
+    width: '100%'
+  }
+};
+/**
+ * Provides context such as filled/focused/error/required for form inputs.
+ * Relying on the context provides high flexibility and ensures that the state always stays
+ * consistent across the children of the `FormControl`.
+ * This context is used by the following components:
+ *  - FormLabel
+ *  - FormHelperText
+ *  - Input
+ *  - InputLabel
+ *
+ * ⚠️ Only one input can be used within a FormControl.
+ */
+
+exports.styles = styles;
+
+var FormControl =
+/*#__PURE__*/
+function (_React$Component) {
+  (0, _inherits2.default)(FormControl, _React$Component);
+  (0, _createClass2.default)(FormControl, null, [{
+    key: "getDerivedStateFromProps",
+    value: function getDerivedStateFromProps(props, state) {
+      if (props.disabled && state.focused) {
+        return {
+          focused: false
+        };
+      }
+
+      return null;
+    }
+  }]);
+
+  function FormControl(props) {
+    var _this;
+
+    (0, _classCallCheck2.default)(this, FormControl);
+    _this = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(FormControl).call(this));
+
+    _this.handleFocus = function () {
+      _this.setState(function (state) {
+        return !state.focused ? {
+          focused: true
+        } : null;
+      });
+    };
+
+    _this.handleBlur = function () {
+      _this.setState(function (state) {
+        return state.focused ? {
+          focused: false
+        } : null;
+      });
+    };
+
+    _this.handleDirty = function () {
+      if (!_this.state.filled) {
+        _this.setState({
+          filled: true
+        });
+      }
+    };
+
+    _this.handleClean = function () {
+      if (_this.state.filled) {
+        _this.setState({
+          filled: false
+        });
+      }
+    };
+
+    _this.state = {
+      adornedStart: false,
+      filled: false,
+      focused: false
+    }; // We need to iterate through the children and find the Input in order
+    // to fully support server-side rendering.
+
+    var children = props.children;
+
+    if (children) {
+      _react.default.Children.forEach(children, function (child) {
+        if (!(0, _reactHelpers.isMuiElement)(child, ['Input', 'Select'])) {
+          return;
+        }
+
+        if ((0, _utils2.isFilled)(child.props, true)) {
+          _this.state.filled = true;
+        }
+
+        var input = (0, _reactHelpers.isMuiElement)(child, ['Select']) ? child.props.input : child;
+
+        if (input && (0, _utils2.isAdornedStart)(input.props)) {
+          _this.state.adornedStart = true;
+        }
+      });
+    }
+
+    return _this;
+  }
+
+  (0, _createClass2.default)(FormControl, [{
+    key: "render",
+    value: function render() {
+      var _classNames;
+
+      var _this$props = this.props,
+          classes = _this$props.classes,
+          className = _this$props.className,
+          Component = _this$props.component,
+          disabled = _this$props.disabled,
+          error = _this$props.error,
+          fullWidth = _this$props.fullWidth,
+          margin = _this$props.margin,
+          required = _this$props.required,
+          variant = _this$props.variant,
+          other = (0, _objectWithoutProperties2.default)(_this$props, ["classes", "className", "component", "disabled", "error", "fullWidth", "margin", "required", "variant"]);
+      var _this$state = this.state,
+          adornedStart = _this$state.adornedStart,
+          filled = _this$state.filled,
+          focused = _this$state.focused;
+      var childContext = {
+        adornedStart: adornedStart,
+        disabled: disabled,
+        error: error,
+        filled: filled,
+        focused: focused,
+        margin: margin,
+        onBlur: this.handleBlur,
+        onEmpty: this.handleClean,
+        onFilled: this.handleDirty,
+        onFocus: this.handleFocus,
+        required: required,
+        variant: variant
+      };
+      return _react.default.createElement(_FormControlContext.default.Provider, {
+        value: childContext
+      }, _react.default.createElement(Component, (0, _extends2.default)({
+        className: (0, _classnames.default)(classes.root, (_classNames = {}, (0, _defineProperty2.default)(_classNames, classes["margin".concat((0, _helpers.capitalize)(margin))], margin !== 'none'), (0, _defineProperty2.default)(_classNames, classes.fullWidth, fullWidth), _classNames), className)
+      }, other)));
+    }
+  }]);
+  return FormControl;
+}(_react.default.Component);
+
+"development" !== "production" ? FormControl.propTypes = {
+  /**
+   * The contents of the form control.
+   */
+  children: _propTypes.default.node,
+
+  /**
+   * Override or extend the styles applied to the component.
+   * See [CSS API](#css-api) below for more details.
+   */
+  classes: _propTypes.default.object.isRequired,
+
+  /**
+   * @ignore
+   */
+  className: _propTypes.default.string,
+
+  /**
+   * The component used for the root node.
+   * Either a string to use a DOM element or a component.
+   */
+  component: _utils.componentPropType,
+
+  /**
+   * If `true`, the label, input and helper text should be displayed in a disabled state.
+   */
+  disabled: _propTypes.default.bool,
+
+  /**
+   * If `true`, the label should be displayed in an error state.
+   */
+  error: _propTypes.default.bool,
+
+  /**
+   * If `true`, the component will take up the full width of its container.
+   */
+  fullWidth: _propTypes.default.bool,
+
+  /**
+   * If `dense` or `normal`, will adjust vertical spacing of this and contained components.
+   */
+  margin: _propTypes.default.oneOf(['none', 'dense', 'normal']),
+
+  /**
+   * If `true`, the label will indicate that the input is required.
+   */
+  required: _propTypes.default.bool,
+
+  /**
+   * The variant to use.
+   */
+  variant: _propTypes.default.oneOf(['standard', 'outlined', 'filled'])
+} : void 0;
+FormControl.defaultProps = {
+  component: 'div',
+  disabled: false,
+  error: false,
+  fullWidth: false,
+  margin: 'none',
+  required: false,
+  variant: 'standard'
+};
+
+var _default = (0, _withStyles.default)(styles, {
+  name: 'MuiFormControl'
+})(FormControl);
+
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","@material-ui/utils":"../node_modules/@material-ui/utils/index.es.js","../InputBase/utils":"../node_modules/@material-ui/core/InputBase/utils.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../utils/helpers":"../node_modules/@material-ui/core/utils/helpers.js","../utils/reactHelpers":"../node_modules/@material-ui/core/utils/reactHelpers.js","./FormControlContext":"../node_modules/@material-ui/core/FormControl/FormControlContext.js"}],"../node_modules/@material-ui/core/FormControl/index.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function get() {
+    return _FormControl.default;
+  }
+});
+
+var _FormControl = _interopRequireDefault(require("./FormControl"));
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./FormControl":"../node_modules/@material-ui/core/FormControl/FormControl.js"}],"../node_modules/@material-ui/core/FormControl/formControlState.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = formControlState;
+
+function formControlState(_ref) {
+  var props = _ref.props,
+      states = _ref.states,
+      muiFormControl = _ref.muiFormControl;
+  return states.reduce(function (acc, state) {
+    acc[state] = props[state];
+
+    if (muiFormControl) {
+      if (typeof props[state] === 'undefined') {
+        acc[state] = muiFormControl[state];
+      }
+    }
+
+    return acc;
+  }, {});
+}
+},{}],"../node_modules/@material-ui/core/FormLabel/FormLabel.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.styles = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _utils = require("@material-ui/utils");
+
+var _formControlState = _interopRequireDefault(require("../FormControl/formControlState"));
+
+var _withFormControlContext = _interopRequireDefault(require("../FormControl/withFormControlContext"));
+
+var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
+
+var styles = function styles(theme) {
+  return {
+    /* Styles applied to the root element. */
+    root: {
+      fontFamily: theme.typography.fontFamily,
+      color: theme.palette.text.secondary,
+      fontSize: theme.typography.pxToRem(16),
+      lineHeight: 1,
+      padding: 0,
+      '&$focused': {
+        color: theme.palette.primary[theme.palette.type === 'light' ? 'dark' : 'light']
+      },
+      '&$disabled': {
+        color: theme.palette.text.disabled
+      },
+      '&$error': {
+        color: theme.palette.error.main
+      }
+    },
+
+    /* Styles applied to the root element if `focused={true}`. */
+    focused: {},
+
+    /* Styles applied to the root element if `disabled={true}`. */
+    disabled: {},
+
+    /* Styles applied to the root element if `error={true}`. */
+    error: {},
+
+    /* Styles applied to the root element if `filled={true}`. */
+    filled: {},
+
+    /* Styles applied to the root element if `required={true}`. */
+    required: {},
+    asterisk: {
+      '&$error': {
+        color: theme.palette.error.main
+      }
+    }
+  };
+};
+
+exports.styles = styles;
+
+function FormLabel(props) {
+  var _classNames;
+
+  var children = props.children,
+      classes = props.classes,
+      classNameProp = props.className,
+      Component = props.component,
+      disabled = props.disabled,
+      error = props.error,
+      filled = props.filled,
+      focused = props.focused,
+      muiFormControl = props.muiFormControl,
+      required = props.required,
+      other = (0, _objectWithoutProperties2.default)(props, ["children", "classes", "className", "component", "disabled", "error", "filled", "focused", "muiFormControl", "required"]);
+  var fcs = (0, _formControlState.default)({
+    props: props,
+    muiFormControl: muiFormControl,
+    states: ['required', 'focused', 'disabled', 'error', 'filled']
+  });
+  return _react.default.createElement(Component, (0, _extends2.default)({
+    className: (0, _classnames.default)(classes.root, (_classNames = {}, (0, _defineProperty2.default)(_classNames, classes.disabled, fcs.disabled), (0, _defineProperty2.default)(_classNames, classes.error, fcs.error), (0, _defineProperty2.default)(_classNames, classes.filled, fcs.filled), (0, _defineProperty2.default)(_classNames, classes.focused, fcs.focused), (0, _defineProperty2.default)(_classNames, classes.required, fcs.required), _classNames), classNameProp)
+  }, other), children, fcs.required && _react.default.createElement("span", {
+    className: (0, _classnames.default)(classes.asterisk, (0, _defineProperty2.default)({}, classes.error, fcs.error))
+  }, "\u2009*"));
+}
+
+"development" !== "production" ? FormLabel.propTypes = {
+  /**
+   * The content of the component.
+   */
+  children: _propTypes.default.node,
+
+  /**
+   * Override or extend the styles applied to the component.
+   * See [CSS API](#css-api) below for more details.
+   */
+  classes: _propTypes.default.object.isRequired,
+
+  /**
+   * @ignore
+   */
+  className: _propTypes.default.string,
+
+  /**
+   * The component used for the root node.
+   * Either a string to use a DOM element or a component.
+   */
+  component: _utils.componentPropType,
+
+  /**
+   * If `true`, the label should be displayed in a disabled state.
+   */
+  disabled: _propTypes.default.bool,
+
+  /**
+   * If `true`, the label should be displayed in an error state.
+   */
+  error: _propTypes.default.bool,
+
+  /**
+   * If `true`, the label should use filled classes key.
+   */
+  filled: _propTypes.default.bool,
+
+  /**
+   * If `true`, the input of this label is focused (used by `FormGroup` components).
+   */
+  focused: _propTypes.default.bool,
+
+  /**
+   * @ignore
+   */
+  muiFormControl: _propTypes.default.object,
+
+  /**
+   * If `true`, the label will indicate that the input is required.
+   */
+  required: _propTypes.default.bool
+} : void 0;
+FormLabel.defaultProps = {
+  component: 'label'
+};
+
+var _default = (0, _withStyles.default)(styles, {
+  name: 'MuiFormLabel'
+})((0, _withFormControlContext.default)(FormLabel));
+
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","@material-ui/utils":"../node_modules/@material-ui/utils/index.es.js","../FormControl/formControlState":"../node_modules/@material-ui/core/FormControl/formControlState.js","../FormControl/withFormControlContext":"../node_modules/@material-ui/core/FormControl/withFormControlContext.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js"}],"../node_modules/@material-ui/core/FormLabel/index.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function get() {
+    return _FormLabel.default;
+  }
+});
+
+var _FormLabel = _interopRequireDefault(require("./FormLabel"));
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./FormLabel":"../node_modules/@material-ui/core/FormLabel/FormLabel.js"}],"../src/DateFunctions.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DateFunctions = void 0;
+
+class DateFunctions {
+  constructor() {}
+
+  static YearDate(dateParam) {
+    // var str = "abt 1978 between 1943";
+    let pattern = /[1][5-9][0-9][0-9]+/g;
+    let matches = pattern.exec(dateParam);
+
+    if (matches != null && matches.length > 0) {
+      return Number(matches[0]);
+    } else {
+      return 0;
+    }
+  }
+
+}
+
+exports.DateFunctions = DateFunctions;
+},{}],"../src/DataLoader/Bio.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Bio = Bio;
+
+var _DateFunctions = require("../DateFunctions.js");
+
+function Bio() {}
+
+Bio.prototype = {
+  fill: function fill(person) {
+    if (person.BaptismPlace == undefined) person.BaptismPlace = '';
+    if (person.BirthPlace == undefined) person.BirthPlace = '';
+    if (person.BirthDate == undefined) person.BirthDate = '';
+    if (person.BaptismDate == undefined) person.BaptismDate = '';
+    if (person.name == undefined) person.name = '';
+    var RecordLink = null;
+
+    try {
+      RecordLink = {
+        PersonId: person.id,
+        DOB: _DateFunctions.DateFunctions.YearDate(person.BirthDate) != 0 ? _DateFunctions.DateFunctions.YearDate(person.BirthDate) : _DateFunctions.DateFunctions.YearDate(person.BaptismDate),
+        BirthDate: person.BirthDate,
+        BaptismDate: person.BaptismDate,
+        DOD: person.DeathDate || '',
+        DeathLocation: person.DeathPlace || '',
+        Name: person.name.replace('/', '').replace('/', ''),
+        OccupationDate: person.OccupationDate || '',
+        OccupationPlace: person.OccupationPlace || '',
+        Occupation: person.Occupation || '',
+        FirstName: '',
+        Surname: '',
+        BirthLocation: person.BaptismPlace == '' ? person.BaptismPlace : person.BirthPlace
+      };
+      var n = person.name.split("/");
+
+      if (n.length == 3) {
+        RecordLink.FirstName = n[0];
+        RecordLink.Surname = n[1];
+      }
+    } catch (e) {
+      console.log(person + ' ' + e);
+    }
+
+    return RecordLink;
+  },
+  fillQuestionData: function fillQuestionData(info, question, answer, questionType) {
+    var RecordLink = null;
+
+    try {
+      RecordLink = {
+        DOB: 1700,
+        BirthDate: '',
+        BaptismDate: '',
+        DOD: '',
+        DeathLocation: '',
+        Name: info,
+        OccupationDate: '',
+        OccupationPlace: '',
+        Occupation: '',
+        FirstName: '',
+        Surname: '',
+        BirthLocation: '',
+        Question: question,
+        Answer: answer,
+        QuestionType: questionType
+      };
+    } catch (e) {
+      console.log(person + ' ' + e);
+    }
+
+    return RecordLink;
+  }
+};
+exports.Bio = Bio;
+},{"../DateFunctions.js":"../src/DateFunctions.js"}],"../src/DataLoader/GedLib.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GedLib = void 0;
+
+var _DateFunctions = require("../DateFunctions.js");
+
+class GedLib {
+  constructor() {// this.cacheFamilies = [];
+    // this.cachePersons = [];
+    // this.families = [];
+    // this.persons = [];
+    // this.loader = null;
+  }
+
+  static parseLine(line) {
+    var gRow = {};
+    var split = line.trim().split(' ');
+    gRow.split = split;
+    gRow.level = Number(split.shift());
+    gRow.id = '';
+    gRow.value = '';
+    var tmp = split.shift();
+
+    if (tmp != undefined) {
+      if (gRow.level == 0) {
+        if (tmp.charAt(0) == '@') {
+          gRow.id = tmp;
+          gRow.tag = split.shift() || '';
+        } else {
+          gRow.tag = tmp;
+          gRow.id = split.shift() || '';
+        }
+      } else {
+        gRow.tag = tmp;
+        tmp = split.shift();
+
+        while (tmp != undefined) {
+          gRow.value += ' ' + tmp;
+          tmp = split.shift();
+        }
+
+        gRow.value = gRow.value.trim();
+      }
+    }
+
+    return gRow;
+  }
+
+  processFile(file, progressFunction, newloader) {
+    let families = [];
+    let persons = [];
+
+    var asynchCall = function asynchCall(func, callback) {
+      setTimeout(function () {
+        func();
+
+        if (callback) {
+          callback();
+        }
+      }, 0);
+    };
+
+    console.log('processFile');
+    var results = file.match(/[^\n]+(?:\r?\n|$)/g);
+
+    if (results == null || results.length == 0) {
+      newloader();
+      return;
+    }
+
+    var that = this;
+
+    var makeLists = function makeLists() {
+      var idx = 0;
+      var currentId = {};
+
+      while (idx < results.length) {
+        var gLine = GedLib.parseLine(results[idx]);
+
+        try {
+          if (gLine.id != '') {
+            currentId = {};
+            currentId.type = gLine.tag;
+            currentId.id = gLine.id;
+            currentId.children = [];
+            currentId.generation = -1;
+            currentId.date = 0;
+            currentId.BaptismPlace = '';
+            currentId.BirthPlace = '';
+            currentId.BirthDate = '';
+            currentId.BaptismDate = '';
+            currentId.husbId = '0';
+            currentId.wifeId = '0';
+            currentId.isFirst = false;
+            currentId.OccupationDate = '';
+            currentId.OccupationPlace = '';
+            currentId.Occupation = '';
+            currentId.DeathLocation = '';
+            currentId.name = '';
+            if (currentId.type == 'FAM') families.push(currentId);
+            if (currentId.type == 'INDI') persons.push(currentId);
+          } else {
+            if (currentId.type == 'FAM') {
+              if (gLine.tag == 'HUSB') currentId.husbId = gLine.value;
+              if (gLine.tag == 'WIFE') currentId.wifeId = gLine.value;
+              if (gLine.tag == 'CHIL') currentId.children.push(gLine.value);
+            }
+
+            if (currentId.type == 'INDI') {
+              if (gLine.tag == 'NAME') currentId.name = gLine.value.replace("/", "").replace("/", "");
+              if (gLine.tag == 'FAMS') currentId.famId = gLine.value;
+            }
+
+            if (idx <= results.length) {
+              var nextLine = GedLib.parseLine(results[idx + 1]);
+
+              while (idx <= results.length && nextLine.level > 1) {
+                if (gLine.tag == 'BAPL' || gLine.tag == 'BAPM' || gLine.tag == 'CHR') {
+                  if (nextLine.tag == 'DATE') currentId.date = _DateFunctions.DateFunctions.YearDate(nextLine.value);
+                  if (nextLine.tag == 'DATE') currentId.BaptismDate = nextLine.value;
+                  if (nextLine.tag == 'PLAC') currentId.BaptismPlace = nextLine.value;
+                }
+
+                if (gLine.tag == 'BIRT') {
+                  if (nextLine.tag == 'DATE') currentId.date = _DateFunctions.DateFunctions.YearDate(nextLine.value);
+                  if (nextLine.tag == 'DATE') currentId.BirthDate = nextLine.value;
+                  if (nextLine.tag == 'PLAC') currentId.BirthPlace = nextLine.value;
+                }
+
+                if (gLine.tag == 'MARR') {
+                  if (nextLine.tag == 'DATE') currentId.date = _DateFunctions.DateFunctions.YearDate(nextLine.value);
+                  if (nextLine.tag == 'DATE') currentId.MarDate = nextLine.value;
+                  if (nextLine.tag == 'PLAC') currentId.MarPlace = nextLine.value;
+                }
+
+                if (gLine.tag == 'OCCU') {
+                  currentId.Occupation = gLine.value;
+                  if (nextLine.tag == 'DATE') currentId.OccupationDate = nextLine.value;
+                  if (nextLine.tag == 'PLAC') currentId.OccupationPlace = nextLine.value;
+                }
+
+                if (gLine.tag == 'DEAT') {
+                  if (nextLine.tag == 'DATE') currentId.DeathDate = nextLine.value;
+                  if (nextLine.tag == 'PLAC') currentId.DeathPlace = nextLine.value;
+                }
+
+                results.splice(idx + 1, 1);
+                nextLine = GedLib.parseLine(results[idx + 1]); //because we have take a row out of the array dont need to increment anything
+              }
+            }
+          }
+        } catch (err) {}
+
+        idx++;
+      }
+    };
+
+    var parseSpouses = function parseSpouses() {
+      // we need to have the families ordered by the birth of their children
+      var famChildIdx = 0;
+      var famidx = 0;
+      var idx = 0;
+
+      while (idx < persons.length) {
+        famidx = 0;
+
+        while (famidx < families.length) {
+          if (families[famidx].husbId == persons[idx].id) families[famidx].husband = persons[idx];
+          if (families[famidx].wifeId == persons[idx].id) families[famidx].wife = persons[idx];
+          famChildIdx = 0;
+
+          while (famChildIdx < families[famidx].children.length) {
+            if (families[famidx].children[famChildIdx] == persons[idx].id) {
+              families[famidx].children[famChildIdx] = persons[idx];
+              if (families[famidx].date != undefined) families[famidx].date = _DateFunctions.DateFunctions.YearDate(persons[idx].BirthDate);
+              break;
+            }
+
+            famChildIdx++;
+          }
+
+          famidx++;
+        }
+
+        idx++;
+      }
+    };
+
+    var parseChildren = function parseChildren() {
+      // sort family children
+      var famidx = 0;
+
+      while (famidx < families.length) {
+        families[famidx].children.sort(function (a, b) {
+          return a.date - b.date;
+        });
+        if (families[famidx].husbId != '0') families[famidx].husband.children = families[famidx].children;
+        if (families[famidx].wifeId != '0') families[famidx].wife.children = families[famidx].children;
+        if (families[famidx].husband == undefined) families[famidx].husband = {
+          id: 0
+        };
+        if (families[famidx].wife == undefined) families[famidx].wife = {
+          id: 0
+        };
+        famidx++;
+      } // sort families
+
+
+      families.sort(function (a, b) {
+        return a.date - b.date;
+      });
+    };
+
+    progressFunction('parsing ged file', true);
+    asynchCall(makeLists, function () {
+      progressFunction('parsing persons', true);
+      asynchCall(parseSpouses, function () {
+        progressFunction('parsing families', true);
+        asynchCall(parseChildren, function () {
+          var rng = GedLib.findDateRange(persons); //    that.cacheFamilies = JSON.parse(JSON.stringify(that.families));
+          //    that.cachePersons = JSON.parse(JSON.stringify(that.persons));
+
+          newloader(families, persons, rng);
+        });
+      });
+    });
+  }
+
+  static findDateRange(persons) {
+    var startDate = 2000;
+    var endDate = 0;
+    var idx = 0;
+
+    while (idx < persons.length) {
+      var date = persons[idx].date;
+
+      if (date && date < startDate && date != 0) {
+        startDate = date;
+      }
+
+      if (date && date > endDate && date != 0) {
+        endDate = date;
+      }
+
+      idx++;
+    }
+
+    return {
+      s: startDate,
+      e: endDate
+    };
+  }
+
+  static FindPerson(persons, target) {
+    var idx = 0;
+
+    while (idx < persons.length) {
+      if (persons[idx].id == target) {
+        return persons[idx];
+      }
+
+      idx++;
+    }
+
+    return null;
+  }
+
+  static MakeFirst(persons, person) {
+    var idx = 0;
+
+    while (idx < persons.length) {
+      if (persons[idx].id == person) {
+        persons[idx].isFirst = true;
+        return persons[idx];
+      }
+
+      idx++;
+    }
+
+    return null;
+  }
+
+  static FindFurthestAncestor(families, startperson) {
+    const getPersonFamily = (families, personId) => {
+      const grep = (items, callback) => {
+        var filtered = [],
+            len = items.length,
+            i = 0;
+
+        for (i; i < len; i++) {
+          var item = items[i];
+          var cond = callback(item);
+
+          if (cond) {
+            filtered.push(item);
+          }
+        }
+
+        return filtered;
+      };
+
+      let family = grep(families, function (e) {
+        var innerresult = grep(e.children, function (a) {
+          return a.id == personId;
+        });
+        return innerresult.length > 0 ? true : false;
+      });
+      return family;
+    };
+
+    console.log('SearchFurthestAncestor');
+    var searchPersonId = startperson;
+    var isSearching = true;
+
+    while (isSearching) {
+      let family = getPersonFamily(families, searchPersonId);
+
+      if (family.length > 0) {
+        if (family[0].husbId != '0') {
+          searchPersonId = family[0].husbId;
+        } else {
+          if (family[0].wifeId != '0') {
+            searchPersonId = family[0].wifeId;
+          } else {
+            searchPersonId = '0';
+          }
+        }
+      } else {
+        isSearching = false;
+      }
+    }
+
+    return searchPersonId;
+  }
+
+  static SetRawDataGenerationProp(families, generation) {
+    var idx = 0;
+
+    while (idx < families.length) {
+      if (families[idx].husband != undefined) families[idx].husband.generation = generation;
+      if (families[idx].wife != undefined) families[idx].wife.generation = generation;
+      var iidx = 0;
+
+      while (iidx < families[idx].children.length) {
+        families[idx].children[iidx].generation = generation;
+        iidx++;
+      }
+
+      idx++;
+    }
+  }
+
+}
+
+exports.GedLib = GedLib;
+},{"../DateFunctions.js":"../src/DateFunctions.js"}],"../src/DataLoader/GNGraph.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GNGraph = GNGraph;
+
+function GNGraph(generationsArray) {
+  this.TopYear = 0;
+  this.BottomYear = 0;
+  this.Generations = generationsArray;
+  this.TreeRange();
+}
+
+GNGraph.prototype = {
+  DescendantCount: function DescendantCount(genidx, personidx) {
+    var stack = [];
+    var count = 0;
+    stack.push(this.Generations[genidx][personidx]);
+
+    while (stack.length > 0) {
+      var current = stack.pop();
+      count++;
+      var personIdx = 0;
+      var nextGen = current.GenerationIdx + 1;
+
+      if (nextGen < this.Generations.length) {
+        while (personIdx < this.Generations[nextGen].length) {
+          if (this.Generations[nextGen][personIdx].FatherId == current.PersonId && this.Generations[nextGen][personIdx].nodeLink != undefined) stack.push(this.Generations[nextGen][personIdx]);
+          personIdx++;
+        }
+      } //  genIdx++;
+
+    }
+
+    return count;
+  },
+  TreeRange: function TreeRange() {
+    var gidx = 0;
+    var botYear = 0;
+    var topYear = 0;
+    var years = [];
+
+    while (gidx < this.Generations.length) {
+      var pidx = 0;
+
+      while (pidx < this.Generations[gidx].length) {
+        if (Number(this.Generations[gidx][pidx].RecordLink.DOB) != 0) years.push(Number(this.Generations[gidx][pidx].RecordLink.DOB));
+        pidx++;
+      }
+
+      gidx++;
+    }
+
+    years = years.sort(function (a, b) {
+      return a - b;
+    });
+
+    if (years.length > 0) {
+      botYear = years[0];
+      topYear = years[years.length - 1];
+    }
+
+    if (botYear == 0) {
+      botYear = 1695;
+      topYear = 1695;
+    }
+
+    this.TopYear = topYear;
+    this.BottomYear = botYear;
+  },
+  FatherEdge: function FatherEdge(genIdx, personIdx) {
+    var currentPerson = this.Generations[genIdx][personIdx];
+    var fatherNodeLink;
+
+    if (genIdx > 0 && currentPerson) {
+      fatherNodeLink = this.Generations[genIdx - 1][currentPerson.FatherIdx].nodeLink;
+    }
+
+    if (!fatherNodeLink) console.log('father node link not found');
+    if (!currentPerson.nodeLink) console.log(currentPerson.PersonId + 'current node missing nodelink');
+    if (genIdx <= 0) console.log('no father for generation: ' + genIdx);
+
+    if (fatherNodeLink && currentPerson.nodeLink && genIdx > 0) {
+      return {
+        IsValid: true,
+        FatherNode: fatherNodeLink,
+        ChildNode: currentPerson.nodeLink
+      };
+    } else {
+      return {
+        IsValid: false
+      };
+    }
+  }
+};
+},{}],"../src/DataLoader/AncGraphCreator.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.AncGraphCreator = void 0;
+
+var _Bio = require("./Bio.js");
+
+var _GedLib = require("./GedLib.js");
+
+var _GNGraph = require("./GNGraph.js");
+
+const grep = function grep(items, callback) {
+  let filtered = [],
+      len = items.length,
+      i = 0;
+
+  for (i; i < len; i++) {
+    let item = items[i];
+    let cond = callback(item);
+
+    if (cond) {
+      filtered.push(item);
+    }
+  }
+
+  return filtered;
+};
+
+class AncGraphCreator {
+  constructor(families, persons) {
+    this.searchDepth = 0;
+    this._generations = [];
+    this.families = families;
+    this.persons = persons;
+    this.RecordLinkLoader = new _Bio.Bio();
+    this.generations = new Proxy(this._generations, {
+      get: function get(target, name) {
+        return target[name];
+      }
+    });
+  }
+
+  GetGenerations(personId, callback) {
+    //'@I4@'
+    let findMakeFirst = _GedLib.GedLib.MakeFirst(this.persons, personId);
+
+    this.addAncestorsToGraph(findMakeFirst);
+    callback(new _GNGraph.GNGraph(this._generations));
+  }
+
+  addAncestorsToGraph(startperson) {
+    var family = grep(this.families, function (e) {
+      var innerresult = grep(e.children, function (a) {
+        return a.id == startperson.id;
+      });
+      return innerresult.length > 0 ? true : false;
+    });
+    var currentGen = 0;
+    this._generations = [];
+    this._generations[currentGen] = [];
+
+    this._generations[currentGen].push(this.addPerson(currentGen, 0, startperson));
+
+    while (this._generations[currentGen] != undefined && this._generations[currentGen].length > 0) {
+      if (currentGen == 0) {
+        let startNode = this._generations[0][0];
+        currentGen++;
+        this._generations[currentGen] = [];
+
+        if (family.length > 0) {
+          let husbandIdx = -1;
+          let wifeIdx = -1;
+
+          if (family[0].husband.id != 0) {
+            // add father
+            this._generations[currentGen].push(this.addPerson(currentGen, 0, family[0].husband, startNode)); // move back down to the first node
+            // set the father idx
+
+
+            husbandIdx = this._generations[currentGen].length - 1;
+            this._generations[currentGen - 1][0].FatherIdx = husbandIdx;
+            this._generations[currentGen - 1][0].Father = this._generations[currentGen][husbandIdx];
+            this._generations[currentGen][husbandIdx].Index = husbandIdx;
+          }
+
+          if (family[0].wife.id != 0) {
+            this._generations[currentGen].push(this.addPerson(currentGen, 0, family[0].wife, startNode));
+
+            wifeIdx = this._generations[currentGen].length - 1;
+            this._generations[currentGen - 1][0].MotherIdx = wifeIdx;
+            this._generations[currentGen - 1][0].Mother = this._generations[currentGen][wifeIdx];
+            this._generations[currentGen][wifeIdx].Index = wifeIdx;
+          }
+
+          if (husbandIdx > 0 && wifeIdx > 0) {
+            this._generations[currentGen][wifeIdx].SpouseIdxLst = [];
+
+            this._generations[currentGen][wifeIdx].SpouseIdxLst.push(wifeIdx - 1);
+
+            this._generations[currentGen][wifeIdx].Spouses.push(this._generations[currentGen][husbandIdx]);
+
+            this._generations[currentGen][husbandIdx].SpouseIdxLst = [];
+
+            this._generations[currentGen][husbandIdx].SpouseIdxLst.push(husbandIdx + 1);
+
+            this._generations[currentGen][husbandIdx].Spouses.push(this._generations[currentGen][wifeIdx]);
+          }
+        }
+      }
+
+      var idx = 0; //cycle through the people in the generation and add there parents to the next gen
+
+      while (idx < this._generations[currentGen].length) {
+        var currentChildId = this._generations[currentGen][idx].PersonId;
+        let currentChild = this._generations[currentGen][idx]; // find this childs family
+
+        var familyi = grep(this.families, e => {
+          var innerresult = grep(e.children, a => {
+            return a.id == currentChildId;
+          });
+          return innerresult.length > 0 ? true : false;
+        });
+
+        if (familyi.length > 0) {
+          if (this._generations[currentGen + 1] == undefined) this._generations[currentGen + 1] = [];
+          let husbandIdx = -1;
+          let wifeIdx = -1;
+
+          if (familyi[0].husband.id != 0) {
+            this._generations[currentGen + 1].push(this.addPerson(currentGen + 1, idx, familyi[0].husband, currentChild));
+
+            husbandIdx = this._generations[currentGen + 1].length - 1;
+            this._generations[currentGen + 1][husbandIdx].Index = husbandIdx;
+            this._generations[currentGen][idx].FatherIdx = husbandIdx;
+            this._generations[currentGen][idx].Father = this._generations[currentGen + 1][husbandIdx];
+          }
+
+          if (familyi[0].wife.id != 0) {
+            this._generations[currentGen + 1].push(this.addPerson(currentGen + 1, idx, familyi[0].wife, currentChild));
+
+            wifeIdx = this._generations[currentGen + 1].length - 1;
+            this._generations[currentGen + 1][wifeIdx].Index = wifeIdx;
+            this._generations[currentGen][idx].MotherIdx = wifeIdx;
+            this._generations[currentGen][idx].Mother = this._generations[currentGen + 1][wifeIdx];
+          }
+
+          if (husbandIdx > 0 && wifeIdx > 0) {
+            this._generations[currentGen + 1][wifeIdx].SpouseIdxLst = [];
+
+            this._generations[currentGen + 1][wifeIdx].SpouseIdxLst.push(wifeIdx - 1);
+
+            this._generations[currentGen + 1][wifeIdx].Spouses.push(this._generations[currentGen + 1][husbandIdx]);
+
+            this._generations[currentGen + 1][husbandIdx].SpouseIdxLst = [];
+
+            this._generations[currentGen + 1][husbandIdx].SpouseIdxLst.push(husbandIdx + 1);
+
+            this._generations[currentGen + 1][husbandIdx].Spouses.push(this._generations[currentGen + 1][wifeIdx]);
+          }
+        }
+
+        idx++;
+      }
+
+      currentGen++;
+    }
+  }
+
+  addPerson(genIdx, idx, person, child) {
+    var newPerson = {
+      RecordLink: this.RecordLinkLoader.fill(person),
+      ChildCount: 1,
+      ChildIdx: idx,
+      ChildIdxLst: [],
+      ChildLst: [],
+      Children: [child],
+      DescendentCount: 0,
+      Father: undefined,
+      FatherId: '',
+      FatherIdx: -1,
+      GenerationIdx: genIdx,
+      Index: 0,
+      IsDisplayed: true,
+      IsFamilyEnd: false,
+      IsFamilyStart: false,
+      IsHtmlLink: true,
+      IsParentalLink: false,
+      Mother: undefined,
+      MotherId: '',
+      MotherIdx: -1,
+      PersonId: person.id,
+      RelationType: 0,
+      SpouseIdxLst: [],
+      SpouseIdLst: [],
+      Spouses: [],
+      X1: 0,
+      X2: 0,
+      Y1: 0,
+      Y2: 0,
+      zoom: 0
+    };
+    return newPerson;
+  }
+
+}
+
+exports.AncGraphCreator = AncGraphCreator;
+},{"./Bio.js":"../src/DataLoader/Bio.js","./GedLib.js":"../src/DataLoader/GedLib.js","./GNGraph.js":"../src/DataLoader/GNGraph.js"}],"../src/DataLoader/DescGraphCreator.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DescGraphCreator = void 0;
+
+var _Bio = require("./Bio.js");
+
+var _GNGraph = require("./GNGraph.js");
+
+var _GedLib = require("./GedLib.js");
+
+class DescGraphCreator {
+  constructor(families, persons) {
+    this.persons = persons;
+    this.searchDepth = 0;
+    this._generations = [];
+    this._workingFamilies = families;
+    this.RecordLinkLoader = new _Bio.Bio(); //debug
+
+    this.firstCount = 0;
+    this.generations = new Proxy(this._generations, {
+      get: function get(target, name) {
+        return target[name];
+      }
+    });
+  }
+
+  GetGenerations(personId, callback) {
+    this.firstCount = 0;
+    var initPerson = personId;
+
+    _GedLib.GedLib.SetRawDataGenerationProp(this._workingFamilies, -1);
+
+    personId = _GedLib.GedLib.FindFurthestAncestor(this._workingFamilies, personId);
+
+    let firstNode = _GedLib.GedLib.FindPerson(this.persons, personId);
+
+    this.addDescendantsToGraph(firstNode);
+    this.addNodeChildLinks(this._generations);
+    callback(new _GNGraph.GNGraph(this._generations));
+  }
+
+  addNodeChildLinks(graph) {
+    console.log('addNodeChildLinks');
+    let genIdx = 0;
+
+    const addChild = (person, childId, currentGeneration) => {
+      let childGeneration = currentGeneration + 1;
+
+      if (childGeneration < graph.length) {
+        let idx = 0;
+
+        while (idx < graph[childGeneration].length) {
+          if (graph[childGeneration][idx].PersonId == childId) {
+            person.Children.push(graph[childGeneration][idx]);
+            break;
+          }
+
+          idx++;
+        }
+      }
+    };
+
+    while (genIdx < graph.length) {
+      let personIdx = 0;
+
+      while (personIdx < graph[genIdx].length) {
+        let person = graph[genIdx][personIdx]; //newPerson.ChildLst.push(person.children[idx].id);
+
+        person.ChildLst.forEach(item => {
+          addChild(person, item, genIdx);
+        });
+        personIdx++;
+      }
+
+      genIdx++;
+    }
+  }
+
+  addDescendantsToGraph(startperson) {
+    this.searchDepth++;
+    if (this._generations.length < this.searchDepth) this._generations.push([]);
+    var idx = 0;
+    var famidx = 0;
+    var familyFound = $.grep(this._workingFamilies, function (e) {
+      if (startperson == null) return false;
+      if (e.husband == null && e.wife == null) return false;
+      return e.husband.id == startperson.id || e.wife.id == startperson.id;
+    }).length > 0 ? true : false; // a child with no spouse
+
+    if (!familyFound && startperson.generation == -1) {
+      startperson.generation = this.searchDepth;
+      this.addPerson(startperson);
+    }
+
+    var that = this;
+
+    var addPersonIf = function addPersonIf(person, spouse) {
+      try {
+        var addChild = false;
+
+        if (person != undefined && person.id == startperson.id) {
+          if (that._workingFamilies[idx].children.length > 0) that._workingFamilies[idx].children[0].isFirst = true;
+          var tpDebugGen = person.generation;
+
+          if (person.generation == -1) {
+            person.generation = that.searchDepth;
+            that.addPerson(person, spouse);
+          }
+
+          addChild = true;
+        } // spouse of one of the children or the first person.
+
+
+        if (spouse != undefined && spouse.generation == -1 && person != undefined && person.id == startperson.id) {
+          spouse.generation = that.searchDepth;
+          that.addPerson(spouse, person, false);
+        }
+
+        if (addChild) {
+          famidx = 0;
+
+          while (famidx < that._workingFamilies[idx].children.length) {
+            that.addDescendantsToGraph(that._workingFamilies[idx].children[famidx]);
+            that.searchDepth--;
+            famidx++;
+          }
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    while (idx < that._workingFamilies.length && familyFound) {
+      addPersonIf(that._workingFamilies[idx].husband, that._workingFamilies[idx].wife);
+      addPersonIf(that._workingFamilies[idx].wife, that._workingFamilies[idx].husband);
+      idx++;
+    }
+
+    that._generations[0][0].IsHtmlLink = false;
+  }
+
+  addPerson(rawPerson, rawSpouse, isChild) {
+    isChild = isChild == undefined ? true : isChild;
+    var newPerson = {
+      RecordLink: this.RecordLinkLoader.fill(rawPerson),
+      ChildCount: 1,
+      ChildIdx: 0,
+      ChildIdxLst: [],
+      ChildLst: [],
+      Children: [],
+      DescendentCount: 0,
+      Father: undefined,
+      FatherId: '',
+      FatherIdx: -1,
+      GenerationIdx: rawPerson.generation,
+      Index: 0,
+      IsDisplayed: true,
+      IsFamilyEnd: true,
+      IsFamilyStart: rawPerson.isFirst,
+      IsHtmlLink: false,
+      IsParentalLink: false,
+      Mother: undefined,
+      MotherId: '',
+      MotherIdx: -1,
+      PersonId: rawPerson.id,
+      RelationType: 0,
+      SpouseIdxLst: [],
+      SpouseIdLst: [],
+      Spouses: [],
+      X1: 0,
+      X2: 0,
+      Y1: 0,
+      Y2: 0,
+      zoom: 0
+    };
+    var idx = 0;
+    if (rawPerson.children == undefined) rawPerson.children = [];
+
+    while (idx < rawPerson.children.length) {
+      newPerson.ChildLst.push(rawPerson.children[idx].id);
+      idx++;
+    }
+
+    newPerson.ChildCount = rawPerson.children.length;
+    var lastPersonAdded = this._generations[this.searchDepth - 1].length - 1; //default every person to family end = true
+    //then if the new person we are adding isnt a isfirst reset that to false.
+
+    if (this._generations[this.searchDepth - 1].length > 0 && !rawPerson.isFirst) {
+      this._generations[this.searchDepth - 1][lastPersonAdded].IsFamilyEnd = false;
+    }
+
+    this._generations[this.searchDepth - 1].push(newPerson);
+
+    lastPersonAdded = this._generations[this.searchDepth - 1].length - 1; // are we the start of a new family
+    // make this the parent link
+    // if not
+    //
+
+    if (rawPerson.isFirst) {
+      this._generations[this.searchDepth - 1][lastPersonAdded].IsParentalLink = true;
+    } else {
+      //lastPersonAdded = generations[searchDepth - 1].length - 1;
+      idx = lastPersonAdded; // rewite this
+      // so fill array with people who have parental indexs
+      // then use middle of array as parental link person!
+      //also remember we are looking back through
+      //the previously added generation
+
+      var tpFamily = [];
+
+      while (idx >= 0) {
+        this._generations[this.searchDepth - 1][idx].IsParentalLink = false;
+
+        if (this._generations[this.searchDepth - 1][idx].FatherId != '' || this._generations[this.searchDepth - 1][idx].MotherId != '') {
+          tpFamily.push(this._generations[this.searchDepth - 1][idx]);
+        }
+
+        if (this._generations[this.searchDepth - 1][idx].IsFamilyStart) {
+          break;
+        }
+
+        idx--;
+      }
+
+      if (tpFamily.length > 0) {
+        lastPersonAdded = Math.floor(tpFamily.length / 2);
+        tpFamily[lastPersonAdded].IsParentalLink = true;
+      } else {
+        console.log('zero length family: ' + rawPerson.id);
+      }
+    }
+
+    if (rawSpouse != undefined) {
+      var currentPersonIdx = this._generations[this.searchDepth - 1].length - 1;
+      var spouseIdx = currentPersonIdx; // fill out spouses location in the current generation
+
+      while (spouseIdx >= 0) {
+        if (this._generations[this.searchDepth - 1][spouseIdx].PersonId == rawSpouse.id) {
+          this._generations[this.searchDepth - 1][currentPersonIdx].Spouses.push(this._generations[this.searchDepth - 1][spouseIdx]);
+
+          this._generations[this.searchDepth - 1][currentPersonIdx].SpouseIdxLst.push(spouseIdx);
+
+          this._generations[this.searchDepth - 1][currentPersonIdx].SpouseIdLst.push(rawSpouse.id);
+
+          this._generations[this.searchDepth - 1][spouseIdx].SpouseIdxLst.push(currentPersonIdx);
+
+          this._generations[this.searchDepth - 1][spouseIdx].SpouseIdLst.push(newPerson.PersonId);
+
+          this._generations[this.searchDepth - 1][spouseIdx].Spouses.push(this._generations[this.searchDepth - 1][currentPersonIdx]);
+
+          break;
+        }
+
+        spouseIdx--;
+      }
+    } // there should always be a parent unless we are dealing with the first person OR a spouse!!
+    // the parent should be the last person in the generation above us.
+
+
+    if (isChild) {
+      var previousGeneration = this.searchDepth > 1 ? this.searchDepth - 2 : 1;
+
+      if (this._generations.length > previousGeneration) {
+        var secondParentIdx = this._generations[previousGeneration].length - 1; // last person in the list
+        // handle single parents
+
+        if (this._generations[previousGeneration][secondParentIdx].SpouseIdxLst.length > 0) {
+          var firstParentIdx = this._generations[previousGeneration][secondParentIdx].SpouseIdxLst[0];
+          newPerson.FatherIdx = firstParentIdx;
+          newPerson.FatherId = this._generations[previousGeneration][firstParentIdx].PersonId;
+          newPerson.Father = this._generations[previousGeneration][firstParentIdx];
+          newPerson.MotherId = this._generations[previousGeneration][secondParentIdx].PersonId;
+          newPerson.MotherIdx = secondParentIdx;
+          newPerson.Mother = this._generations[previousGeneration][secondParentIdx];
+        } else {
+          newPerson.FatherIdx = secondParentIdx;
+          newPerson.Father = this._generations[previousGeneration][secondParentIdx];
+          newPerson.FatherId = this._generations[previousGeneration][secondParentIdx].PersonId;
+        }
+      }
+    }
+
+    if (newPerson.FatherIdx == -1 && newPerson.MotherIdx == -1) newPerson.IsHtmlLink = true;
+    if (newPerson.FatherIdx == -1) newPerson.FatherIdx = 0;
+    if (newPerson.MotherIdx == -1) newPerson.MotherIdx = 0;
+  }
+
+}
+
+exports.DescGraphCreator = DescGraphCreator;
+},{"./Bio.js":"../src/DataLoader/Bio.js","./GNGraph.js":"../src/DataLoader/GNGraph.js","./GedLib.js":"../src/DataLoader/GedLib.js"}],"Assets/open.png":[function(require,module,exports) {
+module.exports = "/open.9035cb99.png";
+},{}],"Assets/close.png":[function(require,module,exports) {
+module.exports = "/close.ab54f64e.png";
+},{}],"../src/DataLoader/TreeUI.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TreeUI = void 0;
+
+var _open = _interopRequireDefault(require("../../public/Assets/open.png"));
+
+var _close = _interopRequireDefault(require("../../public/Assets/close.png"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// with import
+// with import
+class TreeUI {
+  Init(isAnc, context, callback) {
+    this.docClose = new Image();
+    this.docNew = new Image();
+    this.modelCode = isAnc;
+    this.canvas = context.canvas;
+    this.context = context;
+
+    if (this.modelCode == 0) {
+      // descendants
+      this.backgroundcolour = 'black';
+      this.linecolour = '#99CCFF';
+      this.textcolour = 'black'; // 'white';
+
+      this.spousecolour = 'slateblue'; //    $("#map_control").removeClass("ancestorstyle").addClass("descendantstyle");
+      //    $("#map_label").removeClass("ancestorstyle").addClass("descendantstyle");
+    } else {
+      this.backgroundcolour = 'white';
+      this.linecolour = 'black';
+      this.textcolour = 'black';
+      this.spousecolour = 'slateblue'; //    $("#map_control").removeClass("descendantstyle").addClass("ancestorstyle");
+      //    $("#map_label").removeClass("descendantstyle").addClass("ancestorstyle");
+    }
+
+    this.docClose.src = _open.default;
+    var that = this;
+
+    this.docClose.onload = function () {
+      that.docNew.src = _close.default;
+
+      that.docNew.onload = function () {
+        callback(that);
+      };
+    };
+  }
+
+  UpdateUI(screen_width, screen_height, box_width, box_height) {
+    this.screen_width = screen_width;
+    this.screen_height = screen_height; //  this.canvas = document.getElementById("myCanvas");
+    //    this.context = this.canvas.getContext("2d");
+
+    this.boxWidth = box_width;
+    this.boxHeight = box_height;
+  }
+
+  ClearContext() {
+    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+  }
+
+  DrawLine(points) {
+    var _pointIdx = 0;
+    this.context.beginPath();
+    var _validLine = false;
+
+    var _sx1 = -100; //screen left
+
+
+    var _sx2 = this.screen_width + 100; // screen right
+
+
+    var _sy1 = -100;
+
+    var _sy2 = this.screen_height + 100;
+
+    while (_pointIdx < points.length) {
+      var _Point = points[_pointIdx];
+
+      if (_Point[0] > _sx1 && _Point[0] < _sx2 && _Point[1] > _sy1 && _Point[1] < _sy2) {
+        _validLine = true;
+        break;
+      } // but its also valid if line crosses the screen!
+
+
+      if (_pointIdx > 0 && !_validLine) {
+        var _prevPoint = points[_pointIdx - 1];
+        if (_prevPoint[0] > _sx1 && _prevPoint[0] < _sx2 && _Point[0] > _sx1 && _Point[0] < _sx2 && (_prevPoint[1] < _sy2 && _Point > _sy2 || _prevPoint[1] < _sy1 && _Point[1] > _sy2)) _validLine = true;
+        if (_prevPoint[1] > _sy1 && _prevPoint[1] < _sy2 && _Point[1] > _sy1 && _Point[1] < _sy2 && (_prevPoint[0] < _sx2 && _Point > _sx2 || _prevPoint[0] < _sx1 && _Point[0] > _sx1)) _validLine = true;
+        if (_validLine) break;
+      }
+
+      _pointIdx++;
+    }
+
+    if (_validLine) {
+      _pointIdx = 0;
+
+      while (_pointIdx < points.length) {
+        let _Point = points[_pointIdx];
+
+        if (_pointIdx === 0) {
+          this.context.moveTo(_Point[0], _Point[1]);
+        } else {
+          this.context.lineTo(_Point[0], _Point[1]);
+        }
+
+        _pointIdx++;
+      }
+
+      this.context.globalAlpha = 0.5;
+      this.context.lineWidth = 2;
+      this.context.strokeStyle = this.linecolour;
+      this.context.stroke();
+    }
+  }
+
+  DrawButton(_person, checked) {
+    var linkArea = {
+      x1: 0,
+      x2: 0,
+      y1: 0,
+      y2: 0,
+      action: 'box'
+    }; //
+
+    if (_person.IsDisplayed && _person.X2 > 0 && _person.X1 < this.screen_width && _person.Y2 > -100 && _person.Y1 < this.screen_height && _person.ChildLst.length > 0 && _person.zoom >= 3 && !_person.IsHtmlLink) {
+      // this doesnt correspond to the isdisplayed person of the property
+      // because obviously the we want the parent to stay visible so we
+      // can turn on and off the childrens visibility. if we cant see it , we cant turn anything on and off..
+      if (checked) {
+        this.context.fillStyle = "red";
+        this.context.drawImage(this.docClose, _person.X1 - 10, _person.Y1 + 5);
+      } else {
+        this.context.fillStyle = "black";
+        this.context.drawImage(this.docNew, _person.X1 - 10, _person.Y1 + 5);
+      }
+
+      linkArea.y1 = _person.Y1 + 5;
+      linkArea.x1 = _person.X1 - 10;
+      linkArea.y2 = _person.Y1 + 30;
+      linkArea.x2 = _person.X1 + 10;
+      linkArea.action = _person.PersonId + "," + String(checked);
+    } else {
+      linkArea = null;
+    }
+
+    return linkArea;
+  }
+
+  DrawPerson(_person, sourceId, zoomPerc) {
+    var xoffset = 0;
+    var linkArea = {
+      x1: 0,
+      x2: 0,
+      y1: 0,
+      y2: 0,
+      action: ''
+    };
+
+    if (_person.IsDisplayed && _person.X2 > 0 && _person.X1 < this.screen_width && _person.Y2 > -100 && _person.Y1 < this.screen_height) {
+      this.context.beginPath(); //   this.context.rect(_person.X1, _person.Y1, this.boxWidth, this.boxHeight);
+
+      if (_person.zoom >= 1000) {
+        var rectX = _person.X1;
+        var rectY = _person.Y1;
+        var rectWidth = Math.abs(_person.X2 - _person.X1);
+        var rectHeight = Math.abs(_person.Y2 - _person.Y1);
+        var radius = 10;
+        this.context.strokeStyle = "#99003A";
+        this.context.lineWidth = 2;
+        this.RoundedRect(this.context, rectX, rectY, rectWidth, rectHeight, radius);
+      } else {
+        if (this.modelCode == 1) {
+          //boxs
+          xoffset = 3;
+          this.context.rect(_person.X1, _person.Y1, Math.abs(_person.X2 - _person.X1), Math.abs(_person.Y2 - _person.Y1));
+          this.context.fillStyle = this.backgroundcolour;
+          this.context.fill();
+          this.context.lineWidth = 1;
+          this.context.strokeStyle = this.linecolour;
+          this.context.stroke();
+        } else {
+          xoffset = 16; //lines
+
+          var halfwidth = Math.abs(_person.X2 - _person.X1) / 2;
+          var middlebox = _person.X1 + halfwidth; //middle of box
+
+          if ((_person.ChildCount > 0 || _person.SpouseIdLst.length > 0) && !_person.IsHtmlLink) {
+            //
+            // this.context.beginPath();
+            if (_person.GenerationIdx == 0) {
+              this.context.moveTo(middlebox, _person.Y2 - 7);
+              this.context.lineTo(middlebox, _person.Y2);
+              this.context.closePath();
+              this.context.fill();
+              this.context.globalAlpha = 1;
+              this.context.lineWidth = 7;
+            } else {
+              this.context.moveTo(middlebox, _person.Y1);
+              this.context.lineTo(middlebox, _person.Y2);
+              this.context.closePath();
+              this.context.fill();
+              this.context.globalAlpha = 0.5;
+              this.context.lineWidth = 2;
+            }
+          } else {
+            if (!_person.IsHtmlLink) {
+              this.context.moveTo(middlebox, _person.Y1);
+              this.context.lineTo(middlebox, _person.Y1 + 7);
+            } else {
+              this.context.moveTo(middlebox, _person.Y2 - 7);
+              this.context.lineTo(middlebox, _person.Y2);
+            }
+
+            this.context.closePath();
+            this.context.fill();
+            this.context.globalAlpha = 0.9;
+            this.context.lineWidth = 7;
+          }
+
+          this.context.strokeStyle = this.linecolour;
+          this.context.stroke();
+        }
+      }
+
+      this.context.globalAlpha = 1.0;
+      var linespacing = 15;
+
+      if (_person.zoom >= 7) {
+        linespacing = 30;
+      }
+
+      var _y = this.WriteName(_person.X1 + xoffset, _person.Y1 + 19, _person, 0);
+
+      if (_person.IsHtmlLink) {
+        linkArea.y1 = _person.Y1;
+        linkArea.x1 = _person.X1 + xoffset;
+        linkArea.y2 = _y - linespacing;
+        linkArea.x2 = _person.X2;
+        linkArea.action = _person.PersonId;
+      } else {
+        linkArea = null;
+      }
+
+      this.context.font = "8pt Calibri";
+      this.context.fillStyle = this.textcolour;
+
+      switch (_person.zoom) {
+        case 4:
+          //show name
+          this.context.fillText("DOB: " + _person.RecordLink.DOB, _person.X1 + xoffset, _y);
+          _y += linespacing;
+
+          if (_y <= _person.Y2 - 10) {
+            _y = this.WriteBLocation(_person.X1 + xoffset, _y, _person, 1); //+ linespacing
+          }
+
+          break;
+
+        case 5: //show name
+
+        case 6:
+        case 7:
+        case 8:
+          this.context.fillText("Dob: " + _person.RecordLink.DOB, _person.X1 + xoffset, _y);
+          _y += linespacing;
+
+          if (_y <= _person.Y2 - 10) {
+            _y = this.WriteBLocation(_person.X1 + xoffset, _y, _person, 2); //+ linespacing
+          }
+
+          if (_y <= _person.Y2 - 10) {
+            this.context.fillText("Dod: " + _person.RecordLink.DOD, _person.X1 + xoffset, _y);
+            _y += linespacing;
+            this.WriteDLocation(_person.X1 + xoffset, _y, _person, 2);
+          }
+
+          break;
+      }
+    } //typically used in descendanttree drawtree method
+    //adds to basetree links collection
+
+
+    return linkArea;
+  }
+
+  RoundedRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x, y + radius);
+    ctx.lineTo(x, y + height - radius);
+    ctx.quadraticCurveTo(x, y + height, x + radius, y + height);
+    ctx.lineTo(x + width - radius, y + height);
+    ctx.quadraticCurveTo(x + width, y + height, x + width, y + height - radius);
+    ctx.lineTo(x + width, y + radius);
+    ctx.quadraticCurveTo(x + width, y, x + width - radius, y);
+    ctx.lineTo(x + radius, y);
+    ctx.quadraticCurveTo(x, y, x, y + radius);
+    ctx.stroke();
+  }
+
+  WriteName(xpos, ypos, _person, maxlines) {
+    this.context.font = "bold 8pt Calibri";
+
+    if (_person.IsHtmlLink) {
+      //this.context.fillStyle = "#1600BF";
+      this.context.fillStyle = this.spousecolour;
+    } else {
+      this.context.fillStyle = this.textcolour;
+    }
+
+    var _textToDisplay = this.MakeArray(_person, _person.RecordLink.Name);
+
+    var _y = ypos;
+    var linespacing = 15;
+
+    if (maxlines === 0 || _textToDisplay.length <= maxlines) {
+      maxlines = _textToDisplay.length;
+    }
+
+    for (var i = 0; i < maxlines; i++) {
+      this.context.fillText(_textToDisplay[i], xpos, _y);
+      _y += linespacing;
+    } //reset to black.
+
+
+    this.context.font = "8pt Calibri";
+    this.context.fillStyle = "black";
+    return _y;
+  }
+
+  WriteBLocation(xpos, ypos, _person, maxlines) {
+    this.context.font = "8pt Calibri";
+    this.context.fillStyle = this.textcolour;
+    _person.RecordLink.BirthLocation = _person.RecordLink.BirthLocation.replace(",", " ");
+    _person.RecordLink.BirthLocation = _person.RecordLink.BirthLocation.replace("  ", " ");
+
+    var _textToDisplay = this.MakeArray(_person, _person.RecordLink.BirthLocation);
+
+    var _y = ypos;
+    var linespacing = 15;
+
+    if (maxlines === 0 || _textToDisplay.length <= maxlines) {
+      maxlines = _textToDisplay.length;
+    }
+
+    for (var i = 0; i < maxlines; i++) {
+      this.context.fillText(_textToDisplay[i], xpos, _y);
+      _y += linespacing;
+    }
+
+    return _y;
+  }
+
+  WriteDLocation(xpos, ypos, _person, maxlines) {
+    this.context.font = "8pt Calibri";
+    this.context.fillStyle = this.textcolour;
+
+    var _textToDisplay = this.MakeArray(_person, _person.RecordLink.DeathLocation);
+
+    var _y = ypos;
+    var linespacing = 15;
+
+    if (maxlines === 0 || _textToDisplay.length <= maxlines) {
+      maxlines = _textToDisplay.length;
+    }
+
+    for (var i = 0; i < maxlines; i++) {
+      if (_y < _person.Y2 - 10) {
+        this.context.fillText(_textToDisplay[i], xpos, _y);
+        _y += linespacing;
+      }
+    }
+
+    return _y;
+  }
+
+  MakeArray(person, parseStr) {
+    var name = '';
+    var nameAr = [];
+    var i = 0;
+    var character_width = 3;
+    var max_text_width = Math.abs(person.X2 - person.X1);
+    var max_char_count = max_text_width / character_width;
+
+    switch (person.zoom) {
+      case 1:
+        nameAr.push('');
+        break;
+
+      case 2:
+        if (parseStr !== '') {
+          var parts = parseStr.split(' ');
+
+          for (i = 0; i < parts.length; i++) {
+            if (parts[i].length > 0) name += parts[i].slice(0, 1) + " ";
+          }
+        }
+
+        nameAr.push(name);
+        break;
+
+      case 3:
+      case 4:
+      case 5:
+      case 6:
+        nameAr = parseStr.split(' ');
+
+        for (i = 0; i < nameAr.length; i++) {
+          if (nameAr[i].length * character_width > max_text_width) nameAr[i] = nameAr[i].slice(0, max_char_count - 1) + " ";
+        }
+
+        break;
+
+      case 7:
+      case 8:
+        nameAr.push(parseStr);
+        break;
+    }
+
+    return nameAr;
+  }
+
+  WireUp(runner) {
+    $("#myCanvas").unbind();
+    $(".button_box").unbind();
+    $(".button_box").mousedown(function (evt) {
+      var _dir = '';
+      if (evt.target.id == "up") _dir = 'UP';
+      if (evt.target.id == "dn") _dir = 'DOWN';
+      if (evt.target.id == "we") _dir = 'WEST';
+      if (evt.target.id == "no") _dir = 'NORTH';
+      if (evt.target.id == "es") _dir = 'EAST';
+      if (evt.target.id == "so") _dir = 'SOUTH';
+      if (evt.target.id == "de") _dir = 'DEBUG';
+      runner.movebuttondown(_dir);
+    }).mouseup(function () {
+      runner.movebuttonup();
+    });
+    $("#myCanvas").mousedown(function (evt) {
+      evt.preventDefault();
+      evt.originalEvent.preventDefault();
+      runner.canvasmousedown();
+    });
+    $("#myCanvas").mouseup(function (evt) {
+      evt.preventDefault();
+      runner.canvasmouseup();
+    });
+    $("#myCanvas").click(function (evt) {
+      var boundingrec = document.getElementById("myCanvas").getBoundingClientRect();
+      runner.canvasclick(evt.clientX, boundingrec.left, evt.clientY, boundingrec.top);
+    });
+    $("#myCanvas").mousemove(function (evt) {
+      var boundingrec = document.getElementById("myCanvas").getBoundingClientRect();
+      runner.canvasmove(evt.clientX, boundingrec.left, evt.clientY, boundingrec.top);
+    });
+  }
+
+}
+
+exports.TreeUI = TreeUI;
+},{"../../public/Assets/open.png":"Assets/open.png","../../public/Assets/close.png":"Assets/close.png"}],"../src/DataLoader/AncTree.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.AncTree = AncTree;
+
+var _TreeUI = require("./TreeUI.js");
+
+function AncTree() {
+  this._qryString = '';
+  this.bt_refreshData = false;
+  this.bt_screenHeight = 0.0;
+  this.bt_screenWidth = 0.0;
+  this.bt_buttonLinks = [];
+  this.bt_links = []; //  this.inLink = false;
+
+  this.generations = []; //  this.familiesPerGeneration = [];
+
+  this.familySpanLines = [];
+  this.childlessMarriages = [];
+  this.centrePoint = 750.0;
+  this.centreVerticalPoint = 0.0;
+  this.zoomLevel = 0.0;
+  this.centrePointXOffset = 0.0;
+  this.centrePointYOffset = 0.0;
+  this.original_distanceBetweenBoxs = 0.0;
+  this.original_distanceBetweenGens = 0.0;
+  this.original_boxWidth = 0.0;
+  this.original_boxHeight = 0.0;
+  this.original_distancesbetfam = 0.0;
+  this.original_lowerStalkHeight = 0.0;
+  this.original_middleSpan = 40.0;
+  this.original_topSpan = 20.0;
+  this.zoomPercentage = 0.0;
+  this.distanceBetweenBoxs = 0.0;
+  this.distanceBetweenGens = 0.0;
+  this.halfBox = 0.0;
+  this.halfBoxHeight = 0.0;
+  this.mouse_x = 0; //int
+
+  this.mouse_y = 0; //int
+  //    this.initial_mouse_x = 0; //int
+  //    this.initial_mouse_y = 0; //int
+  //  this.xFromCentre = 0.0;
+  //  this.yFromCentre = 0.0;
+
+  this.drawingX1 = 0.0;
+  this.drawingX2 = 0.0;
+  this.drawingY1 = 0.0;
+  this.drawingY2 = 0.0;
+  this.drawingCentre = 0.0;
+  this.drawingWidth = 0.0;
+  this.drawingHeight = 0.0;
+  this.mouseXPercLocat = 0.0;
+  this.mouseYPercLocat = 0.0;
+  this.zoomAmount = 8; //int
+
+  this.boxWidth = 0.0;
+  this.boxHeight = 0.0;
+  this.sourceId = null;
+  this.selectedPersonId = '';
+  this.selectedPersonX = 0;
+  this.selectedPersonY = 0;
+  this.adjustedDistances = [];
+  this.adjustedBoxWidths = [];
+  this.adjustedBoxHeights = [];
+  this.moveList = [];
+  this.newX1 = 0.0;
+  this.newX2 = 0.0;
+  this.workingX1 = 0.0;
+  this.workingX2 = 0.0;
+  this.treeUI;
+}
+
+AncTree.prototype = {
+  LinkContainingPoint: function LinkContainingPoint(list, mx, my) {
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].x1 <= mx && list[i].x2 >= mx && list[i].y1 <= my && list[i].y2 >= my) {
+        return list[i];
+      }
+    }
+
+    return null;
+  },
+  ContainsPerson: function ContainsPerson(value) {
+    for (var i = 0; i < this.length; i++) {
+      if (this[i].PersonId == value.PersonId) {
+        return true;
+      }
+    }
+
+    return false;
+  },
+  DrawTree: function DrawTree() {
+    console.log('draw tree inner'); //  let that = this;
+    //    requestAnimationFrame(()=>{
+
+    this.DrawTreeInner(); //  }); //$.proxy(this.DrawTreeInner, this) );
+  },
+  DrawTreeInner: function DrawTreeInner() {
+    try {
+      this.ComputeLocations();
+    } catch (err) {
+      console.log('error computing locations');
+      console.log(err);
+    }
+
+    var _genidx = 0;
+    var _personIdx = 0; // var treeUI = new TreeUI(this.bt_screenWidth, this.bt_screenHeight, this.boxWidth, this.boxHeight,1,null);
+
+    this.treeUI.UpdateUI(this.bt_screenWidth, this.bt_screenHeight, this.boxWidth, this.boxHeight);
+    this.treeUI.ClearContext();
+
+    try {
+      this.bt_links = [];
+
+      while (_genidx < this.generations.length) {
+        _personIdx = 0;
+
+        while (_personIdx < this.generations[_genidx].length) {
+          var _person = this.generations[_genidx][_personIdx];
+          var personLink = this.treeUI.DrawPerson(_person, this.sourceId, this.zoomPercentage);
+          if (personLink !== null) this.bt_links.push(personLink);
+          _personIdx++;
+        }
+
+        _genidx++;
+      }
+    } catch (err) {
+      console.log('Error Drawing Persons');
+      console.log(err);
+    }
+
+    try {
+      var _fslOuter = 0;
+      var _fslInner = 0; //   var _pointIdx = 0;
+
+      while (_fslOuter < this.familySpanLines.length) {
+        _fslInner = 0;
+
+        while (_fslInner < this.familySpanLines[_fslOuter].length) {
+          this.treeUI.DrawLine(this.familySpanLines[_fslOuter][_fslInner]);
+          _fslInner++;
+        } // end familySpanLines[_fslOuter].length
+
+
+        _fslOuter++;
+      } // end this.familySpanLines.length
+
+    } catch (err) {
+      console.log('Error Drawing Lines');
+      console.log(err);
+    }
+  },
+  ComputeLocations: function ComputeLocations() {
+    var genidx = 0;
+    this.drawingX2 = 0.0;
+    this.drawingX1 = 0.0;
+    var _y = this.centreVerticalPoint;
+    var percentageLess = 0.0;
+    this.adjustedDistances = [];
+    this.adjustedBoxWidths = [];
+    this.adjustedBoxHeights = [];
+    this.generations[0][0].X1 = this.centrePoint;
+    this.generations[0][0].X2 = this.centrePoint + this.boxWidth;
+    this.generations[0][0].Y1 = _y;
+    this.generations[0][0].Y2 = _y + this.boxHeight;
+    var idx = 0;
+    var pidx = 0;
+    this.familySpanLines = [];
+
+    while (idx < this.generations.length) {
+      this.familySpanLines.push([]);
+      pidx = 0;
+
+      while (pidx < this.generations[idx].length) {
+        this.familySpanLines[idx].push([]);
+        pidx++;
+      }
+
+      idx++;
+    }
+
+    let SortByGenIdx = paramList => {
+      for (var i = 0; i < paramList.length; i++) {
+        for (var j = i + 1; j < paramList.length; j++) {
+          if (Number(paramList[i].GenerationIdx) < Number(paramList[j].GenerationIdx)) {
+            var tempValue = paramList[j];
+            paramList[j] = paramList[i];
+            paramList[i] = tempValue;
+          }
+        }
+      }
+    };
+
+    genidx = 0;
+
+    while (genidx < this.generations.length) {
+      var personIdx = 0;
+      percentageLess += 2; // console.log('GENERATION: ' + genidx);
+
+      while (personIdx < this.generations[genidx].length) {
+        this.GetNewX(genidx, percentageLess, personIdx); // fills newxs
+
+        var overlap = 0.0;
+        var requiredSpace = 0.0;
+
+        if (personIdx > 0) {
+          if (this.generations[genidx][personIdx - 1].X2 > this.newX1) {
+            overlap = this.generations[genidx][personIdx - 1].X2 - this.newX1;
+            overlap += this.adjustedDistances[genidx];
+          }
+
+          var newChildidx = this.generations[genidx][personIdx].ChildIdx;
+          var oldChildidx = this.generations[genidx][personIdx - 1].ChildIdx;
+          var countPersonSpaces = newChildidx - oldChildidx;
+
+          if (countPersonSpaces > 1) {
+            countPersonSpaces--; //needed space
+
+            requiredSpace = countPersonSpaces * this.adjustedBoxWidths[genidx - 1] + (countPersonSpaces + 1) * (this.adjustedDistances[genidx - 1] + 5);
+            var spaceSoFarCreated = this.generations[genidx - 1][newChildidx].X1 - this.generations[genidx - 1][oldChildidx].X2 + overlap; // we dont have enough space!
+
+            if (requiredSpace > spaceSoFarCreated) {
+              // increase the overlap so enough space if provided
+              overlap += requiredSpace - spaceSoFarCreated;
+            } else if (overlap === 0) {
+              overlap = requiredSpace - spaceSoFarCreated;
+            }
+          }
+        }
+
+        if (overlap > 0) {
+          // console.log('overlaped: ' + personIdx);
+          this.getMoveList(personIdx - 1, genidx);
+          SortByGenIdx(this.moveList); //  this.moveList.SortByGenIdx();
+          //var sorted = moveList.OrderByDescending(o => o.GenerationIdx);
+
+          var listIdx = 0; // }
+          //                    $.each(this.moveList, function (index, _treePerson) {
+
+          while (listIdx < this.moveList.length) {
+            var _treePerson = this.moveList[listIdx];
+            var tpPersonIdx = _treePerson.Index;
+
+            while (tpPersonIdx >= 0) {
+              //      Debug.WriteLine("moving: " + this.generations[_treePerson.generation][tpPersonIdx].name);
+              //console.log("moving: " + _treePerson.Name + " " + _treePerson.X1 + " " + _treePerson.X2);
+              var _movePerson = this.generations[_treePerson.GenerationIdx][tpPersonIdx];
+              var _prevPerson = null;
+              var _nextPerson = null;
+              if (tpPersonIdx > 0) _prevPerson = this.generations[_treePerson.GenerationIdx][tpPersonIdx - 1];
+              if (tpPersonIdx + 1 < this.generations[_treePerson.GenerationIdx].length) _nextPerson = this.generations[_treePerson.GenerationIdx][tpPersonIdx + 1];
+              this.workingX1 = 0.0;
+              this.workingX2 = 0.0;
+
+              if (_movePerson.FatherIdx == -1 && _movePerson.MotherIdx == -1 || _movePerson.GenerationIdx == genidx) {
+                if (_movePerson.GenerationIdx == genidx) {
+                  this.workingX1 = _movePerson.X1 - overlap;
+                  this.workingX2 = _movePerson.X2 - overlap;
+                } else {
+                  var parentlessPersonStartX = _movePerson.X1 - overlap; // GetX1ForParentlessPerson(_movePerson.generation, _movePerson.index);
+
+                  if (parentlessPersonStartX === 0.0) {
+                    parentlessPersonStartX = 15;
+                    this.workingX2 = _nextPerson.X1 - parentlessPersonStartX;
+                    this.workingX1 = this.workingX2 - this.adjustedBoxWidths[_nextPerson.GenerationIdx];
+                  } else {
+                    this.workingX1 = parentlessPersonStartX;
+                    this.workingX2 = this.workingX1 + this.adjustedBoxWidths[_nextPerson.GenerationIdx];
+                  }
+                }
+              } else {
+                this.CreateChildPositionFromParent(_movePerson); //sets workingXs
+              } //   if (this.workingX1 == -3830.17696197631 && this.workingX2 == -3773.62983468031 && _treePerson.Name == 'James Reeves') {
+              //      console.log('hello');
+              //  }
+              // console.log('working 1 and 2: ' + this.workingX1 + ' - ' + this.workingX2);
+
+
+              _movePerson.X1 = this.workingX1; // -adjustedDistanceApart;
+
+              _movePerson.X2 = this.workingX2; // -adjustedDistanceApart;
+
+              tpPersonIdx--;
+            } //end while (tpPersonIdx >= 0)
+
+
+            listIdx++;
+          } // end listIdx < this.moveList.length
+
+        }
+
+        this.generations[genidx][personIdx].X1 = this.newX1; // _x - adjustedBoxWidth;
+
+        this.generations[genidx][personIdx].X2 = this.newX2; // _x + adjustedBoxWidth;
+
+        this.generations[genidx][personIdx].Y1 = _y;
+        this.generations[genidx][personIdx].Y2 = _y + this.adjustedBoxHeights[genidx];
+        this.CalcTPZoom(genidx, personIdx);
+        personIdx++;
+      }
+
+      _y -= this.distanceBetweenGens;
+      genidx++;
+    } //, ref newX1, ref newX2
+
+
+    this.CreateChildPositionFromParent(this.generations[0][0]); //sets workingXs
+
+    this.generations[0][0].X1 = this.workingX1;
+    this.generations[0][0].X2 = this.workingX2;
+    this.generations[0][0].IsDisplayed = true;
+    genidx = 0;
+    this.drawingX1 = this.generations[0][0].X1;
+    this.drawingX2 = this.generations[0][0].X2;
+
+    while (genidx < this.generations.length) {
+      if (this.drawingX1 > this.generations[genidx][0].X1) this.drawingX1 = this.generations[genidx][0].X1;
+      if (this.drawingX2 < this.generations[genidx][this.generations[genidx].length - 1].X2) this.drawingX2 = this.generations[genidx][this.generations[genidx].length - 1].X2;
+      genidx++;
+    } // top of the screen
+
+
+    this.drawingY1 = this.generations[this.generations.length - 1][0].Y2; //bottom of the screen
+
+    this.drawingY2 = this.generations[0][0].Y1;
+    this.drawingHeight = this.generations[0][0].Y1 - this.generations[this.generations.length - 1][0].Y2;
+    this.drawingCentre = (this.drawingX2 - this.drawingX1) / 2;
+    this.drawingWidth = this.drawingX2 - this.drawingX1;
+    this.CreateConnectionLines();
+  },
+  //end compute locations
+  //run when generation is loaded
+  //run when visibility changed
+  UpdateGenerationState: function UpdateGenerationState() {},
+  CreateConnectionLines: function CreateConnectionLines() {
+    // this.FamilySpanLines = new List<List<List<TreePoint>>>();
+    var middleGeneration = 0.0;
+    var middleXChild = 0.0;
+    var middleParent = 0.0;
+    var middleTopChild = 0.0;
+    var bottomParent = 0.0;
+    var parentHeight = 0.0;
+    var distanceBetweenGens = 0.0;
+    var genidx = 0;
+
+    while (genidx < this.generations.length) {
+      var personIdx = 0;
+
+      if (genidx + 1 >= this.familySpanLines.length) {
+        genidx++;
+        continue;
+      }
+
+      while (personIdx < this.generations[genidx].length) {
+        var _family0 = this.familySpanLines[genidx][personIdx]; //_family0[_family0.length] = new Array(_secondStorkX, _firstRow);
+
+        _family0 = []; //familySpanLines[genidx][personIdx].Clear();
+
+        middleTopChild = this.generations[genidx][personIdx].Y1; // + 10
+
+        if (this.generations.length > genidx + 1) {
+          parentHeight = this.generations[genidx + 1][0].Y2 - this.generations[genidx + 1][0].Y1;
+          bottomParent = this.generations[genidx + 1][0].Y1 + parentHeight; // + 10
+
+          distanceBetweenGens = this.generations[genidx][personIdx].Y1 - this.generations[genidx + 1][0].Y2;
+
+          if (this.generations[genidx][personIdx].FatherIdx > -1 || this.generations[genidx][personIdx].MotherIdx > -1) {
+            // top middle of child
+            middleXChild = (this.generations[genidx][personIdx].X1 + this.generations[genidx][personIdx].X2) / 2;
+            middleGeneration = this.generations[genidx][personIdx].Y1 - distanceBetweenGens / 2 + 10; // move to top and middle of child
+            // familySpanLines[genidx][personIdx].Add(new TreePoint(middleXChild, middleTopChild));
+
+            _family0[_family0.length] = new Array(middleXChild, middleTopChild); // move to middle of generations about child
+            // familySpanLines[genidx][personIdx].Add(new TreePoint(middleXChild, middleGeneration));
+
+            _family0[_family0.length] = new Array(middleXChild, middleGeneration);
+            var patIdx = this.generations[genidx][personIdx].FatherIdx;
+
+            if (patIdx != -1) {
+              // move to middle generation under parent
+              middleParent = (this.generations[genidx + 1][patIdx].X1 + this.generations[genidx + 1][patIdx].X2) / 2; //familySpanLines[genidx][personIdx].Add(new TreePoint(middleParent, middleGeneration));
+
+              _family0[_family0.length] = new Array(middleParent, middleGeneration);
+
+              if (this.drawingHeight > 200) {
+                // move to bottom of parent
+                //familySpanLines[genidx][personIdx].Add(new TreePoint(middleParent, bottomParent));
+                _family0[_family0.length] = new Array(middleParent, bottomParent);
+              } else {
+                //familySpanLines[genidx][personIdx].Add(new TreePoint(middleParent, middleGeneration - 4));
+                _family0[_family0.length] = new Array(middleParent, middleGeneration - 4);
+              } // move to middle generation under parent
+              //familySpanLines[genidx][personIdx].Add(new TreePoint(middleParent, middleGeneration));
+
+
+              _family0[_family0.length] = new Array(middleParent, middleGeneration); // move to middle of child
+              // familySpanLines[genidx][personIdx].Add(new TreePoint(middleXChild, middleGeneration));
+
+              _family0[_family0.length] = new Array(middleXChild, middleGeneration); // move to top and middle of child
+              // familySpanLines[genidx][personIdx].Add(new TreePoint(middleXChild, middleTopChild));
+
+              _family0[_family0.length] = new Array(middleXChild, middleTopChild);
+            }
+
+            patIdx = this.generations[genidx][personIdx].MotherIdx;
+
+            if (patIdx != -1) {
+              middleParent = (this.generations[genidx + 1][patIdx].X1 + this.generations[genidx + 1][patIdx].X2) / 2; // move to middle of generations about child
+              // familySpanLines[genidx][personIdx].Add(new TreePoint(middleXChild, middleGeneration));
+
+              _family0[_family0.length] = new Array(middleXChild, middleGeneration); //familySpanLines[genidx][personIdx].Add(new TreePoint(middleParent, middleGeneration));
+
+              _family0[_family0.length] = new Array(middleParent, middleGeneration);
+
+              if (this.drawingHeight > 200) {
+                // move to bottom of parent
+                //familySpanLines[genidx][personIdx].Add(new TreePoint(middleParent, bottomParent));
+                _family0[_family0.length] = new Array(middleParent, bottomParent);
+              } else {
+                //familySpanLines[genidx][personIdx].Add(new TreePoint(middleParent, middleGeneration - 4));
+                _family0[_family0.length] = new Array(middleParent, middleGeneration - 4);
+              } // move to middle generation under parent
+              // familySpanLines[genidx][personIdx].Add(new TreePoint(middleParent, middleGeneration));
+
+
+              _family0[_family0.length] = new Array(middleParent, middleGeneration); // move to middle of child
+              // familySpanLines[genidx][personIdx].Add(new TreePoint(middleXChild, middleGeneration));
+
+              _family0[_family0.length] = new Array(middleXChild, middleGeneration); // move to top and middle of child
+              //familySpanLines[genidx][personIdx].Add(new TreePoint(middleXChild, middleTopChild));
+
+              _family0[_family0.length] = new Array(middleXChild, middleTopChild);
+            } //end (patIdx != -1)
+
+          } //end  if (this.generations[genidx][personIdx].FatherIdx > 0 || this.generations[genidx][personIdx].MotherIdx > 0)
+
+        } //if (this.generations.length > (genidx + 1))
+
+
+        this.familySpanLines[genidx][personIdx] = _family0;
+        personIdx++;
+      }
+
+      genidx++;
+    }
+  },
+  //this.CreateConnectionLines
+  CreateChildPositionFromParent: function CreateChildPositionFromParent(movePerson) {
+    this.workingX1 = 0.0;
+    this.workingX2 = 0.0;
+
+    if (this.adjustedBoxWidths.length > movePerson.GenerationIdx) {
+      this.boxWidth = this.adjustedBoxWidths[movePerson.GenerationIdx];
+    } else {
+      this.boxWidth = this.boxWidth;
+    }
+
+    if (movePerson.FatherIdx == -1) {
+      this.workingX1 = (this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X1 + this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X2) / 2 - this.boxWidth / 2;
+      this.workingX2 = this.workingX1 + this.boxWidth;
+    }
+
+    if (movePerson.MotherIdx == -1) {
+      this.workingX1 = (this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X1 + this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X2) / 2 - this.boxWidth / 2;
+      this.workingX2 = this.workingX1 + this.boxWidth;
+    }
+
+    var parentX1 = 0.0;
+    var parentX2 = 0.0;
+
+    if (movePerson.FatherIdx != -1 && movePerson.MotherIdx != -1) {
+      parentX2 = this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X2;
+      parentX1 = this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X1;
+
+      if (movePerson.FatherIdx > movePerson.MotherIdx) {
+        parentX2 = this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X2;
+        parentX1 = this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X1;
+      }
+
+      this.workingX1 = (parentX2 + parentX1) / 2 - (movePerson.X2 - movePerson.X1) / 2;
+      this.workingX2 = this.workingX1 + (movePerson.X2 - movePerson.X1);
+    }
+  },
+  GetNewX: function GetNewX(genidx, percentageLess, personIdx) {
+    var adjustedBoxHeight = 0.0;
+    var adjustedDistanceApart = 0.0;
+    var adjustedBoxWidth = 0.0;
+    var childIdx = this.generations[genidx][personIdx].ChildIdx;
+
+    if (genidx > 0) {
+      adjustedBoxHeight = this.boxHeight - this.boxHeight / 100 * percentageLess;
+      var childBoxWidth = this.generations[genidx - 1][childIdx].X2 - this.generations[genidx - 1][childIdx].X1;
+      var childCentrePoint = this.generations[genidx - 1][childIdx].X1 + childBoxWidth / 2;
+      adjustedDistanceApart = this.distanceBetweenBoxs - this.distanceBetweenBoxs / 100 * percentageLess;
+      adjustedBoxWidth = childBoxWidth - childBoxWidth / 100 * percentageLess;
+      var isFirstParent = false;
+      var isLastParent = false;
+      var isSingleParent = false; //trying to determine which of the parents we are refering to
+      // because if its the first then x value will be lower than it would be for 2nd
+
+      if (this.generations[genidx].length > personIdx + 1) {
+        if (this.generations[genidx][personIdx + 1].ChildIdx == this.generations[genidx][personIdx].ChildIdx) {
+          isFirstParent = true;
+        }
+      }
+
+      if (personIdx > 0) {
+        if (this.generations[genidx][personIdx].ChildIdx == this.generations[genidx][personIdx - 1].ChildIdx) {
+          isLastParent = true;
+        }
+      }
+
+      if (!isFirstParent && !isLastParent) {
+        isSingleParent = true;
+      }
+
+      if (isFirstParent) {
+        this.newX1 = childCentrePoint - adjustedDistanceApart / 2 - adjustedBoxWidth;
+      }
+
+      if (isLastParent) {
+        this.newX1 = childCentrePoint + adjustedDistanceApart / 2;
+      }
+
+      if (isSingleParent) {
+        this.newX1 = childCentrePoint - adjustedBoxWidth / 2;
+      } // newX1 = initialCentrePoint - newX1;
+
+    } else {
+      adjustedBoxHeight = this.boxHeight;
+      adjustedBoxWidth = this.boxWidth;
+      this.newX1 = this.centrePoint;
+    }
+
+    if (this.adjustedDistances.length > genidx) {
+      this.adjustedDistances[genidx] = adjustedDistanceApart;
+    } else {
+      this.adjustedDistances[this.adjustedDistances.length] = adjustedDistanceApart;
+    }
+
+    if (this.adjustedBoxWidths.length > genidx) {
+      this.adjustedBoxWidths[genidx] = adjustedBoxWidth;
+    } else {
+      //this.adjustedBoxWidths[this.adjustedBoxWidths.length] = adjustedBoxWidth;
+      this.adjustedBoxWidths.push(adjustedBoxWidth);
+    }
+
+    if (this.adjustedBoxHeights.length > genidx) {
+      this.adjustedBoxHeights[genidx] = adjustedBoxHeight;
+    } else {
+      //this.adjustedBoxHeights[this.adjustedBoxWidths.length] = adjustedBoxHeight;
+      this.adjustedBoxHeights.push(adjustedBoxHeight);
+    }
+
+    this.newX2 = this.newX1 + adjustedBoxWidth;
+  },
+  getMoveList: function getMoveList(person, startGen) {
+    this.moveList = [];
+    var moveGenIdx = startGen;
+
+    let containsPerson = (personList, person) => {
+      for (var i = 0; i < personList.length; i++) {
+        if (personList[i].PersonId == person.PersonId) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    while (moveGenIdx > 0) {
+      if (!containsPerson(this.moveList, this.generations[moveGenIdx][person])) {
+        this.moveList.push(this.generations[moveGenIdx][person]);
+      }
+
+      person = this.generations[moveGenIdx][person].ChildIdx;
+      moveGenIdx--;
+    }
+  },
+  SetInitialValues: function SetInitialValues(zoomPerc, dist_bet_box, dist_bet_gen, box_wid, box_hig, dist_bet_fam, low_stalk_hi, mid_span, top_span, screen_width, screen_height) {
+    this.centrePoint = 750.0;
+    this.centreVerticalPoint = 0.0;
+    this.zoomLevel = 0.0;
+    this.centrePointXOffset = 0.0;
+    this.centrePointYOffset = 0.0;
+    this.mouse_x = 0; //int
+
+    this.mouse_y = 0; //int
+
+    this.mouseXPercLocat = 0.0;
+    this.mouseYPercLocat = 0.0;
+    this.bt_screenHeight = screen_height;
+    this.bt_screenWidth = screen_width;
+    this.zoomPercentage = zoomPerc;
+    this.original_distanceBetweenBoxs = dist_bet_box;
+    this.original_distanceBetweenGens = dist_bet_gen;
+    this.original_boxWidth = box_wid;
+    this.original_boxHeight = box_hig;
+    this.original_distancesbetfam = dist_bet_fam;
+    this.original_lowerStalkHeight = low_stalk_hi;
+    this.original_middleSpan = mid_span;
+    this.original_topSpan = top_span;
+    this.distanceBetweenBoxs = this.original_distanceBetweenBoxs;
+    this.distanceBetweenGens = this.original_distanceBetweenGens;
+    this.boxWidth = this.original_boxWidth;
+    this.boxHeight = this.original_boxHeight;
+    this.distancesbetfam = this.original_distancesbetfam;
+    this.halfBox = this.boxWidth / 2;
+    this.halfBoxHeight = this.boxHeight / 2;
+    this.lowerSpan = this.original_lowerStalkHeight;
+    this.middleSpan = this.original_middleSpan;
+    this.topSpan = this.original_topSpan;
+  },
+  _GetTreePerson: function _GetTreePerson(graph, personId) {
+    var _genidx = 0;
+    var _personIdx = 0;
+
+    while (_genidx < graph.length) {
+      _personIdx = 0;
+
+      while (_personIdx < graph[_genidx].length) {
+        if (graph[_genidx][_personIdx].PersonId == personId) {
+          return graph[_genidx][_personIdx];
+        }
+
+        _personIdx++;
+      }
+
+      _genidx++;
+    }
+
+    return null;
+  },
+  SetVisibility: function SetVisibility(parent, isDisplay) {
+    var personStack = [];
+    parent.Children.forEach(child => {
+      personStack.push(child);
+    });
+    var currentTP = parent;
+
+    while (personStack.length > 0) {
+      currentTP = personStack.pop();
+      currentTP.IsDisplayed = isDisplay;
+      currentTP.Spouses.forEach(spouse => {
+        spouse.IsDisplayed = isDisplay;
+      });
+      currentTP.Children.forEach(child => {
+        personStack.push(child);
+      });
+    }
+  },
+  MoveTree: function MoveTree(direction) {
+    // console.log('move tree' + direction);
+    if (direction == 'SOUTH') this.centreVerticalPoint -= 1;
+    if (direction == 'NORTH') this.centreVerticalPoint += 1;
+    if (direction == 'EAST') this.centrePoint += 1;
+    if (direction == 'WEST') this.centrePoint -= 1;
+
+    if (direction == 'UP' || direction == 'DOWN') {
+      var x = this.bt_screenWidth / 2;
+      var y = this.bt_screenHeight / 2;
+      this.SetMouse(x, y);
+      this.SetZoomStart();
+      this.SetCentrePoint(1000000, 1000000);
+
+      if (direction == 'UP') {
+        this.ZoomIn();
+      } else {
+        this.ZoomOut();
+      }
+    } else {
+      this.DrawTree();
+    }
+  },
+  SetZoom: function SetZoom(percentage) {
+    if (percentage !== 0.0) {
+      var _workingtp = 0.0;
+      var _percLocal_x = 0.0;
+      var _percLocal_y = 0.0; //zoom drawing components
+
+      this.zoomPercentage += percentage;
+      this.zoomLevel += percentage;
+      _workingtp = this.original_distanceBetweenBoxs / 100;
+      this.distanceBetweenBoxs = _workingtp * this.zoomPercentage;
+      _workingtp = this.original_boxWidth / 100;
+      this.boxWidth = _workingtp * this.zoomPercentage;
+      this.halfBox = this.boxWidth / 2;
+      _workingtp = this.original_distancesbetfam / 100;
+      _workingtp = this.original_distanceBetweenGens / 100;
+      this.distanceBetweenGens = _workingtp * this.zoomPercentage;
+      _workingtp = this.original_boxHeight / 100;
+      this.boxHeight = _workingtp * this.zoomPercentage;
+      this.halfBoxHeight = this.boxHeight / 2;
+      this.ComputeLocations();
+      this.GetPercDistances();
+      _percLocal_x = this.percX1;
+      _percLocal_y = this.percY1;
+      this.centreVerticalPoint += this.drawingHeight / 100 * (_percLocal_y - this.mouseYPercLocat);
+      this.centrePoint += this.drawingWidth / 100 * (_percLocal_x - this.mouseXPercLocat);
+      this.ComputeLocations();
+    } //end percentage ==0.0)
+
+
+    this.DrawTree();
+  },
+  SetZoomStart: function SetZoomStart() {
+    this.GetPercDistances();
+    this.mouseXPercLocat = this.percX1;
+    this.mouseYPercLocat = this.percY1;
+  },
+  GetPercDistances: function GetPercDistances() {
+    var _distanceFromX1 = 0.0;
+    var _distanceFromY1 = 0.0;
+    var _onePercentDistance = 0.0;
+    this.percX1 = 0.0;
+    this.percY1 = 0.0;
+    this.drawingWidth = this.drawingX2 - this.drawingX1;
+    this.drawingHeight = this.drawingY2 - this.drawingY1;
+
+    if (this.drawingWidth !== 0 && this.drawingHeight !== 0) {
+      if (this.drawingX1 > 0) {
+        _distanceFromX1 = this.mouse_x - this.drawingX1; //;
+      } else {
+        _distanceFromX1 = Math.abs(this.drawingX1) + this.mouse_x;
+      }
+
+      _onePercentDistance = this.drawingWidth / 100;
+      this.percX1 = _distanceFromX1 / _onePercentDistance;
+
+      if (this.drawingY1 > 0) {
+        _distanceFromY1 = this.mouse_y - this.drawingY1; // ;
+      } else {
+        _distanceFromY1 = Math.abs(this.drawingY1) + this.mouse_y;
+      }
+
+      _onePercentDistance = this.drawingHeight / 100;
+      this.percY1 = _distanceFromY1 / _onePercentDistance;
+    }
+  },
+  SetMouse: function SetMouse(x, y, mousestate) {
+    //    console.log('mouse set: ' + x + ' , ' + y);
+    this.mouse_x = x;
+    this.mouse_y = y;
+    if (mousestate == undefined) mousestate = false;
+    var mouseLink = this.LinkContainingPoint(this.bt_links, this.mouse_x, this.mouse_y); //var mouseLink = this.bt_links.LinkContainingPoint(this.mouse_x, this.mouse_y);
+    //var buttonLink = this.bt_buttonLinks.LinkContainingPoint(this.mouse_x, this.mouse_y);
+
+    var buttonLink = this.LinkContainingPoint(this.bt_buttonLinks, this.mouse_x, this.mouse_y);
+
+    if (mouseLink !== null || buttonLink !== null) {
+      document.body.style.cursor = 'pointer'; //   console.log(mouseLink.action);
+    } else {
+      if (mousestate == false) document.body.style.cursor = 'default';else document.body.style.cursor = 'move';
+    }
+  },
+  GetChildDisplayStatus: function GetChildDisplayStatus(person) {
+    var isDisplayed = true;
+
+    if (this.generations.length > person.GenerationIdx) {
+      var _genidx = 0;
+
+      while (_genidx < this.generations[person.GenerationIdx].length) {
+        if (this.generations[person.GenerationIdx][_genidx].PersonId == person.ChildLst[0]) {
+          var _person = this.generations[person.GenerationIdx][_genidx];
+          isDisplayed = _person.IsDisplayed;
+          break;
+        }
+
+        _genidx++;
+      }
+    }
+
+    return isDisplayed;
+  },
+  // move this up to the derived classes
+  PerformClick: function PerformClick(x, y) {
+    //  var mouseLink = this.bt_links.LinkContainingPoint(x, y);
+    var mouseLink = this.LinkContainingPoint(this.bt_links, x, y);
+
+    if (mouseLink !== null) {
+      var selectedPerson = this._GetTreePerson(this.generations, mouseLink.action); //     var zoomReq = this.zoomPercentage; //-100
+      //   var xpos = selectedPerson.X1;
+      //   var ypos = selectedPerson.Y1;
+
+
+      this.selectedPersonId = selectedPerson.PersonId;
+      this.selectedPersonX = selectedPerson.X1;
+      this.selectedPersonY = selectedPerson.Y1; //var queryStr = '?sid=' + '00000000-0000-0000-0000-000000000000' + '&id=' + selectedPerson.PersonId;
+      //queryStr += '&xpos=' + xpos + '&ypos=' + ypos + '&zoom=' + zoomReq;
+      //this._qryString = queryStr;
+
+      this.bt_refreshData = true;
+    } else {
+      //  var buttonLink = this.bt_buttonLinks.LinkContainingPoint(x, y);
+      var buttonLink = this.LinkContainingPoint(this.bt_buttonLinks, x, y);
+
+      if (buttonLink !== null) {
+        var parts = buttonLink.action.split(',');
+
+        var clickedPerson = this._GetTreePerson(this.generations, parts[0]);
+
+        var isVis = true;
+
+        if (parts[1] == 'false') {
+          isVis = true;
+        } else {
+          isVis = false;
+        }
+
+        this.SetVisibility(clickedPerson, isVis);
+      }
+    }
+  },
+  SetCentrePoint: function SetCentrePoint(param_x, param_y) {
+    if (param_x == 1000000 && param_y == 1000000) {
+      this.centrePointXOffset = 0;
+      this.centrePointYOffset = 0;
+    } else {
+      if (this.centrePointXOffset === 0) {
+        this.centrePointXOffset = this.centrePoint - param_x;
+      } else {
+        this.centrePoint = param_x + this.centrePointXOffset;
+      }
+
+      if (this.centrePointYOffset === 0) {
+        this.centrePointYOffset = this.centreVerticalPoint - param_y;
+      } else {
+        this.centreVerticalPoint = param_y + this.centrePointYOffset;
+      }
+    } // console.log('setcentrepoint: '+ this.centrePointXOffset + ' ' + this.centrePoint);
+
+  },
+  //end set centre point
+  ResetOffset: function ResetOffset() {
+    this.centrePointXOffset = 0;
+    this.centrePointYOffset = 0;
+  },
+  ZoomIn: function ZoomIn() {
+    this.zoomAmount++;
+    this.SetZoom(this.zoomAmount);
+  },
+  ZoomOut: function ZoomOut() {
+    if (this.zoomAmount > 7) this.zoomAmount--;
+    this.SetZoom(this.zoomAmount - this.zoomAmount * 2); //  SetZoom(zoomAmount - (zoomAmount * 2));
+  },
+  CalcZoomLevel: function CalcZoomLevel(zoomPercentage) {
+    var _retVal = 0;
+
+    if (zoomPercentage > 0 && zoomPercentage < 40) {
+      _retVal = 1;
+    } else if (zoomPercentage >= 40 && zoomPercentage < 60) {
+      _retVal = 2;
+    } else if (zoomPercentage >= 60 && zoomPercentage <= 150) {
+      _retVal = 3;
+    } else if (zoomPercentage > 150 && zoomPercentage <= 200) {
+      _retVal = 4;
+    } else if (zoomPercentage > 200 && zoomPercentage <= 250) {
+      _retVal = 5;
+    } else if (zoomPercentage > 250 && zoomPercentage <= 300) {
+      _retVal = 6;
+    } else if (zoomPercentage > 300) {
+      _retVal = 7;
+    }
+
+    return _retVal;
+  },
+  CalcAreaLevel: function CalcAreaLevel(area) {
+    var _returnVal = 0;
+
+    if (area > 0 && area < 1000) {
+      _returnVal = 1;
+    } else if (area >= 1000 && area < 2500) {
+      _returnVal = 2;
+    } else if (area >= 2500 && area <= 5000) {
+      _returnVal = 3;
+    } else if (area > 5000 && area <= 10000) {
+      _returnVal = 4;
+    } else if (area > 10000 && area <= 15000) {
+      _returnVal = 5;
+    } else if (area > 15000 && area <= 20000) {
+      _returnVal = 6;
+    } else if (area > 20000) {
+      _returnVal = 7;
+    }
+
+    return _returnVal;
+  },
+  CalcTPZoom: function CalcTPZoom(genidx, personIdx) {
+    var _tp = this.generations[genidx][personIdx];
+
+    var _boxarea = (_tp.X2 - _tp.X1) * (_tp.Y2 - _tp.Y1);
+
+    _tp.zoom = this.CalcAreaLevel(_boxarea);
+  },
+  RelocateToSelectedPerson: function RelocateToSelectedPerson() {
+    var personId = this.selectedPersonId;
+    var _xpos = this.selectedPersonX;
+    var _ypos = this.selectedPersonY;
+    this.ComputeLocations();
+    var distanceToMove = 0.0;
+    var currentPersonLocation = 0;
+
+    var _temp = this._GetTreePerson(this.generations, personId);
+
+    var x = 0.0;
+    var y = 0.0;
+
+    if (_temp !== null) {
+      if (_xpos === 0.0) {
+        currentPersonLocation = (this.generations[0][0].X1 + this.generations[0][0].X2) / 2;
+        var requiredLocation = this.bt_screenWidth / 2;
+        distanceToMove = requiredLocation - currentPersonLocation;
+        this.centrePoint += distanceToMove;
+      } else {
+        currentPersonLocation = _temp.X1;
+
+        if (currentPersonLocation < 0.0) {
+          distanceToMove = _xpos - currentPersonLocation;
+        }
+
+        if (currentPersonLocation > this.bt_screenWidth) {
+          distanceToMove = 0.0 - (this.bt_screenWidth - _xpos + (_xpos - this.bt_screenWidth));
+        }
+
+        if (currentPersonLocation >= 0 && currentPersonLocation <= this.bt_screenWidth) {
+          //100 - 750
+          distanceToMove = _xpos - currentPersonLocation; // 800 - 100
+        }
+
+        this.centrePoint += distanceToMove;
+      }
+
+      if (_ypos === 0.0) {
+        var _currentPersonLocation = (this.generations[0][0].Y1 + this.generations[0][0].Y2) / 2;
+
+        var _requiredLocation = this.boxHeight;
+
+        var _distanceToMove = _requiredLocation - _currentPersonLocation;
+
+        this.centreVerticalPoint -= _distanceToMove;
+      } else {
+        if (_temp === null) {
+          currentPersonLocation = 0.0;
+        } else {
+          currentPersonLocation = _temp.Y1;
+
+          if (currentPersonLocation > this.bt_screenHeight) {
+            distanceToMove = currentPersonLocation - _ypos;
+          }
+
+          if (currentPersonLocation >= 0 && currentPersonLocation <= this.bt_screenHeight) {
+            distanceToMove = currentPersonLocation - _ypos;
+          }
+
+          if (currentPersonLocation < 0) {
+            distanceToMove = _ypos - currentPersonLocation;
+          }
+        }
+
+        this.centreVerticalPoint -= distanceToMove;
+      }
+
+      this.ComputeLocations();
+
+      if (_ypos === 0) {
+        y = 0 - this.bt_screenHeight / 2;
+      } else {
+        y = (_temp.Y2 + _temp.Y1) / 2;
+      }
+
+      if (_xpos === 0) {
+        x = this.bt_screenWidth / 2;
+      } else {
+        x = (_temp.X2 + _temp.X1) / 2;
+      }
+
+      this.SetMouse(x, y);
+      this.SetZoomStart();
+      this.SetCentrePoint(1000000, 1000000);
+      this.DrawTree();
+    }
+  },
+  Debug: function Debug() {
+    console.log('debugging');
+    var idx = 0;
+
+    while (this.generations.length > idx) {
+      var cid = 0;
+      var cife = 0;
+      var cipl = 0;
+      var cifs = 0;
+      var cihl = 0;
+      var personidx = 0;
+
+      while (this.generations[idx].length > personidx) {
+        if (this.generations[idx][personidx].RecordLink.Name == "Jane Thackray") {
+          console.log("Jane Thackray X1 Y2");
+          console.log(this.generations[idx][personidx].X1);
+          console.log(this.generations[idx][personidx].Y1);
+        }
+
+        if (this.generations[idx][personidx].RecordLink.Name == "William Talbot") {
+          console.log("William Talbot X1 Y2");
+          console.log(this.generations[idx][personidx].X1);
+          console.log(this.generations[idx][personidx].Y1);
+        }
+
+        personidx++;
+      }
+
+      idx++;
+    }
+  }
+};
+},{"./TreeUI.js":"../src/DataLoader/TreeUI.js"}],"../src/containers/VisualisationHandler.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _styles = require("@material-ui/core/styles");
+
+var _Grid = _interopRequireDefault(require("@material-ui/core/Grid"));
+
+var _Button = _interopRequireDefault(require("@material-ui/core/Button"));
+
+var _Radio = _interopRequireDefault(require("@material-ui/core/Radio"));
+
+var _RadioGroup = _interopRequireDefault(require("@material-ui/core/RadioGroup"));
+
+var _FormControlLabel = _interopRequireDefault(require("@material-ui/core/FormControlLabel"));
+
+var _FormControl = _interopRequireDefault(require("@material-ui/core/FormControl"));
+
+var _FormLabel = _interopRequireDefault(require("@material-ui/core/FormLabel"));
+
+var _reactRedux = require("react-redux");
+
+var _creators = require("../actions/creators.jsx");
+
+var _AncGraphCreator = require("../DataLoader/AncGraphCreator.js");
+
+var _DescGraphCreator = require("../DataLoader/DescGraphCreator.js");
+
+var _TreeUI = require("../DataLoader/TreeUI.js");
+
+var _AncTree = require("../DataLoader/AncTree.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+const styles = {
+  formControl: {
+    marginTop: 15,
+    marginLeft: 10
+  },
+  label: {
+    textAlign: 'center'
+  }
+};
+const cStyle = {
+  position: 'absolute'
+};
+
+class GraphContainer extends _react.default.Component {
+  constructor(props) {
+    super(props);
+    this.saveContext = this.saveContext.bind(this);
+  }
+
+  saveContext(ctx) {
+    this.props.contextCreated(ctx);
+  }
+
+  componentDidUpdate() {
+    this.props.drawFrame();
+  }
+
+  render() {
+    return _react.default.createElement(PureCanvas, {
+      contextRef: this.saveContext
+    });
+  }
+
+}
+
+class PureCanvas extends _react.default.Component {
+  shouldComponentUpdate() {
+    return false;
+  }
+
+  render() {
+    return _react.default.createElement("canvas", {
+      style: cStyle,
+      ref: node => node ? this.props.contextRef(node.getContext('2d')) : null
+    });
+  }
+
+}
+
+class VisualisationHandler extends _react.Component {
+  // import {AncTree} from "../../DataLoader/AncTree.js";
+  // import {DescTree} from "../../DataLoader/DescTree.js";
+  // import {GedLib} from "../../DataLoader/GedLib.js";
+  // import {AncGraphCreator} from "../../DataLoader/AncGraphCreator.js";
+  // import {TreeUI} from "../../DataLoader/TreeUI.js";
+  constructor(props) {
+    super(props); //state
+
+    this._tree = null;
+    this._moustQueue = [];
+    this.updateAnimationState = this.updateAnimationState.bind(this);
+  }
+
+  updateAnimationState() {
+    while (this._moustQueue.length > 0) {
+      var _point = this._moustQueue.shift();
+
+      console.log(_point[0] + "," + _point[1]); //   this.props.context.canvas.width = window.innerWidth;
+      //   this.props.context.canvas.height = window.innerHeight;
+
+      this._tree.SetCentrePoint(_point[0], _point[1]);
+
+      this._tree.DrawTree();
+
+      this.rAF = requestAnimationFrame(this.updateAnimationState);
+    }
+  }
+
+  canvasclick(clientX, boundingrecleft, clientY, boundingrectop) {
+    //  if(!this.validtree) return;
+    this._tree.PerformClick(clientX - boundingrecleft, clientY - boundingrectop);
+
+    this._tree.UpdateGenerationState(); // if (this._tree.bt_refreshData) {
+    //     getData(this._tree.selectedPersonId, this._tree.selectedPersonX, this._tree.selectedPersonY);
+    // }
+    //
+
+
+    this._moustQueue[this._moustQueue.length] = new Array(1000000, 1000000);
+  }
+
+  canvasmove(clientX, boundingrecleft, clientY, boundingrectop) {
+    var _point = new Array(clientX - boundingrecleft, clientY - boundingrectop);
+
+    if (this._tree != null && this._tree != undefined) this._tree.SetMouse(_point[0], _point[1]);
+
+    if (this._mouseDown) {
+      this._moustQueue.push(_point);
+
+      this.updateAnimationState();
+    }
+  }
+
+  canvasmousedown() {
+    this._mouseDown = true;
+  }
+
+  canvasmouseup() {
+    this._mouseDown = false;
+
+    var _point = new Array(1000000, 1000000);
+
+    this._moustQueue[this._moustQueue.length] = _point;
+  } // componentDidMount(){
+  //
+  //    console.log('VisualisationHandler componentDidMount' );
+  //
+  //    if(this.props.graphActiveLayout== 'ancestors'){
+  //      this.runAncestors(this.props.graphActiveSelection);
+  //
+  //    }
+  //    if(this.props.graphActiveLayout== 'descendents'){
+  //      this.runDescendants(this.props.graphActiveSelection);
+  //    }
+  //    if(this.props.graphActiveLayout== 'forceDirect'){
+  //      this.runGraphDirected();
+  //    }
+  //
+  //
+  // }
+
+
+  componentDidUpdate() {
+    console.log('VisualisationHandler componentDidUpdate');
+
+    if (this.props.graphActiveLayout == 'ancestors') {
+      this.initAncestors(this.props.graphActiveSelection, (selectedId, data, treeUI) => {
+        this.runAncestors(selectedId, data, treeUI);
+      });
+    }
+
+    if (this.props.graphActiveLayout == 'descendents') {
+      this.runDescendants(this.props.graphActiveSelection);
+    }
+
+    if (this.props.graphActiveLayout == 'forceDirect') {
+      this.runGraphDirected();
+    }
+  }
+
+  drawFrame(ctx) {// if(this._tree!=null){
+    //   console.log('drawing tree');
+    //   this._tree.DrawTree();
+    // }
+  }
+
+  contextCreated(ctx) {
+    console.log('context created');
+    this.props.setContext(ctx);
+    this.WireUp(ctx);
+  }
+
+  WireUp(ctx) {
+    // $("#myCanvas").unbind();
+    // $(".button_box").unbind();
+    //
+    // $(".button_box").mousedown(function (evt) {
+    //     var _dir = '';
+    //
+    //     if (evt.target.id == "up") _dir = 'UP';
+    //     if (evt.target.id == "dn") _dir = 'DOWN';
+    //     if (evt.target.id == "we") _dir = 'WEST';
+    //     if (evt.target.id == "no") _dir = 'NORTH';
+    //     if (evt.target.id == "es") _dir = 'EAST';
+    //     if (evt.target.id == "so") _dir = 'SOUTH';
+    //     if (evt.target.id == "de") _dir = 'DEBUG';
+    //
+    //     runner.movebuttondown(_dir);
+    //
+    // }).mouseup(function () {
+    //     runner.movebuttonup();
+    // });
+    // $("#myCanvas").mousedown(function (evt) {
+    //     evt.preventDefault();
+    //     evt.originalEvent.preventDefault();
+    //     runner.canvasmousedown();
+    // });
+    ctx.canvas.addEventListener('mousedown', evt => {
+      evt.preventDefault(); //evt.originalEvent.preventDefault();
+
+      this.canvasmousedown();
+    }); // $("#myCanvas").mouseup(function (evt) {
+    //   evt.preventDefault();
+    //   runner.canvasmouseup();
+    // });
+
+    ctx.canvas.addEventListener('mouseup', evt => {
+      evt.preventDefault();
+      this.canvasmouseup();
+    }); // $("#myCanvas").click(function (evt) {
+    //   var boundingrec = document.getElementById("myCanvas").getBoundingClientRect();
+    //   runner.canvasclick(evt.clientX ,boundingrec.left, evt.clientY , boundingrec.top);
+    // });
+
+    ctx.canvas.addEventListener('click', evt => {
+      var boundingrec = ctx.canvas.getBoundingClientRect();
+      this.canvasclick(evt.clientX, boundingrec.left, evt.clientY, boundingrec.top);
+    }); // $("#myCanvas").mousemove(function (evt) {
+    //    var boundingrec = document.getElementById("myCanvas").getBoundingClientRect();
+    //    runner.canvasmove(evt.clientX ,boundingrec.left, evt.clientY , boundingrec.top);
+    // });
+
+    ctx.canvas.addEventListener('mousemove', evt => {
+      var boundingrec = ctx.canvas.getBoundingClientRect();
+      this.canvasmove(evt.clientX, boundingrec.left, evt.clientY, boundingrec.top);
+    });
+  }
+
+  initAncestors(selectedId, complete) {
+    console.log('running ancs: ' + selectedId);
+    var context = this.props.context;
+    var loader = new _AncGraphCreator.AncGraphCreator(this.props.families, this.props.persons);
+    loader.GetGenerations(selectedId, function (data) {
+      console.log(data.Generations.length);
+      let treeUI = new _TreeUI.TreeUI();
+      context.canvas.style.top = 0;
+      context.canvas.style.left = 0; // context.canvas.style.position = 'absolute';
+
+      context.canvas.width = window.innerWidth;
+      context.canvas.height = window.innerHeight; //   treeUI.RoundedRect(context,500,100,50,50,2);
+
+      treeUI.Init(1, context, instance => {
+        console.log('tree ui loaded');
+        complete(selectedId, data, treeUI);
+      });
+    });
+  }
+
+  runAncestors(selectedId, data, treeUI) {
+    //   TreeUI.WireUp(_treeRunner);
+    //   _treeRunner.run(selectedId,data, new AncTree(),treeUI);
+    var _zoomLevel = 100;
+    this._tree = new _AncTree.AncTree();
+    this._tree.selectedPersonId = selectedId;
+    this._tree.selectedPersonX = 0;
+    this._tree.selectedPersonY = 0;
+
+    this._tree.SetInitialValues(Number(_zoomLevel), 30.0, 170.0, 70.0, 70.0, 100.0, 20.0, 40.0, 20.0, screen.width, screen.height);
+
+    this._tree.treeUI = treeUI;
+    this._tree.generations = data.Generations;
+
+    this._tree.UpdateGenerationState();
+
+    this._tree.RelocateToSelectedPerson();
+
+    this._tree.bt_refreshData = false;
+    this.rAF = requestAnimationFrame(this.updateAnimationState);
+  }
+
+  runDescendants(selectedId) {
+    console.log('running decs: ' + selectedId);
+  }
+
+  runGraphDirected(nextProps) {}
+
+  stopAll() {
+    console.log('clear all ');
+  }
+
+  render() {
+    return _react.default.createElement(GraphContainer, {
+      drawFrame: this.drawFrame.bind(this),
+      contextCreated: this.contextCreated.bind(this)
+    });
+  }
+
+}
+
+const mapStateToProps = state => {
+  return {
+    graphActive: state.graphActive,
+    graphActiveLayout: state.graphActiveLayout,
+    graphActiveSelection: state.graphActiveSelection,
+    persons: state.persons,
+    families: state.families,
+    context: state.context
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setContext: context => {
+      dispatch((0, _creators.setContext)(context));
+    }
+  };
+};
+
+var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(VisualisationHandler));
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/Radio":"../node_modules/@material-ui/core/Radio/index.js","@material-ui/core/RadioGroup":"../node_modules/@material-ui/core/RadioGroup/index.js","@material-ui/core/FormControlLabel":"../node_modules/@material-ui/core/FormControlLabel/index.js","@material-ui/core/FormControl":"../node_modules/@material-ui/core/FormControl/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx","../DataLoader/AncGraphCreator.js":"../src/DataLoader/AncGraphCreator.js","../DataLoader/DescGraphCreator.js":"../src/DataLoader/DescGraphCreator.js","../DataLoader/TreeUI.js":"../src/DataLoader/TreeUI.js","../DataLoader/AncTree.js":"../src/DataLoader/AncTree.js"}],"../src/containers/graph.css":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/containers/Graph.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _reactRouterDom = require("react-router-dom");
+
+var _Navbar = _interopRequireDefault(require("react-bootstrap/Navbar"));
+
+var _Nav = _interopRequireDefault(require("react-bootstrap/Nav"));
+
+var _reactBootstrap = require("react-bootstrap");
+
+var _GraphControl = _interopRequireDefault(require("./MapControls/GraphControl.jsx"));
+
+var _TopButtons = _interopRequireDefault(require("./ButtonBar/TopButtons.jsx"));
+
+var _reactRedux = require("react-redux");
+
+var _creators = require("../actions/creators.jsx");
+
+var _VisualisationHandler = _interopRequireDefault(require("./VisualisationHandler.jsx"));
+
+require("./graph.css");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+class Graph extends _react.Component {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "topButtonClicked", e => {
+      console.log('Graph mode changed ' + e);
+
+      if (e == "controls") {
+        if (this.props.controlVisible) this.props.switchControlVisbility(false);else this.props.switchControlVisbility(true);
+      }
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('Graph componentWillReceiveProps');
+
+    if (nextProps.loading !== this.props.loading && nextProps.success !== this.props.success && !nextProps.loading && nextprops.success) {}
+  }
+
+  render() {
+    console.log('Graph render');
+    return _react.default.createElement("div", null, _react.default.createElement(_VisualisationHandler.default, null), _react.default.createElement(_TopButtons.default, {
+      isData: false,
+      modeChanged: this.topButtonClicked
+    }), _react.default.createElement(_reactBootstrap.Container, {
+      className: "cont-width"
+    }, _react.default.createElement(_reactBootstrap.Row, {
+      className: "my-row"
+    }), _react.default.createElement(_reactBootstrap.Row, {
+      className: "my-row"
+    }), _react.default.createElement(_reactBootstrap.Row, {
+      className: "my-row"
+    }, _react.default.createElement(_GraphControl.default, {
+      modalShow: this.props.controlVisible
+    }))));
+  }
+
+}
+
+const mapStateToProps = (state, ownProps) => {
+  return _objectSpread({
+    term: state.term,
+    images: state.images,
+    status: state.status,
+    controlVisible: state.controlVisible
+  }, ownProps);
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    beginSearch: term => {
+      dispatch((0, _creators.beginSearch)(term));
+    },
+    switchControlVisbility: controlVisible => {
+      dispatch((0, _creators.switchControlVisbility)(controlVisible));
+    }
+  };
+};
+
+var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Graph);
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/es/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","./MapControls/GraphControl.jsx":"../src/containers/MapControls/GraphControl.jsx","./ButtonBar/TopButtons.jsx":"../src/containers/ButtonBar/TopButtons.jsx","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx","./VisualisationHandler.jsx":"../src/containers/VisualisationHandler.jsx","./graph.css":"../src/containers/graph.css"}],"../node_modules/@material-ui/core/RootRef/RootRef.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -64652,382 +70100,7 @@ Object.defineProperty(exports, "default", {
 });
 
 var _ListItemIcon = _interopRequireDefault(require("./ListItemIcon"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/ListItemIcon.js"}],"../node_modules/@material-ui/core/Typography/Typography.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = exports.styles = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
-var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _utils = require("@material-ui/utils");
-
-var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
-
-var _helpers = require("../utils/helpers");
-
-var styles = function styles(theme) {
-  return {
-    /* Styles applied to the root element. */
-    root: {
-      display: 'block',
-      margin: 0
-    },
-
-    /* Styles applied to the root element if `variant="display4"`. */
-    display4: theme.typography.display4,
-
-    /* Styles applied to the root element if `variant="display3"`. */
-    display3: theme.typography.display3,
-
-    /* Styles applied to the root element if `variant="display2"`. */
-    display2: theme.typography.display2,
-
-    /* Styles applied to the root element if `variant="display1"`. */
-    display1: theme.typography.display1,
-
-    /* Styles applied to the root element if `variant="headline"`. */
-    headline: theme.typography.headline,
-
-    /* Styles applied to the root element if `variant="title"`. */
-    title: theme.typography.title,
-
-    /* Styles applied to the root element if `variant="subheading"`. */
-    subheading: theme.typography.subheading,
-
-    /* Styles applied to the root element if `variant="body2"`. */
-    body2: theme.typography.body2,
-
-    /* Styles applied to the root element if `variant="body1"`. */
-    body1: theme.typography.body1,
-
-    /* Styles applied to the root element if `variant="caption"`. */
-    caption: theme.typography.caption,
-
-    /* Styles applied to the root element if `variant="button"`. */
-    button: theme.typography.button,
-
-    /* Styles applied to the root element if `variant="h1"`. */
-    h1: theme.typography.h1,
-
-    /* Styles applied to the root element if `variant="h2"`. */
-    h2: theme.typography.h2,
-
-    /* Styles applied to the root element if `variant="h3"`. */
-    h3: theme.typography.h3,
-
-    /* Styles applied to the root element if `variant="h4"`. */
-    h4: theme.typography.h4,
-
-    /* Styles applied to the root element if `variant="h5"`. */
-    h5: theme.typography.h5,
-
-    /* Styles applied to the root element if `variant="h6"`. */
-    h6: theme.typography.h6,
-
-    /* Styles applied to the root element if `variant="subtitle1"`. */
-    subtitle1: theme.typography.subtitle1,
-
-    /* Styles applied to the root element if `variant="subtitle2"`. */
-    subtitle2: theme.typography.subtitle2,
-
-    /* Styles applied to the root element if `variant="overline"`. */
-    overline: theme.typography.overline,
-
-    /* Styles applied to the root element if `variant="srOnly"`. Only accessible to screen readers. */
-    srOnly: {
-      position: 'absolute',
-      height: 1,
-      width: 1,
-      overflow: 'hidden'
-    },
-
-    /* Styles applied to the root element if `align="left"`. */
-    alignLeft: {
-      textAlign: 'left'
-    },
-
-    /* Styles applied to the root element if `align="center"`. */
-    alignCenter: {
-      textAlign: 'center'
-    },
-
-    /* Styles applied to the root element if `align="right"`. */
-    alignRight: {
-      textAlign: 'right'
-    },
-
-    /* Styles applied to the root element if `align="justify"`. */
-    alignJustify: {
-      textAlign: 'justify'
-    },
-
-    /* Styles applied to the root element if `align="nowrap"`. */
-    noWrap: {
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
-    },
-
-    /* Styles applied to the root element if `gutterBottom={true}`. */
-    gutterBottom: {
-      marginBottom: '0.35em'
-    },
-
-    /* Styles applied to the root element if `paragraph={true}`. */
-    paragraph: {
-      marginBottom: 16
-    },
-
-    /* Styles applied to the root element if `color="inherit"`. */
-    colorInherit: {
-      color: 'inherit'
-    },
-
-    /* Styles applied to the root element if `color="primary"`. */
-    colorPrimary: {
-      color: theme.palette.primary.main
-    },
-
-    /* Styles applied to the root element if `color="secondary"`. */
-    colorSecondary: {
-      color: theme.palette.secondary.main
-    },
-
-    /* Styles applied to the root element if `color="textPrimary"`. */
-    colorTextPrimary: {
-      color: theme.palette.text.primary
-    },
-
-    /* Styles applied to the root element if `color="textSecondary"`. */
-    colorTextSecondary: {
-      color: theme.palette.text.secondary
-    },
-
-    /* Styles applied to the root element if `color="error"`. */
-    colorError: {
-      color: theme.palette.error.main
-    },
-
-    /* Styles applied to the root element if `inline={true}`. */
-    inline: {
-      display: 'inline'
-    }
-  };
-};
-
-exports.styles = styles;
-var nextVariants = {
-  display4: 'h1',
-  display3: 'h2',
-  display2: 'h3',
-  display1: 'h4',
-  headline: 'h5',
-  title: 'h6',
-  subheading: 'subtitle1'
-};
-
-function getVariant(theme, variantProp) {
-  var typography = theme.typography;
-  var variant = variantProp;
-
-  if (!variant) {
-    variant = typography.useNextVariants ? 'body2' : 'body1';
-  } // complete v2 switch
-
-
-  if (typography.useNextVariants) {
-    variant = nextVariants[variant] || variant;
-  }
-
-  return variant;
-}
-
-var defaultHeadlineMapping = {
-  h1: 'h1',
-  h2: 'h2',
-  h3: 'h3',
-  h4: 'h4',
-  h5: 'h5',
-  h6: 'h6',
-  subtitle1: 'h6',
-  subtitle2: 'h6',
-  body1: 'p',
-  body2: 'p',
-  // deprecated
-  display4: 'h1',
-  display3: 'h1',
-  display2: 'h1',
-  display1: 'h1',
-  headline: 'h1',
-  title: 'h2',
-  subheading: 'h3'
-};
-
-function Typography(props) {
-  var _classNames;
-
-  var align = props.align,
-      classes = props.classes,
-      classNameProp = props.className,
-      color = props.color,
-      componentProp = props.component,
-      gutterBottom = props.gutterBottom,
-      headlineMapping = props.headlineMapping,
-      inline = props.inline,
-      internalDeprecatedVariant = props.internalDeprecatedVariant,
-      noWrap = props.noWrap,
-      paragraph = props.paragraph,
-      theme = props.theme,
-      variantProp = props.variant,
-      other = (0, _objectWithoutProperties2.default)(props, ["align", "classes", "className", "color", "component", "gutterBottom", "headlineMapping", "inline", "internalDeprecatedVariant", "noWrap", "paragraph", "theme", "variant"]);
-  var variant = getVariant(theme, variantProp);
-  var className = (0, _classnames.default)(classes.root, (_classNames = {}, (0, _defineProperty2.default)(_classNames, classes[variant], variant !== 'inherit'), (0, _defineProperty2.default)(_classNames, classes["color".concat((0, _helpers.capitalize)(color))], color !== 'default'), (0, _defineProperty2.default)(_classNames, classes.noWrap, noWrap), (0, _defineProperty2.default)(_classNames, classes.gutterBottom, gutterBottom), (0, _defineProperty2.default)(_classNames, classes.paragraph, paragraph), (0, _defineProperty2.default)(_classNames, classes["align".concat((0, _helpers.capitalize)(align))], align !== 'inherit'), (0, _defineProperty2.default)(_classNames, classes.inline, inline), _classNames), classNameProp);
-  var Component = componentProp || (paragraph ? 'p' : headlineMapping[variant] || defaultHeadlineMapping[variant]) || 'span';
-  return _react.default.createElement(Component, (0, _extends2.default)({
-    className: className
-  }, other));
-}
-
-"development" !== "production" ? Typography.propTypes = {
-  /**
-   * Set the text-align on the component.
-   */
-  align: _propTypes.default.oneOf(['inherit', 'left', 'center', 'right', 'justify']),
-
-  /**
-   * The content of the component.
-   */
-  children: _propTypes.default.node,
-
-  /**
-   * Override or extend the styles applied to the component.
-   * See [CSS API](#css-api) below for more details.
-   */
-  classes: _propTypes.default.object.isRequired,
-
-  /**
-   * @ignore
-   */
-  className: _propTypes.default.string,
-
-  /**
-   * The color of the component. It supports those theme colors that make sense for this component.
-   */
-  color: _propTypes.default.oneOf(['default', 'error', 'inherit', 'primary', 'secondary', 'textPrimary', 'textSecondary']),
-
-  /**
-   * The component used for the root node.
-   * Either a string to use a DOM element or a component.
-   * By default, it maps the variant to a good default headline component.
-   */
-  component: _utils.componentPropType,
-
-  /**
-   * If `true`, the text will have a bottom margin.
-   */
-  gutterBottom: _propTypes.default.bool,
-
-  /**
-   * We are empirically mapping the variant property to a range of different DOM element types.
-   * For instance, subtitle1 to `<h6>`.
-   * If you wish to change that mapping, you can provide your own.
-   * Alternatively, you can use the `component` property.
-   * The default mapping is the following:
-   */
-  headlineMapping: _propTypes.default.object,
-
-  /**
-   *  Controls whether the Typography is inline or not.
-   */
-  inline: _propTypes.default.bool,
-
-  /**
-   * A deprecated variant is used from an internal component. Users don't need
-   * a deprecation warning here if they switched to the v2 theme. They already
-   * get the mapping that will be applied in the next major release.
-   *
-   * @internal
-   */
-  internalDeprecatedVariant: _propTypes.default.bool,
-
-  /**
-   * If `true`, the text will not wrap, but instead will truncate with an ellipsis.
-   */
-  noWrap: _propTypes.default.bool,
-
-  /**
-   * If `true`, the text will have a bottom margin.
-   */
-  paragraph: _propTypes.default.bool,
-
-  /**
-   * @ignore
-   */
-  theme: _propTypes.default.object.isRequired,
-
-  /**
-   * Applies the theme typography styles.
-   * Use `body1` as the default value with the legacy implementation and `body2` with the new one.
-   */
-  variant: (0, _utils.chainPropTypes)(_propTypes.default.oneOf(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'subtitle1', 'subtitle2', 'body1', 'body2', 'caption', 'button', 'overline', 'srOnly', 'inherit', // deprecated
-  'display4', 'display3', 'display2', 'display1', 'headline', 'title', 'subheading']), function (props) {
-    var deprecatedVariants = ['display4', 'display3', 'display2', 'display1', 'headline', 'title', 'subheading'];
-
-    if (props.theme.typography.useNextVariants && !props.internalDeprecatedVariant && deprecatedVariants.indexOf(props.variant) !== -1) {
-      return new Error('Material-UI: you are using a deprecated typography variant: ' + "`".concat(props.variant, "` that will be removed in the next major release.\n") + 'Please read the migration guide under https://material-ui.com/style/typography#migration-to-typography-v2.');
-    }
-
-    return null;
-  })
-} : void 0;
-Typography.defaultProps = {
-  align: 'inherit',
-  color: 'default',
-  gutterBottom: false,
-  headlineMapping: defaultHeadlineMapping,
-  inline: false,
-  noWrap: false,
-  paragraph: false
-};
-
-var _default = (0, _withStyles.default)(styles, {
-  name: 'MuiTypography',
-  withTheme: true
-})(Typography);
-
-exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","@material-ui/utils":"../node_modules/@material-ui/utils/index.es.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../utils/helpers":"../node_modules/@material-ui/core/utils/helpers.js"}],"../node_modules/@material-ui/core/Typography/index.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "default", {
-  enumerable: true,
-  get: function get() {
-    return _Typography.default;
-  }
-});
-
-var _Typography = _interopRequireDefault(require("./Typography"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Typography":"../node_modules/@material-ui/core/Typography/Typography.js"}],"../node_modules/@material-ui/core/ListItemText/ListItemText.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/ListItemIcon.js"}],"../node_modules/@material-ui/core/ListItemText/ListItemText.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -65270,40 +70343,7 @@ var _default = (0, _createSvgIcon.default)(_react.default.createElement(_react.d
 })), 'Mail');
 
 exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/core/utils/requirePropFactory.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function requirePropFactory(componentNameInError) {
-  /* istanbul ignore if */
-  if ("development" === 'production') {
-    return function () {
-      return null;
-    };
-  }
-
-  var requireProp = function requireProp(requiredProp) {
-    return function (props, propName, componentName, location, propFullName) {
-      var propFullNameSafe = propFullName || propName;
-
-      if (typeof props[propName] !== 'undefined' && !props[requiredProp]) {
-        return new Error("The property `".concat(propFullNameSafe, "` of ") + "`".concat(componentNameInError, "` must be used on `").concat(requiredProp, "`."));
-      }
-
-      return null;
-    };
-  };
-
-  return requireProp;
-}
-
-var _default = requirePropFactory;
-exports.default = _default;
-},{}],"../node_modules/@material-ui/core/Grid/Grid.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js","./utils/createSvgIcon":"../node_modules/@material-ui/icons/utils/createSvgIcon.js"}],"../node_modules/@material-ui/core/Switch/Switch.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -65313,11 +70353,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = exports.styles = void 0;
 
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
 
 var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
 
 var _react = _interopRequireDefault(require("react"));
 
@@ -65325,263 +70363,153 @@ var _propTypes = _interopRequireDefault(require("prop-types"));
 
 var _classnames = _interopRequireDefault(require("classnames"));
 
-var _utils = require("@material-ui/utils");
-
 var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
 
-var _createBreakpoints = require("../styles/createBreakpoints");
+var _helpers = require("../utils/helpers");
 
-var _requirePropFactory = _interopRequireDefault(require("../utils/requirePropFactory")); // A grid component using the following libs as inspiration.
-//
-// For the implementation:
-// - http://v4-alpha.getbootstrap.com/layout/flexbox-grid/
-// - https://github.com/kristoferjoseph/flexboxgrid/blob/master/src/css/flexboxgrid.css
-// - https://github.com/roylee0704/react-flexbox-grid
-// - https://material.angularjs.org/latest/layout/introduction
-//
-// Follow this flexbox Guide to better understand the underlying model:
-// - https://css-tricks.com/snippets/css/a-guide-to-flexbox/
-
-
-var GUTTERS = [0, 8, 16, 24, 32, 40];
-var GRID_SIZES = ['auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-function generateGrid(globalStyles, theme, breakpoint) {
-  var styles = {};
-  GRID_SIZES.forEach(function (size) {
-    var key = "grid-".concat(breakpoint, "-").concat(size);
-
-    if (size === true) {
-      // For the auto layouting
-      styles[key] = {
-        flexBasis: 0,
-        flexGrow: 1,
-        maxWidth: '100%'
-      };
-      return;
-    }
-
-    if (size === 'auto') {
-      styles[key] = {
-        flexBasis: 'auto',
-        flexGrow: 0,
-        maxWidth: 'none'
-      };
-      return;
-    } // Keep 7 significant numbers.
-
-
-    var width = "".concat(Math.round(size / 12 * 10e7) / 10e5, "%"); // Close to the bootstrap implementation:
-    // https://github.com/twbs/bootstrap/blob/8fccaa2439e97ec72a4b7dc42ccc1f649790adb0/scss/mixins/_grid.scss#L41
-
-    styles[key] = {
-      flexBasis: width,
-      flexGrow: 0,
-      maxWidth: width
-    };
-  }); // No need for a media query for the first size.
-
-  if (breakpoint === 'xs') {
-    (0, _extends2.default)(globalStyles, styles);
-  } else {
-    globalStyles[theme.breakpoints.up(breakpoint)] = styles;
-  }
-}
-
-function generateGutter(theme, breakpoint) {
-  var styles = {};
-  GUTTERS.forEach(function (spacing, index) {
-    if (index === 0) {
-      // Skip the default style.
-      return;
-    }
-
-    styles["spacing-".concat(breakpoint, "-").concat(spacing)] = {
-      margin: -spacing / 2,
-      width: "calc(100% + ".concat(spacing, "px)"),
-      '& > $item': {
-        padding: spacing / 2
-      }
-    };
-  });
-  return styles;
-} // Default CSS values
-// flex: '0 1 auto',
-// flexDirection: 'row',
-// alignItems: 'flex-start',
-// flexWrap: 'nowrap',
-// justifyContent: 'flex-start',
-
+var _SwitchBase = _interopRequireDefault(require("../internal/SwitchBase"));
 
 var styles = function styles(theme) {
-  return (0, _extends2.default)({
-    /* Styles applied to the root element if `container={true}`. */
-    container: {
-      boxSizing: 'border-box',
-      display: 'flex',
-      flexWrap: 'wrap',
-      width: '100%'
+  return {
+    /* Styles applied to the root element. */
+    root: {
+      display: 'inline-flex',
+      width: 62,
+      position: 'relative',
+      flexShrink: 0,
+      zIndex: 0,
+      // Reset the stacking context.
+      // For correct alignment with the text.
+      verticalAlign: 'middle'
     },
 
-    /* Styles applied to the root element if `item={true}`. */
-    item: {
-      boxSizing: 'border-box',
-      margin: '0' // For instance, it's useful when used with a `figure` element.
-
+    /* Styles used to create the `icon` passed to the internal `SwitchBase` component `icon` prop. */
+    icon: {
+      boxShadow: theme.shadows[1],
+      backgroundColor: 'currentColor',
+      width: 20,
+      height: 20,
+      borderRadius: '50%'
     },
 
-    /* Styles applied to the root element if `zeroMinWidth={true}`. */
-    zeroMinWidth: {
-      minWidth: 0
+    /* Styles applied the icon element component if `checked={true}`. */
+    iconChecked: {
+      boxShadow: theme.shadows[2]
     },
 
-    /* Styles applied to the root element if `direction="column"`. */
-    'direction-xs-column': {
-      flexDirection: 'column'
+    /* Styles applied to the internal `SwitchBase` component's `root` class. */
+    switchBase: {
+      padding: 0,
+      height: 48,
+      width: 48,
+      color: theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[400],
+      transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest
+      })
     },
 
-    /* Styles applied to the root element if `direction="column-reverse"`. */
-    'direction-xs-column-reverse': {
-      flexDirection: 'column-reverse'
+    /* Styles applied to the internal `SwitchBase` component's `checked` class. */
+    checked: {
+      transform: 'translateX(14px)',
+      '& + $bar': {
+        opacity: 0.5
+      }
     },
 
-    /* Styles applied to the root element if `direction="rwo-reverse"`. */
-    'direction-xs-row-reverse': {
-      flexDirection: 'row-reverse'
+    /* Styles applied to the internal SwitchBase component's root element if `color="primary"`. */
+    colorPrimary: {
+      '&$checked': {
+        color: theme.palette.primary.main,
+        '& + $bar': {
+          backgroundColor: theme.palette.primary.main
+        }
+      }
     },
 
-    /* Styles applied to the root element if `wrap="nowrap"`. */
-    'wrap-xs-nowrap': {
-      flexWrap: 'nowrap'
+    /* Styles applied to the internal SwitchBase component's root element if `color="secondary"`. */
+    colorSecondary: {
+      '&$checked': {
+        color: theme.palette.secondary.main,
+        '& + $bar': {
+          backgroundColor: theme.palette.secondary.main
+        }
+      }
     },
 
-    /* Styles applied to the root element if `wrap="reverse"`. */
-    'wrap-xs-wrap-reverse': {
-      flexWrap: 'wrap-reverse'
+    /* Styles applied to the internal SwitchBase component's disabled class. */
+    disabled: {
+      '& + $bar': {
+        opacity: theme.palette.type === 'light' ? 0.12 : 0.1
+      },
+      '& $icon': {
+        boxShadow: theme.shadows[1]
+      },
+      '&$switchBase': {
+        color: theme.palette.type === 'light' ? theme.palette.grey[400] : theme.palette.grey[800],
+        '& + $bar': {
+          backgroundColor: theme.palette.type === 'light' ? theme.palette.common.black : theme.palette.common.white
+        }
+      }
     },
 
-    /* Styles applied to the root element if `alignItems="center"`. */
-    'align-items-xs-center': {
-      alignItems: 'center'
-    },
-
-    /* Styles applied to the root element if `alignItems="flex-start"`. */
-    'align-items-xs-flex-start': {
-      alignItems: 'flex-start'
-    },
-
-    /* Styles applied to the root element if `alignItems="flex-end"`. */
-    'align-items-xs-flex-end': {
-      alignItems: 'flex-end'
-    },
-
-    /* Styles applied to the root element if `alignItems="baseline"`. */
-    'align-items-xs-baseline': {
-      alignItems: 'baseline'
-    },
-
-    /* Styles applied to the root element if `alignContent="center"`. */
-    'align-content-xs-center': {
-      alignContent: 'center'
-    },
-
-    /* Styles applied to the root element if `alignContent="flex-start"`. */
-    'align-content-xs-flex-start': {
-      alignContent: 'flex-start'
-    },
-
-    /* Styles applied to the root element if `alignContent="flex-end"`. */
-    'align-content-xs-flex-end': {
-      alignContent: 'flex-end'
-    },
-
-    /* Styles applied to the root element if `alignContent="space-between"`. */
-    'align-content-xs-space-between': {
-      alignContent: 'space-between'
-    },
-
-    /* Styles applied to the root element if `alignContent="space-around"`. */
-    'align-content-xs-space-around': {
-      alignContent: 'space-around'
-    },
-
-    /* Styles applied to the root element if `justify="center"`. */
-    'justify-xs-center': {
-      justifyContent: 'center'
-    },
-
-    /* Styles applied to the root element if `justify="flex-end"`. */
-    'justify-xs-flex-end': {
-      justifyContent: 'flex-end'
-    },
-
-    /* Styles applied to the root element if `justify="space-between"`. */
-    'justify-xs-space-between': {
-      justifyContent: 'space-between'
-    },
-
-    /* Styles applied to the root element if `justify="space-around"`. */
-    'justify-xs-space-around': {
-      justifyContent: 'space-around'
-    },
-
-    /* Styles applied to the root element if `justify="space-evenly"`. */
-    'justify-xs-space-evenly': {
-      justifyContent: 'space-evenly'
+    /* Styles applied to the bar element. */
+    bar: {
+      borderRadius: 14 / 2,
+      display: 'block',
+      position: 'absolute',
+      zIndex: -1,
+      width: 34,
+      height: 14,
+      top: '50%',
+      left: '50%',
+      marginTop: -7,
+      marginLeft: -17,
+      transition: theme.transitions.create(['opacity', 'background-color'], {
+        duration: theme.transitions.duration.shortest
+      }),
+      backgroundColor: theme.palette.type === 'light' ? theme.palette.common.black : theme.palette.common.white,
+      opacity: theme.palette.type === 'light' ? 0.38 : 0.3
     }
-  }, generateGutter(theme, 'xs'), _createBreakpoints.keys.reduce(function (accumulator, key) {
-    // Use side effect over immutability for better performance.
-    generateGrid(accumulator, theme, key);
-    return accumulator;
-  }, {}));
+  };
 };
 
 exports.styles = styles;
 
-function Grid(props) {
-  var _classNames;
-
-  var alignContent = props.alignContent,
-      alignItems = props.alignItems,
-      classes = props.classes,
-      classNameProp = props.className,
-      Component = props.component,
-      container = props.container,
-      direction = props.direction,
-      item = props.item,
-      justify = props.justify,
-      lg = props.lg,
-      md = props.md,
-      sm = props.sm,
-      spacing = props.spacing,
-      wrap = props.wrap,
-      xl = props.xl,
-      xs = props.xs,
-      zeroMinWidth = props.zeroMinWidth,
-      other = (0, _objectWithoutProperties2.default)(props, ["alignContent", "alignItems", "classes", "className", "component", "container", "direction", "item", "justify", "lg", "md", "sm", "spacing", "wrap", "xl", "xs", "zeroMinWidth"]);
-  var className = (0, _classnames.default)((_classNames = {}, (0, _defineProperty2.default)(_classNames, classes.container, container), (0, _defineProperty2.default)(_classNames, classes.item, item), (0, _defineProperty2.default)(_classNames, classes.zeroMinWidth, zeroMinWidth), (0, _defineProperty2.default)(_classNames, classes["spacing-xs-".concat(String(spacing))], container && spacing !== 0), (0, _defineProperty2.default)(_classNames, classes["direction-xs-".concat(String(direction))], direction !== Grid.defaultProps.direction), (0, _defineProperty2.default)(_classNames, classes["wrap-xs-".concat(String(wrap))], wrap !== Grid.defaultProps.wrap), (0, _defineProperty2.default)(_classNames, classes["align-items-xs-".concat(String(alignItems))], alignItems !== Grid.defaultProps.alignItems), (0, _defineProperty2.default)(_classNames, classes["align-content-xs-".concat(String(alignContent))], alignContent !== Grid.defaultProps.alignContent), (0, _defineProperty2.default)(_classNames, classes["justify-xs-".concat(String(justify))], justify !== Grid.defaultProps.justify), (0, _defineProperty2.default)(_classNames, classes["grid-xs-".concat(String(xs))], xs !== false), (0, _defineProperty2.default)(_classNames, classes["grid-sm-".concat(String(sm))], sm !== false), (0, _defineProperty2.default)(_classNames, classes["grid-md-".concat(String(md))], md !== false), (0, _defineProperty2.default)(_classNames, classes["grid-lg-".concat(String(lg))], lg !== false), (0, _defineProperty2.default)(_classNames, classes["grid-xl-".concat(String(xl))], xl !== false), _classNames), classNameProp);
-  return _react.default.createElement(Component, (0, _extends2.default)({
-    className: className
-  }, other));
+function Switch(props) {
+  var classes = props.classes,
+      className = props.className,
+      color = props.color,
+      other = (0, _objectWithoutProperties2.default)(props, ["classes", "className", "color"]);
+  return _react.default.createElement("span", {
+    className: (0, _classnames.default)(classes.root, className)
+  }, _react.default.createElement(_SwitchBase.default, (0, _extends2.default)({
+    type: "checkbox",
+    icon: _react.default.createElement("span", {
+      className: classes.icon
+    }),
+    classes: {
+      root: (0, _classnames.default)(classes.switchBase, classes["color".concat((0, _helpers.capitalize)(color))]),
+      checked: classes.checked,
+      disabled: classes.disabled
+    },
+    checkedIcon: _react.default.createElement("span", {
+      className: (0, _classnames.default)(classes.icon, classes.iconChecked)
+    })
+  }, other)), _react.default.createElement("span", {
+    className: classes.bar
+  }));
 }
 
-"development" !== "production" ? Grid.propTypes = {
+"development" !== "production" ? Switch.propTypes = {
   /**
-   * Defines the `align-content` style property.
-   * It's applied for all screen sizes.
+   * If `true`, the component is checked.
    */
-  alignContent: _propTypes.default.oneOf(['stretch', 'center', 'flex-start', 'flex-end', 'space-between', 'space-around']),
+  checked: _propTypes.default.oneOfType([_propTypes.default.bool, _propTypes.default.string]),
 
   /**
-   * Defines the `align-items` style property.
-   * It's applied for all screen sizes.
+   * The icon to display when the component is checked.
    */
-  alignItems: _propTypes.default.oneOf(['flex-start', 'center', 'flex-end', 'stretch', 'baseline']),
-
-  /**
-   * The content of the component.
-   */
-  children: _propTypes.default.node,
+  checkedIcon: _propTypes.default.node,
 
   /**
    * Override or extend the styles applied to the component.
@@ -65595,124 +70523,74 @@ function Grid(props) {
   className: _propTypes.default.string,
 
   /**
-   * The component used for the root node.
-   * Either a string to use a DOM element or a component.
+   * The color of the component. It supports those theme colors that make sense for this component.
    */
-  component: _utils.componentPropType,
+  color: _propTypes.default.oneOf(['primary', 'secondary', 'default']),
 
   /**
-   * If `true`, the component will have the flex *container* behavior.
-   * You should be wrapping *items* with a *container*.
+   * @ignore
    */
-  container: _propTypes.default.bool,
+  defaultChecked: _propTypes.default.bool,
 
   /**
-   * Defines the `flex-direction` style property.
-   * It is applied for all screen sizes.
+   * If `true`, the switch will be disabled.
    */
-  direction: _propTypes.default.oneOf(['row', 'row-reverse', 'column', 'column-reverse']),
+  disabled: _propTypes.default.bool,
 
   /**
-   * If `true`, the component will have the flex *item* behavior.
-   * You should be wrapping *items* with a *container*.
+   * If `true`, the ripple effect will be disabled.
    */
-  item: _propTypes.default.bool,
+  disableRipple: _propTypes.default.bool,
 
   /**
-   * Defines the `justify-content` style property.
-   * It is applied for all screen sizes.
+   * The icon to display when the component is unchecked.
    */
-  justify: _propTypes.default.oneOf(['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly']),
+  icon: _propTypes.default.node,
 
   /**
-   * Defines the number of grids the component is going to use.
-   * It's applied for the `lg` breakpoint and wider screens if not overridden.
+   * The id of the `input` element.
    */
-  lg: _propTypes.default.oneOf([false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+  id: _propTypes.default.string,
 
   /**
-   * Defines the number of grids the component is going to use.
-   * It's applied for the `md` breakpoint and wider screens if not overridden.
+   * Attributes applied to the `input` element.
    */
-  md: _propTypes.default.oneOf([false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+  inputProps: _propTypes.default.object,
 
   /**
-   * Defines the number of grids the component is going to use.
-   * It's applied for the `sm` breakpoint and wider screens if not overridden.
+   * Use that property to pass a ref callback to the native input component.
    */
-  sm: _propTypes.default.oneOf([false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+  inputRef: _propTypes.default.oneOfType([_propTypes.default.func, _propTypes.default.object]),
 
   /**
-   * Defines the space between the type `item` component.
-   * It can only be used on a type `container` component.
+   * Callback fired when the state is changed.
+   *
+   * @param {object} event The event source of the callback.
+   * You can pull out the new value by accessing `event.target.checked`.
+   * @param {boolean} checked The `checked` value of the switch
    */
-  spacing: _propTypes.default.oneOf(GUTTERS),
+  onChange: _propTypes.default.func,
 
   /**
-   * Defines the `flex-wrap` style property.
-   * It's applied for all screen sizes.
+   * The input component property `type`.
    */
-  wrap: _propTypes.default.oneOf(['nowrap', 'wrap', 'wrap-reverse']),
+  type: _propTypes.default.string,
 
   /**
-   * Defines the number of grids the component is going to use.
-   * It's applied for the `xl` breakpoint and wider screens.
+   * The value of the component.
    */
-  xl: _propTypes.default.oneOf([false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
-
-  /**
-   * Defines the number of grids the component is going to use.
-   * It's applied for all the screen sizes with the lowest priority.
-   */
-  xs: _propTypes.default.oneOf([false, 'auto', true, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
-
-  /**
-   * If `true`, it sets `min-width: 0` on the item.
-   * Refer to the limitations section of the documentation to better understand the use case.
-   */
-  zeroMinWidth: _propTypes.default.bool
+  value: _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.number, _propTypes.default.bool])
 } : void 0;
-Grid.defaultProps = {
-  alignContent: 'stretch',
-  alignItems: 'stretch',
-  component: 'div',
-  container: false,
-  direction: 'row',
-  item: false,
-  justify: 'flex-start',
-  lg: false,
-  md: false,
-  sm: false,
-  spacing: 0,
-  wrap: 'wrap',
-  xl: false,
-  xs: false,
-  zeroMinWidth: false
+Switch.defaultProps = {
+  color: 'secondary'
 };
-var StyledGrid = (0, _withStyles.default)(styles, {
-  name: 'MuiGrid'
-})(Grid);
 
-if ("development" !== 'production') {
-  var requireProp = (0, _requirePropFactory.default)('Grid');
-  StyledGrid.propTypes = (0, _extends2.default)({}, StyledGrid.propTypes, {
-    alignContent: requireProp('container'),
-    alignItems: requireProp('container'),
-    direction: requireProp('container'),
-    justify: requireProp('container'),
-    lg: requireProp('item'),
-    md: requireProp('item'),
-    sm: requireProp('item'),
-    spacing: requireProp('container'),
-    wrap: requireProp('container'),
-    xs: requireProp('item'),
-    zeroMinWidth: requireProp('zeroMinWidth')
-  });
-}
+var _default = (0, _withStyles.default)(styles, {
+  name: 'MuiSwitch'
+})(Switch);
 
-var _default = StyledGrid;
 exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","@material-ui/utils":"../node_modules/@material-ui/utils/index.es.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../styles/createBreakpoints":"../node_modules/@material-ui/core/styles/createBreakpoints.js","../utils/requirePropFactory":"../node_modules/@material-ui/core/utils/requirePropFactory.js"}],"../node_modules/@material-ui/core/Grid/index.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../utils/helpers":"../node_modules/@material-ui/core/utils/helpers.js","../internal/SwitchBase":"../node_modules/@material-ui/core/internal/SwitchBase.js"}],"../node_modules/@material-ui/core/Switch/index.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -65723,402 +70601,17 @@ Object.defineProperty(exports, "__esModule", {
 Object.defineProperty(exports, "default", {
   enumerable: true,
   get: function get() {
-    return _Grid.default;
+    return _Switch.default;
   }
 });
 
-var _Grid = _interopRequireDefault(require("./Grid"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Grid":"../node_modules/@material-ui/core/Grid/Grid.js"}],"../src/containers/SideDrawer.css":[function(require,module,exports) {
+var _Switch = _interopRequireDefault(require("./Switch"));
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Switch":"../node_modules/@material-ui/core/Switch/Switch.js"}],"../src/containers/SideDrawer/SideDrawer.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/DateFunctions.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.DateFunctions = void 0;
-
-class DateFunctions {
-  constructor() {}
-
-  static YearDate(dateParam) {
-    // var str = "abt 1978 between 1943";
-    let pattern = /[1][5-9][0-9][0-9]+/g;
-    let matches = pattern.exec(dateParam);
-
-    if (matches != null && matches.length > 0) {
-      return Number(matches[0]);
-    } else {
-      return 0;
-    }
-  }
-
-}
-
-exports.DateFunctions = DateFunctions;
-},{}],"../src/DataLoader/GedLib.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.GedLib = void 0;
-
-var _DateFunctions = require("../DateFunctions.js");
-
-class GedLib {
-  constructor() {// this.cacheFamilies = [];
-    // this.cachePersons = [];
-    // this.families = [];
-    // this.persons = [];
-    // this.loader = null;
-  }
-
-  static parseLine(line) {
-    var gRow = {};
-    var split = line.trim().split(' ');
-    gRow.split = split;
-    gRow.level = Number(split.shift());
-    gRow.id = '';
-    gRow.value = '';
-    var tmp = split.shift();
-
-    if (tmp != undefined) {
-      if (gRow.level == 0) {
-        if (tmp.charAt(0) == '@') {
-          gRow.id = tmp;
-          gRow.tag = split.shift() || '';
-        } else {
-          gRow.tag = tmp;
-          gRow.id = split.shift() || '';
-        }
-      } else {
-        gRow.tag = tmp;
-        tmp = split.shift();
-
-        while (tmp != undefined) {
-          gRow.value += ' ' + tmp;
-          tmp = split.shift();
-        }
-
-        gRow.value = gRow.value.trim();
-      }
-    }
-
-    return gRow;
-  }
-
-  processFile(file, progressFunction, newloader) {
-    let families = [];
-    let persons = [];
-
-    var asynchCall = function asynchCall(func, callback) {
-      setTimeout(function () {
-        func();
-
-        if (callback) {
-          callback();
-        }
-      }, 0);
-    };
-
-    console.log('processFile');
-    var results = file.match(/[^\n]+(?:\r?\n|$)/g);
-
-    if (results == null || results.length == 0) {
-      newloader();
-      return;
-    }
-
-    var that = this;
-
-    var makeLists = function makeLists() {
-      var idx = 0;
-      var currentId = {};
-
-      while (idx < results.length) {
-        var gLine = GedLib.parseLine(results[idx]);
-
-        try {
-          if (gLine.id != '') {
-            currentId = {};
-            currentId.type = gLine.tag;
-            currentId.id = gLine.id;
-            currentId.children = [];
-            currentId.generation = -1;
-            currentId.date = 0;
-            currentId.BaptismPlace = '';
-            currentId.BirthPlace = '';
-            currentId.BirthDate = '';
-            currentId.BaptismDate = '';
-            currentId.husbId = '0';
-            currentId.wifeId = '0';
-            currentId.isFirst = false;
-            currentId.OccupationDate = '';
-            currentId.OccupationPlace = '';
-            currentId.Occupation = '';
-            currentId.DeathLocation = '';
-            currentId.name = '';
-            if (currentId.type == 'FAM') families.push(currentId);
-            if (currentId.type == 'INDI') persons.push(currentId);
-          } else {
-            if (currentId.type == 'FAM') {
-              if (gLine.tag == 'HUSB') currentId.husbId = gLine.value;
-              if (gLine.tag == 'WIFE') currentId.wifeId = gLine.value;
-              if (gLine.tag == 'CHIL') currentId.children.push(gLine.value);
-            }
-
-            if (currentId.type == 'INDI') {
-              if (gLine.tag == 'NAME') currentId.name = gLine.value.replace("/", "").replace("/", "");
-              if (gLine.tag == 'FAMS') currentId.famId = gLine.value;
-            }
-
-            if (idx <= results.length) {
-              var nextLine = GedLib.parseLine(results[idx + 1]);
-
-              while (idx <= results.length && nextLine.level > 1) {
-                if (gLine.tag == 'BAPL' || gLine.tag == 'BAPM' || gLine.tag == 'CHR') {
-                  if (nextLine.tag == 'DATE') currentId.date = _DateFunctions.DateFunctions.YearDate(nextLine.value);
-                  if (nextLine.tag == 'DATE') currentId.BaptismDate = nextLine.value;
-                  if (nextLine.tag == 'PLAC') currentId.BaptismPlace = nextLine.value;
-                }
-
-                if (gLine.tag == 'BIRT') {
-                  if (nextLine.tag == 'DATE') currentId.date = _DateFunctions.DateFunctions.YearDate(nextLine.value);
-                  if (nextLine.tag == 'DATE') currentId.BirthDate = nextLine.value;
-                  if (nextLine.tag == 'PLAC') currentId.BirthPlace = nextLine.value;
-                }
-
-                if (gLine.tag == 'MARR') {
-                  if (nextLine.tag == 'DATE') currentId.date = _DateFunctions.DateFunctions.YearDate(nextLine.value);
-                  if (nextLine.tag == 'DATE') currentId.MarDate = nextLine.value;
-                  if (nextLine.tag == 'PLAC') currentId.MarPlace = nextLine.value;
-                }
-
-                if (gLine.tag == 'OCCU') {
-                  currentId.Occupation = gLine.value;
-                  if (nextLine.tag == 'DATE') currentId.OccupationDate = nextLine.value;
-                  if (nextLine.tag == 'PLAC') currentId.OccupationPlace = nextLine.value;
-                }
-
-                if (gLine.tag == 'DEAT') {
-                  if (nextLine.tag == 'DATE') currentId.DeathDate = nextLine.value;
-                  if (nextLine.tag == 'PLAC') currentId.DeathPlace = nextLine.value;
-                }
-
-                results.splice(idx + 1, 1);
-                nextLine = GedLib.parseLine(results[idx + 1]); //because we have take a row out of the array dont need to increment anything
-              }
-            }
-          }
-        } catch (err) {}
-
-        idx++;
-      }
-    };
-
-    var parseSpouses = function parseSpouses() {
-      // we need to have the families ordered by the birth of their children
-      var famChildIdx = 0;
-      var famidx = 0;
-      var idx = 0;
-
-      while (idx < persons.length) {
-        famidx = 0;
-
-        while (famidx < families.length) {
-          if (families[famidx].husbId == persons[idx].id) families[famidx].husband = persons[idx];
-          if (families[famidx].wifeId == persons[idx].id) families[famidx].wife = persons[idx];
-          famChildIdx = 0;
-
-          while (famChildIdx < families[famidx].children.length) {
-            if (families[famidx].children[famChildIdx] == persons[idx].id) {
-              families[famidx].children[famChildIdx] = persons[idx];
-              if (families[famidx].date != undefined) families[famidx].date = _DateFunctions.DateFunctions.YearDate(persons[idx].BirthDate);
-              break;
-            }
-
-            famChildIdx++;
-          }
-
-          famidx++;
-        }
-
-        idx++;
-      }
-    };
-
-    var parseChildren = function parseChildren() {
-      // sort family children
-      var famidx = 0;
-
-      while (famidx < families.length) {
-        families[famidx].children.sort(function (a, b) {
-          return a.date - b.date;
-        });
-        if (families[famidx].husbId != '0') families[famidx].husband.children = families[famidx].children;
-        if (families[famidx].wifeId != '0') families[famidx].wife.children = families[famidx].children;
-        if (families[famidx].husband == undefined) families[famidx].husband = {
-          id: 0
-        };
-        if (families[famidx].wife == undefined) families[famidx].wife = {
-          id: 0
-        };
-        famidx++;
-      } // sort families
-
-
-      families.sort(function (a, b) {
-        return a.date - b.date;
-      });
-    };
-
-    progressFunction('parsing ged file', true);
-    asynchCall(makeLists, function () {
-      progressFunction('parsing persons', true);
-      asynchCall(parseSpouses, function () {
-        progressFunction('parsing families', true);
-        asynchCall(parseChildren, function () {
-          var rng = GedLib.findDateRange(persons); //    that.cacheFamilies = JSON.parse(JSON.stringify(that.families));
-          //    that.cachePersons = JSON.parse(JSON.stringify(that.persons));
-
-          newloader(families, persons, rng);
-        });
-      });
-    });
-  }
-
-  static findDateRange(persons) {
-    var startDate = 2000;
-    var endDate = 0;
-    var idx = 0;
-
-    while (idx < persons.length) {
-      var date = persons[idx].date;
-
-      if (date && date < startDate && date != 0) {
-        startDate = date;
-      }
-
-      if (date && date > endDate && date != 0) {
-        endDate = date;
-      }
-
-      idx++;
-    }
-
-    return {
-      s: startDate,
-      e: endDate
-    };
-  }
-
-  static FindPerson(persons, target) {
-    var idx = 0;
-
-    while (idx < persons.length) {
-      if (persons[idx].id == target) {
-        return persons[idx];
-      }
-
-      idx++;
-    }
-
-    return null;
-  }
-
-  static MakeFirst(persons, person) {
-    var idx = 0;
-
-    while (idx < persons.length) {
-      if (persons[idx].id == person) {
-        persons[idx].isFirst = true;
-        return persons[idx];
-      }
-
-      idx++;
-    }
-
-    return null;
-  }
-
-  static FindFurthestAncestor(families, startperson) {
-    const getPersonFamily = (families, personId) => {
-      const grep = (items, callback) => {
-        var filtered = [],
-            len = items.length,
-            i = 0;
-
-        for (i; i < len; i++) {
-          var item = items[i];
-          var cond = callback(item);
-
-          if (cond) {
-            filtered.push(item);
-          }
-        }
-
-        return filtered;
-      };
-
-      let family = grep(families, function (e) {
-        var innerresult = grep(e.children, function (a) {
-          return a.id == personId;
-        });
-        return innerresult.length > 0 ? true : false;
-      });
-      return family;
-    };
-
-    console.log('SearchFurthestAncestor');
-    var searchPersonId = startperson;
-    var isSearching = true;
-
-    while (isSearching) {
-      let family = getPersonFamily(families, searchPersonId);
-
-      if (family.length > 0) {
-        if (family[0].husbId != '0') {
-          searchPersonId = family[0].husbId;
-        } else {
-          if (family[0].wifeId != '0') {
-            searchPersonId = family[0].wifeId;
-          } else {
-            searchPersonId = '0';
-          }
-        }
-      } else {
-        isSearching = false;
-      }
-    }
-
-    return searchPersonId;
-  }
-
-  static SetRawDataGenerationProp(families, generation) {
-    var idx = 0;
-
-    while (idx < families.length) {
-      if (families[idx].husband != undefined) families[idx].husband.generation = generation;
-      if (families[idx].wife != undefined) families[idx].wife.generation = generation;
-      var iidx = 0;
-
-      while (iidx < families[idx].children.length) {
-        families[idx].children[iidx].generation = generation;
-        iidx++;
-      }
-
-      idx++;
-    }
-  }
-
-}
-
-exports.GedLib = GedLib;
-},{"../DateFunctions.js":"../src/DateFunctions.js"}],"../node_modules/@material-ui/core/Table/TableContext.js":[function(require,module,exports) {
+},{"_css_loader":"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../node_modules/@material-ui/core/Table/TableContext.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -66804,87 +71297,7 @@ Object.defineProperty(exports, "default", {
 });
 
 var _TableHead = _interopRequireDefault(require("./TableHead"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./TableHead":"../node_modules/@material-ui/core/TableHead/TableHead.js"}],"../node_modules/@material-ui/core/FormControl/formControlState.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = formControlState;
-
-function formControlState(_ref) {
-  var props = _ref.props,
-      states = _ref.states,
-      muiFormControl = _ref.muiFormControl;
-  return states.reduce(function (acc, state) {
-    acc[state] = props[state];
-
-    if (muiFormControl) {
-      if (typeof props[state] === 'undefined') {
-        acc[state] = muiFormControl[state];
-      }
-    }
-
-    return acc;
-  }, {});
-}
-},{}],"../node_modules/@material-ui/core/FormControl/FormControlContext.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-/**
- * @ignore - internal component.
- */
-
-
-var FormControlContext = _react.default.createContext();
-
-var _default = FormControlContext;
-exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","react":"../node_modules/react/index.js"}],"../node_modules/@material-ui/core/FormControl/withFormControlContext.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = withFormControlContext;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _hoistNonReactStatics = _interopRequireDefault(require("hoist-non-react-statics"));
-
-var _FormControlContext = _interopRequireDefault(require("./FormControlContext"));
-
-var _utils = require("@material-ui/utils");
-
-function withFormControlContext(Component) {
-  var EnhancedComponent = function EnhancedComponent(props) {
-    return _react.default.createElement(_FormControlContext.default.Consumer, null, function (context) {
-      return _react.default.createElement(Component, (0, _extends2.default)({
-        muiFormControl: context
-      }, props));
-    });
-  };
-
-  if ("development" !== 'production') {
-    EnhancedComponent.displayName = "WithFormControlContext(".concat((0, _utils.getDisplayName)(Component), ")");
-  }
-
-  (0, _hoistNonReactStatics.default)(EnhancedComponent, Component);
-  return EnhancedComponent;
-}
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","react":"../node_modules/react/index.js","hoist-non-react-statics":"../node_modules/@material-ui/core/node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js","./FormControlContext":"../node_modules/@material-ui/core/FormControl/FormControlContext.js","@material-ui/utils":"../node_modules/@material-ui/utils/index.es.js"}],"../node_modules/@material-ui/core/InputBase/Textarea.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./TableHead":"../node_modules/@material-ui/core/TableHead/TableHead.js"}],"../node_modules/@material-ui/core/InputBase/Textarea.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -67185,47 +71598,7 @@ var _default = (0, _withStyles.default)(styles, {
 })(Textarea);
 
 exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","debounce":"../node_modules/debounce/index.js","react-event-listener":"../node_modules/react-event-listener/dist/react-event-listener.cjs.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../utils/reactHelpers":"../node_modules/@material-ui/core/utils/reactHelpers.js"}],"../node_modules/@material-ui/core/InputBase/utils.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.hasValue = hasValue;
-exports.isFilled = isFilled;
-exports.isAdornedStart = isAdornedStart; // Supports determination of isControlled().
-// Controlled input accepts its current value as a prop.
-//
-// @see https://facebook.github.io/react/docs/forms.html#controlled-components
-// @param value
-// @returns {boolean} true if string (including '') or number (including zero)
-
-function hasValue(value) {
-  return value != null && !(Array.isArray(value) && value.length === 0);
-} // Determine if field is empty or filled.
-// Response determines if label is presented above field or as placeholder.
-//
-// @param obj
-// @param SSR
-// @returns {boolean} False when not present or empty string.
-//                    True when any number or string with length.
-
-
-function isFilled(obj) {
-  var SSR = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  return obj && (hasValue(obj.value) && obj.value !== '' || SSR && hasValue(obj.defaultValue) && obj.defaultValue !== '');
-} // Determine if an Input is adorned on start.
-// It's corresponding to the left with LTR.
-//
-// @param obj
-// @returns {boolean} False when no adornments.
-//                    True when adorned at the start.
-
-
-function isAdornedStart(obj) {
-  return obj.startAdornment;
-}
-},{}],"../node_modules/@material-ui/core/InputBase/InputBase.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","debounce":"../node_modules/debounce/index.js","react-event-listener":"../node_modules/react-event-listener/dist/react-event-listener.cjs.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../utils/reactHelpers":"../node_modules/@material-ui/core/utils/reactHelpers.js"}],"../node_modules/@material-ui/core/InputBase/InputBase.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -71969,328 +76342,7 @@ Object.defineProperty(exports, "default", {
 });
 
 var _TableSortLabel = _interopRequireDefault(require("./TableSortLabel"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./TableSortLabel":"../node_modules/@material-ui/core/TableSortLabel/TableSortLabel.js"}],"../node_modules/@material-ui/core/internal/SwitchBase.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = exports.styles = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
-var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
-
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
-
-var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
-
-var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
-
-var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
-
-var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _withFormControlContext = _interopRequireDefault(require("../FormControl/withFormControlContext"));
-
-var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
-
-var _IconButton = _interopRequireDefault(require("../IconButton")); // @inheritedComponent IconButton
-
-
-var styles = {
-  root: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    transition: 'none',
-    '&:hover': {
-      // Disable the hover effect for the IconButton.
-      backgroundColor: 'transparent'
-    }
-  },
-  checked: {},
-  disabled: {},
-  input: {
-    cursor: 'inherit',
-    position: 'absolute',
-    opacity: 0,
-    width: '100%',
-    height: '100%',
-    top: 0,
-    left: 0,
-    margin: 0,
-    padding: 0
-  }
-};
-/**
- * @ignore - internal component.
- */
-
-exports.styles = styles;
-
-var SwitchBase =
-/*#__PURE__*/
-function (_React$Component) {
-  (0, _inherits2.default)(SwitchBase, _React$Component);
-
-  function SwitchBase(props) {
-    var _this;
-
-    (0, _classCallCheck2.default)(this, SwitchBase);
-    _this = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(SwitchBase).call(this));
-
-    _this.handleFocus = function (event) {
-      if (_this.props.onFocus) {
-        _this.props.onFocus(event);
-      }
-
-      var muiFormControl = _this.props.muiFormControl;
-
-      if (muiFormControl && muiFormControl.onFocus) {
-        muiFormControl.onFocus(event);
-      }
-    };
-
-    _this.handleBlur = function (event) {
-      if (_this.props.onBlur) {
-        _this.props.onBlur(event);
-      }
-
-      var muiFormControl = _this.props.muiFormControl;
-
-      if (muiFormControl && muiFormControl.onBlur) {
-        muiFormControl.onBlur(event);
-      }
-    };
-
-    _this.handleInputChange = function (event) {
-      var checked = event.target.checked;
-
-      if (!_this.isControlled) {
-        _this.setState({
-          checked: checked
-        });
-      }
-
-      if (_this.props.onChange) {
-        _this.props.onChange(event, checked);
-      }
-    };
-
-    _this.isControlled = props.checked != null;
-    _this.state = {};
-
-    if (!_this.isControlled) {
-      // not controlled, use internal state
-      _this.state.checked = props.defaultChecked !== undefined ? props.defaultChecked : false;
-    }
-
-    return _this;
-  }
-
-  (0, _createClass2.default)(SwitchBase, [{
-    key: "render",
-    value: function render() {
-      var _classNames;
-
-      var _this$props = this.props,
-          autoFocus = _this$props.autoFocus,
-          checkedProp = _this$props.checked,
-          checkedIcon = _this$props.checkedIcon,
-          classes = _this$props.classes,
-          classNameProp = _this$props.className,
-          defaultChecked = _this$props.defaultChecked,
-          disabledProp = _this$props.disabled,
-          icon = _this$props.icon,
-          id = _this$props.id,
-          inputProps = _this$props.inputProps,
-          inputRef = _this$props.inputRef,
-          muiFormControl = _this$props.muiFormControl,
-          name = _this$props.name,
-          onBlur = _this$props.onBlur,
-          onChange = _this$props.onChange,
-          onFocus = _this$props.onFocus,
-          readOnly = _this$props.readOnly,
-          required = _this$props.required,
-          tabIndex = _this$props.tabIndex,
-          type = _this$props.type,
-          value = _this$props.value,
-          other = (0, _objectWithoutProperties2.default)(_this$props, ["autoFocus", "checked", "checkedIcon", "classes", "className", "defaultChecked", "disabled", "icon", "id", "inputProps", "inputRef", "muiFormControl", "name", "onBlur", "onChange", "onFocus", "readOnly", "required", "tabIndex", "type", "value"]);
-      var disabled = disabledProp;
-
-      if (muiFormControl) {
-        if (typeof disabled === 'undefined') {
-          disabled = muiFormControl.disabled;
-        }
-      }
-
-      var checked = this.isControlled ? checkedProp : this.state.checked;
-      var hasLabelFor = type === 'checkbox' || type === 'radio';
-      return _react.default.createElement(_IconButton.default, (0, _extends2.default)({
-        component: "span",
-        className: (0, _classnames.default)(classes.root, (_classNames = {}, (0, _defineProperty2.default)(_classNames, classes.checked, checked), (0, _defineProperty2.default)(_classNames, classes.disabled, disabled), _classNames), classNameProp),
-        disabled: disabled,
-        tabIndex: null,
-        role: undefined,
-        onFocus: this.handleFocus,
-        onBlur: this.handleBlur
-      }, other), checked ? checkedIcon : icon, _react.default.createElement("input", (0, _extends2.default)({
-        autoFocus: autoFocus,
-        checked: checkedProp,
-        defaultChecked: defaultChecked,
-        className: classes.input,
-        disabled: disabled,
-        id: hasLabelFor && id,
-        name: name,
-        onChange: this.handleInputChange,
-        readOnly: readOnly,
-        ref: inputRef,
-        required: required,
-        tabIndex: tabIndex,
-        type: type,
-        value: value
-      }, inputProps)));
-    }
-  }]);
-  return SwitchBase;
-}(_react.default.Component); // NB: If changed, please update Checkbox, Switch and Radio
-// so that the API documentation is updated.
-
-
-"development" !== "production" ? SwitchBase.propTypes = {
-  /**
-   * If `true`, the input will be focused during the first mount.
-   */
-  autoFocus: _propTypes.default.bool,
-
-  /**
-   * If `true`, the component is checked.
-   */
-  checked: _propTypes.default.oneOfType([_propTypes.default.bool, _propTypes.default.string]),
-
-  /**
-   * The icon to display when the component is checked.
-   */
-  checkedIcon: _propTypes.default.node.isRequired,
-
-  /**
-   * Override or extend the styles applied to the component.
-   * See [CSS API](#css-api) below for more details.
-   */
-  classes: _propTypes.default.object.isRequired,
-
-  /**
-   * @ignore
-   */
-  className: _propTypes.default.string,
-
-  /**
-   * @ignore
-   */
-  defaultChecked: _propTypes.default.bool,
-
-  /**
-   * If `true`, the switch will be disabled.
-   */
-  disabled: _propTypes.default.bool,
-
-  /**
-   * If `true`, the ripple effect will be disabled.
-   */
-  disableRipple: _propTypes.default.bool,
-
-  /**
-   * The icon to display when the component is unchecked.
-   */
-  icon: _propTypes.default.node.isRequired,
-
-  /**
-   * The id of the `input` element.
-   */
-  id: _propTypes.default.string,
-
-  /**
-   * Attributes applied to the `input` element.
-   */
-  inputProps: _propTypes.default.object,
-
-  /**
-   * Use that property to pass a ref callback to the native input component.
-   */
-  inputRef: _propTypes.default.oneOfType([_propTypes.default.func, _propTypes.default.object]),
-
-  /**
-   * @ignore
-   */
-  muiFormControl: _propTypes.default.object,
-
-  /*
-   * @ignore
-   */
-  name: _propTypes.default.string,
-
-  /**
-   * @ignore
-   */
-  onBlur: _propTypes.default.func,
-
-  /**
-   * Callback fired when the state is changed.
-   *
-   * @param {object} event The event source of the callback.
-   * You can pull out the new value by accessing `event.target.checked`.
-   * @param {boolean} checked The `checked` value of the switch
-   */
-  onChange: _propTypes.default.func,
-
-  /**
-   * @ignore
-   */
-  onFocus: _propTypes.default.func,
-
-  /**
-   * It prevents the user from changing the value of the field
-   * (not from interacting with the field).
-   */
-  readOnly: _propTypes.default.bool,
-
-  /**
-   * If `true`, the input will be required.
-   */
-  required: _propTypes.default.bool,
-
-  /**
-   * @ignore
-   */
-  tabIndex: _propTypes.default.oneOfType([_propTypes.default.number, _propTypes.default.string]),
-
-  /**
-   * The input component property `type`.
-   */
-  type: _propTypes.default.string.isRequired,
-
-  /**
-   * The value of the component.
-   */
-  value: _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.number, _propTypes.default.bool])
-} : void 0;
-
-var _default = (0, _withStyles.default)(styles, {
-  name: 'MuiPrivateSwitchBase'
-})((0, _withFormControlContext.default)(SwitchBase));
-
-exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","../FormControl/withFormControlContext":"../node_modules/@material-ui/core/FormControl/withFormControlContext.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../IconButton":"../node_modules/@material-ui/core/IconButton/index.js"}],"../node_modules/@material-ui/core/internal/svg-icons/CheckBoxOutlineBlank.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./TableSortLabel":"../node_modules/@material-ui/core/TableSortLabel/TableSortLabel.js"}],"../node_modules/@material-ui/core/internal/svg-icons/CheckBoxOutlineBlank.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -74320,185 +78372,7 @@ Object.defineProperty(exports, "default", {
 });
 
 var _OutlinedInput = _interopRequireDefault(require("./OutlinedInput"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./OutlinedInput":"../node_modules/@material-ui/core/OutlinedInput/OutlinedInput.js"}],"../node_modules/@material-ui/core/FormLabel/FormLabel.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = exports.styles = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
-var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _utils = require("@material-ui/utils");
-
-var _formControlState = _interopRequireDefault(require("../FormControl/formControlState"));
-
-var _withFormControlContext = _interopRequireDefault(require("../FormControl/withFormControlContext"));
-
-var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
-
-var styles = function styles(theme) {
-  return {
-    /* Styles applied to the root element. */
-    root: {
-      fontFamily: theme.typography.fontFamily,
-      color: theme.palette.text.secondary,
-      fontSize: theme.typography.pxToRem(16),
-      lineHeight: 1,
-      padding: 0,
-      '&$focused': {
-        color: theme.palette.primary[theme.palette.type === 'light' ? 'dark' : 'light']
-      },
-      '&$disabled': {
-        color: theme.palette.text.disabled
-      },
-      '&$error': {
-        color: theme.palette.error.main
-      }
-    },
-
-    /* Styles applied to the root element if `focused={true}`. */
-    focused: {},
-
-    /* Styles applied to the root element if `disabled={true}`. */
-    disabled: {},
-
-    /* Styles applied to the root element if `error={true}`. */
-    error: {},
-
-    /* Styles applied to the root element if `filled={true}`. */
-    filled: {},
-
-    /* Styles applied to the root element if `required={true}`. */
-    required: {},
-    asterisk: {
-      '&$error': {
-        color: theme.palette.error.main
-      }
-    }
-  };
-};
-
-exports.styles = styles;
-
-function FormLabel(props) {
-  var _classNames;
-
-  var children = props.children,
-      classes = props.classes,
-      classNameProp = props.className,
-      Component = props.component,
-      disabled = props.disabled,
-      error = props.error,
-      filled = props.filled,
-      focused = props.focused,
-      muiFormControl = props.muiFormControl,
-      required = props.required,
-      other = (0, _objectWithoutProperties2.default)(props, ["children", "classes", "className", "component", "disabled", "error", "filled", "focused", "muiFormControl", "required"]);
-  var fcs = (0, _formControlState.default)({
-    props: props,
-    muiFormControl: muiFormControl,
-    states: ['required', 'focused', 'disabled', 'error', 'filled']
-  });
-  return _react.default.createElement(Component, (0, _extends2.default)({
-    className: (0, _classnames.default)(classes.root, (_classNames = {}, (0, _defineProperty2.default)(_classNames, classes.disabled, fcs.disabled), (0, _defineProperty2.default)(_classNames, classes.error, fcs.error), (0, _defineProperty2.default)(_classNames, classes.filled, fcs.filled), (0, _defineProperty2.default)(_classNames, classes.focused, fcs.focused), (0, _defineProperty2.default)(_classNames, classes.required, fcs.required), _classNames), classNameProp)
-  }, other), children, fcs.required && _react.default.createElement("span", {
-    className: (0, _classnames.default)(classes.asterisk, (0, _defineProperty2.default)({}, classes.error, fcs.error))
-  }, "\u2009*"));
-}
-
-"development" !== "production" ? FormLabel.propTypes = {
-  /**
-   * The content of the component.
-   */
-  children: _propTypes.default.node,
-
-  /**
-   * Override or extend the styles applied to the component.
-   * See [CSS API](#css-api) below for more details.
-   */
-  classes: _propTypes.default.object.isRequired,
-
-  /**
-   * @ignore
-   */
-  className: _propTypes.default.string,
-
-  /**
-   * The component used for the root node.
-   * Either a string to use a DOM element or a component.
-   */
-  component: _utils.componentPropType,
-
-  /**
-   * If `true`, the label should be displayed in a disabled state.
-   */
-  disabled: _propTypes.default.bool,
-
-  /**
-   * If `true`, the label should be displayed in an error state.
-   */
-  error: _propTypes.default.bool,
-
-  /**
-   * If `true`, the label should use filled classes key.
-   */
-  filled: _propTypes.default.bool,
-
-  /**
-   * If `true`, the input of this label is focused (used by `FormGroup` components).
-   */
-  focused: _propTypes.default.bool,
-
-  /**
-   * @ignore
-   */
-  muiFormControl: _propTypes.default.object,
-
-  /**
-   * If `true`, the label will indicate that the input is required.
-   */
-  required: _propTypes.default.bool
-} : void 0;
-FormLabel.defaultProps = {
-  component: 'label'
-};
-
-var _default = (0, _withStyles.default)(styles, {
-  name: 'MuiFormLabel'
-})((0, _withFormControlContext.default)(FormLabel));
-
-exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","@material-ui/utils":"../node_modules/@material-ui/utils/index.es.js","../FormControl/formControlState":"../node_modules/@material-ui/core/FormControl/formControlState.js","../FormControl/withFormControlContext":"../node_modules/@material-ui/core/FormControl/withFormControlContext.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js"}],"../node_modules/@material-ui/core/FormLabel/index.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "default", {
-  enumerable: true,
-  get: function get() {
-    return _FormLabel.default;
-  }
-});
-
-var _FormLabel = _interopRequireDefault(require("./FormLabel"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./FormLabel":"../node_modules/@material-ui/core/FormLabel/FormLabel.js"}],"../node_modules/@material-ui/core/InputLabel/InputLabel.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./OutlinedInput":"../node_modules/@material-ui/core/OutlinedInput/OutlinedInput.js"}],"../node_modules/@material-ui/core/InputLabel/InputLabel.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -74745,311 +78619,7 @@ Object.defineProperty(exports, "default", {
 });
 
 var _InputLabel = _interopRequireDefault(require("./InputLabel"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./InputLabel":"../node_modules/@material-ui/core/InputLabel/InputLabel.js"}],"../node_modules/@material-ui/core/FormControl/FormControl.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = exports.styles = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
-var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
-
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
-
-var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
-
-var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
-
-var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
-
-var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _utils = require("@material-ui/utils");
-
-var _utils2 = require("../InputBase/utils");
-
-var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
-
-var _helpers = require("../utils/helpers");
-
-var _reactHelpers = require("../utils/reactHelpers");
-
-var _FormControlContext = _interopRequireDefault(require("./FormControlContext"));
-
-var styles = {
-  /* Styles applied to the root element. */
-  root: {
-    display: 'inline-flex',
-    flexDirection: 'column',
-    position: 'relative',
-    // Reset fieldset default style.
-    minWidth: 0,
-    padding: 0,
-    margin: 0,
-    border: 0,
-    verticalAlign: 'top' // Fix alignment issue on Safari.
-
-  },
-
-  /* Styles applied to the root element if `margin="normal"`. */
-  marginNormal: {
-    marginTop: 16,
-    marginBottom: 8
-  },
-
-  /* Styles applied to the root element if `margin="dense"`. */
-  marginDense: {
-    marginTop: 8,
-    marginBottom: 4
-  },
-
-  /* Styles applied to the root element if `fullWidth={true}`. */
-  fullWidth: {
-    width: '100%'
-  }
-};
-/**
- * Provides context such as filled/focused/error/required for form inputs.
- * Relying on the context provides high flexibility and ensures that the state always stays
- * consistent across the children of the `FormControl`.
- * This context is used by the following components:
- *  - FormLabel
- *  - FormHelperText
- *  - Input
- *  - InputLabel
- *
- * ⚠️ Only one input can be used within a FormControl.
- */
-
-exports.styles = styles;
-
-var FormControl =
-/*#__PURE__*/
-function (_React$Component) {
-  (0, _inherits2.default)(FormControl, _React$Component);
-  (0, _createClass2.default)(FormControl, null, [{
-    key: "getDerivedStateFromProps",
-    value: function getDerivedStateFromProps(props, state) {
-      if (props.disabled && state.focused) {
-        return {
-          focused: false
-        };
-      }
-
-      return null;
-    }
-  }]);
-
-  function FormControl(props) {
-    var _this;
-
-    (0, _classCallCheck2.default)(this, FormControl);
-    _this = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(FormControl).call(this));
-
-    _this.handleFocus = function () {
-      _this.setState(function (state) {
-        return !state.focused ? {
-          focused: true
-        } : null;
-      });
-    };
-
-    _this.handleBlur = function () {
-      _this.setState(function (state) {
-        return state.focused ? {
-          focused: false
-        } : null;
-      });
-    };
-
-    _this.handleDirty = function () {
-      if (!_this.state.filled) {
-        _this.setState({
-          filled: true
-        });
-      }
-    };
-
-    _this.handleClean = function () {
-      if (_this.state.filled) {
-        _this.setState({
-          filled: false
-        });
-      }
-    };
-
-    _this.state = {
-      adornedStart: false,
-      filled: false,
-      focused: false
-    }; // We need to iterate through the children and find the Input in order
-    // to fully support server-side rendering.
-
-    var children = props.children;
-
-    if (children) {
-      _react.default.Children.forEach(children, function (child) {
-        if (!(0, _reactHelpers.isMuiElement)(child, ['Input', 'Select'])) {
-          return;
-        }
-
-        if ((0, _utils2.isFilled)(child.props, true)) {
-          _this.state.filled = true;
-        }
-
-        var input = (0, _reactHelpers.isMuiElement)(child, ['Select']) ? child.props.input : child;
-
-        if (input && (0, _utils2.isAdornedStart)(input.props)) {
-          _this.state.adornedStart = true;
-        }
-      });
-    }
-
-    return _this;
-  }
-
-  (0, _createClass2.default)(FormControl, [{
-    key: "render",
-    value: function render() {
-      var _classNames;
-
-      var _this$props = this.props,
-          classes = _this$props.classes,
-          className = _this$props.className,
-          Component = _this$props.component,
-          disabled = _this$props.disabled,
-          error = _this$props.error,
-          fullWidth = _this$props.fullWidth,
-          margin = _this$props.margin,
-          required = _this$props.required,
-          variant = _this$props.variant,
-          other = (0, _objectWithoutProperties2.default)(_this$props, ["classes", "className", "component", "disabled", "error", "fullWidth", "margin", "required", "variant"]);
-      var _this$state = this.state,
-          adornedStart = _this$state.adornedStart,
-          filled = _this$state.filled,
-          focused = _this$state.focused;
-      var childContext = {
-        adornedStart: adornedStart,
-        disabled: disabled,
-        error: error,
-        filled: filled,
-        focused: focused,
-        margin: margin,
-        onBlur: this.handleBlur,
-        onEmpty: this.handleClean,
-        onFilled: this.handleDirty,
-        onFocus: this.handleFocus,
-        required: required,
-        variant: variant
-      };
-      return _react.default.createElement(_FormControlContext.default.Provider, {
-        value: childContext
-      }, _react.default.createElement(Component, (0, _extends2.default)({
-        className: (0, _classnames.default)(classes.root, (_classNames = {}, (0, _defineProperty2.default)(_classNames, classes["margin".concat((0, _helpers.capitalize)(margin))], margin !== 'none'), (0, _defineProperty2.default)(_classNames, classes.fullWidth, fullWidth), _classNames), className)
-      }, other)));
-    }
-  }]);
-  return FormControl;
-}(_react.default.Component);
-
-"development" !== "production" ? FormControl.propTypes = {
-  /**
-   * The contents of the form control.
-   */
-  children: _propTypes.default.node,
-
-  /**
-   * Override or extend the styles applied to the component.
-   * See [CSS API](#css-api) below for more details.
-   */
-  classes: _propTypes.default.object.isRequired,
-
-  /**
-   * @ignore
-   */
-  className: _propTypes.default.string,
-
-  /**
-   * The component used for the root node.
-   * Either a string to use a DOM element or a component.
-   */
-  component: _utils.componentPropType,
-
-  /**
-   * If `true`, the label, input and helper text should be displayed in a disabled state.
-   */
-  disabled: _propTypes.default.bool,
-
-  /**
-   * If `true`, the label should be displayed in an error state.
-   */
-  error: _propTypes.default.bool,
-
-  /**
-   * If `true`, the component will take up the full width of its container.
-   */
-  fullWidth: _propTypes.default.bool,
-
-  /**
-   * If `dense` or `normal`, will adjust vertical spacing of this and contained components.
-   */
-  margin: _propTypes.default.oneOf(['none', 'dense', 'normal']),
-
-  /**
-   * If `true`, the label will indicate that the input is required.
-   */
-  required: _propTypes.default.bool,
-
-  /**
-   * The variant to use.
-   */
-  variant: _propTypes.default.oneOf(['standard', 'outlined', 'filled'])
-} : void 0;
-FormControl.defaultProps = {
-  component: 'div',
-  disabled: false,
-  error: false,
-  fullWidth: false,
-  margin: 'none',
-  required: false,
-  variant: 'standard'
-};
-
-var _default = (0, _withStyles.default)(styles, {
-  name: 'MuiFormControl'
-})(FormControl);
-
-exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","@babel/runtime/helpers/classCallCheck":"../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/possibleConstructorReturn":"../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../node_modules/@babel/runtime/helpers/getPrototypeOf.js","@babel/runtime/helpers/createClass":"../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/inherits":"../node_modules/@babel/runtime/helpers/inherits.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","@material-ui/utils":"../node_modules/@material-ui/utils/index.es.js","../InputBase/utils":"../node_modules/@material-ui/core/InputBase/utils.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js","../utils/helpers":"../node_modules/@material-ui/core/utils/helpers.js","../utils/reactHelpers":"../node_modules/@material-ui/core/utils/reactHelpers.js","./FormControlContext":"../node_modules/@material-ui/core/FormControl/FormControlContext.js"}],"../node_modules/@material-ui/core/FormControl/index.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "default", {
-  enumerable: true,
-  get: function get() {
-    return _FormControl.default;
-  }
-});
-
-var _FormControl = _interopRequireDefault(require("./FormControl"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./FormControl":"../node_modules/@material-ui/core/FormControl/FormControl.js"}],"../node_modules/@material-ui/core/FormHelperText/FormHelperText.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./InputLabel":"../node_modules/@material-ui/core/InputLabel/InputLabel.js"}],"../node_modules/@material-ui/core/FormHelperText/FormHelperText.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -75622,7 +79192,7 @@ Object.defineProperty(exports, "default", {
 });
 
 var _TextField = _interopRequireDefault(require("./TextField"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./TextField":"../node_modules/@material-ui/core/TextField/TextField.js"}],"../src/containers/PersonList.jsx":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./TextField":"../node_modules/@material-ui/core/TextField/TextField.js"}],"../src/containers/SideDrawer/PersonList.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -75674,7 +79244,7 @@ var _TextField = _interopRequireDefault(require("@material-ui/core/TextField"));
 
 var _reactRedux = require("react-redux");
 
-var _creators = require("../actions/creators.jsx");
+var _creators = require("../../actions/creators.jsx");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -75892,8 +79462,8 @@ class PersonList extends _react.default.Component {
           orderBy = _this$props2.orderBy,
           selected = _this$props2.selected,
           rowsPerPage = _this$props2.rowsPerPage,
-          page = _this$props2.page;
-    console.log('render :' + order + ' -' + orderBy + ' -' + selected + ' -' + rowsPerPage + ' -' + page);
+          page = _this$props2.page; //  console.log('render :' + order +' -'+ orderBy +' -'+ selected +' -'+ rowsPerPage +' -'+ page);
+
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, persons.length - page * rowsPerPage);
     return _react.default.createElement(_Paper.default, {
       className: classes.root
@@ -75972,7 +79542,7 @@ PersonList.propTypes = {
 };
 
 const mapStateToProps = state => {
-  console.log('mapStateToProps personlist');
+  //  console.log('mapStateToProps personlist');
   return {
     rowsPerPage: state.rowsPerPage,
     page: state.page,
@@ -76009,7 +79579,284 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _styles.withStyles)(styles)((0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(PersonList));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Table":"../node_modules/@material-ui/core/Table/index.js","@material-ui/core/TableBody":"../node_modules/@material-ui/core/TableBody/index.js","@material-ui/core/TableCell":"../node_modules/@material-ui/core/TableCell/index.js","@material-ui/core/TableHead":"../node_modules/@material-ui/core/TableHead/index.js","@material-ui/core/TablePagination":"../node_modules/@material-ui/core/TablePagination/index.js","@material-ui/core/TableRow":"../node_modules/@material-ui/core/TableRow/index.js","@material-ui/core/TableSortLabel":"../node_modules/@material-ui/core/TableSortLabel/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","@material-ui/core/Typography":"../node_modules/@material-ui/core/Typography/index.js","@material-ui/core/Paper":"../node_modules/@material-ui/core/Paper/index.js","@material-ui/core/Checkbox":"../node_modules/@material-ui/core/Checkbox/index.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/core/Tooltip":"../node_modules/@material-ui/core/Tooltip/index.js","@material-ui/icons/Delete":"../node_modules/@material-ui/icons/Delete.js","@material-ui/icons/FilterList":"../node_modules/@material-ui/icons/FilterList.js","@material-ui/core/styles/colorManipulator":"../node_modules/@material-ui/core/styles/colorManipulator.js","@material-ui/core/TextField":"../node_modules/@material-ui/core/TextField/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Table":"../node_modules/@material-ui/core/Table/index.js","@material-ui/core/TableBody":"../node_modules/@material-ui/core/TableBody/index.js","@material-ui/core/TableCell":"../node_modules/@material-ui/core/TableCell/index.js","@material-ui/core/TableHead":"../node_modules/@material-ui/core/TableHead/index.js","@material-ui/core/TablePagination":"../node_modules/@material-ui/core/TablePagination/index.js","@material-ui/core/TableRow":"../node_modules/@material-ui/core/TableRow/index.js","@material-ui/core/TableSortLabel":"../node_modules/@material-ui/core/TableSortLabel/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","@material-ui/core/Typography":"../node_modules/@material-ui/core/Typography/index.js","@material-ui/core/Paper":"../node_modules/@material-ui/core/Paper/index.js","@material-ui/core/Checkbox":"../node_modules/@material-ui/core/Checkbox/index.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/core/Tooltip":"../node_modules/@material-ui/core/Tooltip/index.js","@material-ui/icons/Delete":"../node_modules/@material-ui/icons/Delete.js","@material-ui/icons/FilterList":"../node_modules/@material-ui/icons/FilterList.js","@material-ui/core/styles/colorManipulator":"../node_modules/@material-ui/core/styles/colorManipulator.js","@material-ui/core/TextField":"../node_modules/@material-ui/core/TextField/index.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/GedLoader.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _styles = require("@material-ui/core/styles");
+
+var _Grid = _interopRequireDefault(require("@material-ui/core/Grid"));
+
+var _Button = _interopRequireDefault(require("@material-ui/core/Button"));
+
+var _GedLib = require("../../DataLoader/GedLib.js");
+
+var _reactRedux = require("react-redux");
+
+var _creators = require("../../actions/creators.jsx");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+const styles = {
+  list: {
+    width: 420
+  },
+  fullList: {
+    width: 'auto'
+  },
+  mygrid: {
+    margin: '0px'
+  },
+  label: {
+    textAlign: 'center'
+  }
+};
+
+class GedLoader extends _react.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  dataParseComplete(persons, range) {
+    if (persons == undefined || persons == null || persons.length == 0) {
+      this.showGedError("Could not obtain list of persons");
+      return;
+    } //    this.showGedContent();
+    //  this.showPersonSelectList(persons);
+    //    this.setFDDefaults(Number(range.s)+50,5,3000);
+
+
+    console.log('complete');
+  }
+
+  loadGedDefault() {
+    let defaultGed = '../../Assets/test.ged';
+    let tp = this;
+    fetch(defaultGed).then(response => response.text()).then(data => {
+      const _applicationGedLoader = new _GedLib.GedLib();
+
+      _applicationGedLoader.processFile(data, (message, show) => {
+        tp.props.gedLoadingStatus(message, show);
+      }, function (families, persons, range) {
+        if (persons == undefined || persons == null || persons.length == 0) {
+          tp.props.gedLoadFailed('No Data');
+        } else {
+          tp.props.setGedData(persons, families, range);
+        }
+      });
+    }).catch(error => console.log('error is', error));
+  }
+
+  loadGetStandard() {
+    var that = this;
+
+    var handleFileSelect = function handleFileSelect(evt) {
+      var files = evt.target.files; // FileList object
+      // Loop through the FileList and render image files as thumbnails.
+
+      for (var i = 0, f; f = files[i]; i++) {
+        var reader = new FileReader(); // Closure to capture the file information.
+
+        reader.onload = function (theFile) {
+          return function (e) {
+            // loader.processFile(e.target.result);
+            treedate(e.target.result);
+          };
+        }(f); // Read in the image file as a data URL.
+
+
+        reader.readAsText(f);
+      }
+    };
+  }
+
+  render() {
+    const classes = this.props.classes;
+    return _react.default.createElement(_Grid.default, {
+      container: true,
+      spacing: 24,
+      className: classes.mygrid
+    }, _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 4
+    }, _react.default.createElement(_Button.default, {
+      onClick: () => {
+        this.loadGedDefault();
+      },
+      className: classes.label
+    }, "Default")), _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 4
+    }, _react.default.createElement(_Button.default, {
+      onClick: () => {},
+      className: classes.label
+    }, "Select")), _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 4
+    }));
+  }
+
+}
+
+const mapStateToProps = state => {
+  return {
+    timerStartYear: state.timerStartYear,
+    gedLoaded: state.gedLoaded,
+    getError: state.gedError,
+    incrementSize: state.incrementSize,
+    timeSpeed: state.timeSpeed,
+    gedLoadingMessage: state.gedLoadingMessage,
+    gedLoadingMessagesDisplayed: state.gedLoadingMessagesDisplayed
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    switchControlVisbility: controlVisible => {
+      dispatch((0, _creators.switchControlVisbility)(controlVisible));
+    },
+    gedLoadFailed: message => {
+      dispatch((0, _creators.gedLoadFailed)(message));
+    },
+    initYearIncrementor: (increment, speed) => {
+      dispatch((0, _creators.initYearIncrementor)(increment, speed));
+    },
+    gedLoadingStatus: (message, show) => {
+      dispatch((0, _creators.gedLoadingStatus)(message, show));
+    },
+    setGedData: (persons, families, range) => {
+      dispatch((0, _creators.setGedData)(persons, families, range));
+    }
+  };
+};
+
+var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(GedLoader));
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","../../DataLoader/GedLib.js":"../src/DataLoader/GedLib.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/LayoutSelect.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _styles = require("@material-ui/core/styles");
+
+var _Grid = _interopRequireDefault(require("@material-ui/core/Grid"));
+
+var _Button = _interopRequireDefault(require("@material-ui/core/Button"));
+
+var _Radio = _interopRequireDefault(require("@material-ui/core/Radio"));
+
+var _RadioGroup = _interopRequireDefault(require("@material-ui/core/RadioGroup"));
+
+var _FormControlLabel = _interopRequireDefault(require("@material-ui/core/FormControlLabel"));
+
+var _FormControl = _interopRequireDefault(require("@material-ui/core/FormControl"));
+
+var _FormLabel = _interopRequireDefault(require("@material-ui/core/FormLabel"));
+
+var _reactRedux = require("react-redux");
+
+var _creators = require("../../actions/creators.jsx");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+const styles = {
+  formControl: {
+    marginTop: 15,
+    marginLeft: 10
+  },
+  label: {
+    textAlign: 'center'
+  }
+};
+
+class LayoutSelect extends _react.Component {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "handleChange", event => {
+      this.props.setLayout(event.target.value);
+    });
+  }
+
+  render() {
+    const classes = this.props.classes;
+    return _react.default.createElement(_FormControl.default, {
+      className: classes.formControl,
+      component: "fieldset"
+    }, _react.default.createElement(_FormLabel.default, {
+      component: "legend"
+    }, "Select Layout"), _react.default.createElement(_RadioGroup.default, {
+      "aria-label": "position",
+      name: "position",
+      value: this.props.layout,
+      onChange: this.handleChange,
+      row: true
+    }, _react.default.createElement(_FormControlLabel.default, {
+      value: "forceDirect",
+      control: _react.default.createElement(_Radio.default, {
+        color: "primary"
+      }),
+      label: "Force Direct",
+      labelPlacement: "top"
+    }), _react.default.createElement(_FormControlLabel.default, {
+      value: "ancestors",
+      control: _react.default.createElement(_Radio.default, {
+        color: "primary"
+      }),
+      label: "Ancestors",
+      labelPlacement: "top"
+    }), _react.default.createElement(_FormControlLabel.default, {
+      value: "descendents",
+      control: _react.default.createElement(_Radio.default, {
+        color: "primary"
+      }),
+      label: "Descendents",
+      labelPlacement: "top"
+    })));
+  }
+
+}
+
+const mapStateToProps = state => {
+  return {
+    layout: state.layout
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setLayout: layout => {
+      dispatch((0, _creators.setLayout)(layout));
+    }
+  };
+};
+
+var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(LayoutSelect));
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/Radio":"../node_modules/@material-ui/core/Radio/index.js","@material-ui/core/RadioGroup":"../node_modules/@material-ui/core/RadioGroup/index.js","@material-ui/core/FormControlLabel":"../node_modules/@material-ui/core/FormControlLabel/index.js","@material-ui/core/FormControl":"../node_modules/@material-ui/core/FormControl/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/SideDrawer.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -76041,17 +79888,23 @@ var _MoveToInbox = _interopRequireDefault(require("@material-ui/icons/MoveToInbo
 
 var _Mail = _interopRequireDefault(require("@material-ui/icons/Mail"));
 
+var _Switch = _interopRequireDefault(require("@material-ui/core/Switch"));
+
 var _Grid = _interopRequireDefault(require("@material-ui/core/Grid"));
 
 require("./SideDrawer.css");
 
-var _GedLib = require("../DataLoader/GedLib.js");
+var _GedLib = require("../../DataLoader/GedLib.js");
 
 var _PersonList = _interopRequireDefault(require("./PersonList.jsx"));
 
+var _GedLoader = _interopRequireDefault(require("./GedLoader.jsx"));
+
+var _LayoutSelect = _interopRequireDefault(require("./LayoutSelect.jsx"));
+
 var _reactRedux = require("react-redux");
 
-var _creators = require("../actions/creators.jsx");
+var _creators = require("../../actions/creators.jsx");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -76096,60 +79949,17 @@ class SideDrawer extends _react.Component {
     });
   }
 
-  dataParseComplete(persons, range) {
-    if (persons == undefined || persons == null || persons.length == 0) {
-      this.showGedError("Could not obtain list of persons");
+  drawLayout(event) {
+    //nothing has changed
+    if (this.props.graphActiveLayout == this.props.layout && this.props.graphActiveSelection == this.props.selection) {
       return;
-    } //    this.showGedContent();
-    //  this.showPersonSelectList(persons);
-    //    this.setFDDefaults(Number(range.s)+50,5,3000);
+    }
 
-
-    console.log('complete');
+    this.props.activateLayout(true, this.props.layout, this.props.selection);
   }
 
-  loadGedDefault() {
-    let defaultGed = '../../Assets/default.ged';
-    let tp = this; // $.get(that.defaultGed, function (contents) {
-    //           treedate(contents);
-    //       }, 'text');
-
-    fetch(defaultGed).then(response => response.text()).then(data => {
-      const _applicationGedLoader = new _GedLib.GedLib();
-
-      _applicationGedLoader.processFile(data, (message, show) => {
-        tp.props.gedLoadingStatus(message, show);
-      }, function (families, persons, range) {
-        if (persons == undefined || persons == null || persons.length == 0) {
-          tp.props.gedLoadFailed('No Data');
-        } else {
-          tp.props.setGedData(persons, families, range);
-        }
-      });
-    }).catch(error => console.log('error is', error));
-  }
-
-  loadGetStandard() {
-    var that = this;
-
-    var handleFileSelect = function handleFileSelect(evt) {
-      var files = evt.target.files; // FileList object
-      // Loop through the FileList and render image files as thumbnails.
-
-      for (var i = 0, f; f = files[i]; i++) {
-        var reader = new FileReader(); // Closure to capture the file information.
-
-        reader.onload = function (theFile) {
-          return function (e) {
-            // loader.processFile(e.target.result);
-            treedate(e.target.result);
-          };
-        }(f); // Read in the image file as a data URL.
-
-
-        reader.readAsText(f);
-      }
-    };
+  clearLayout(event) {
+    this.props.activateLayout(false);
   }
 
   render() {
@@ -76166,32 +79976,45 @@ class SideDrawer extends _react.Component {
       className: classes.mygrid
     }, _react.default.createElement(_Grid.default, {
       item: true,
-      xs: 12
+      xs: 9
     }, _react.default.createElement("b", {
       className: classes.label
     }, "Data Selection")), _react.default.createElement(_Grid.default, {
       item: true,
-      xs: 4
-    }, _react.default.createElement(_Button.default, {
-      onClick: () => {
-        this.loadGedDefault();
-      },
-      className: classes.label
-    }, "Default")), _react.default.createElement(_Grid.default, {
-      item: true,
-      xs: 4
-    }, _react.default.createElement(_Button.default, {
-      onClick: () => {},
-      className: classes.label
-    }, "Select")), _react.default.createElement(_Grid.default, {
-      item: true,
-      xs: 4
+      xs: 3
     }, _react.default.createElement(_Button.default, {
       onClick: () => {
         this.toggleDrawer(false);
       },
       className: classes.label
-    }, "Close"))), _react.default.createElement(_PersonList.default, null)))));
+    }, "Close"))), _react.default.createElement(_GedLoader.default, null), _react.default.createElement(_PersonList.default, null), _react.default.createElement(_LayoutSelect.default, null), _react.default.createElement(_Grid.default, {
+      container: true,
+      spacing: 24,
+      className: classes.mygrid
+    }, _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 3
+    }, _react.default.createElement(_Button.default, {
+      onClick: () => {
+        this.drawLayout();
+      },
+      className: classes.label
+    }, "Draw")), _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 3
+    }, _react.default.createElement(_Button.default, {
+      onClick: () => {
+        this.clearLayout();
+      },
+      className: classes.label
+    }, "Clear")), _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 3
+    }, _react.default.createElement(_Switch.default, {
+      checked: this.props.graphActive,
+      value: "checkedB",
+      color: "primary"
+    })))))));
   }
 
 }
@@ -76214,9 +80037,12 @@ const mapStateToProps = state => {
     timeSpeed: state.timeSpeed,
     gedLoadingMessage: state.gedLoadingMessage,
     gedLoadingMessagesDisplayed: state.gedLoadingMessagesDisplayed,
-    persons: state.persons,
-    families: state.families,
-    gedDataRange: state.gedDataRange
+    gedDataRange: state.gedDataRange,
+    graphActive: state.graphActive,
+    graphActiveLayout: state.graphActiveLayout,
+    graphActiveSelection: state.graphActiveSelection,
+    layout: state.layout,
+    selection: state.selection
   };
 };
 
@@ -76225,17 +80051,11 @@ const mapDispatchToProps = dispatch => {
     switchControlVisbility: controlVisible => {
       dispatch((0, _creators.switchControlVisbility)(controlVisible));
     },
-    gedLoadFailed: message => {
-      dispatch((0, _creators.gedLoadFailed)(message));
-    },
     initYearIncrementor: (increment, speed) => {
       dispatch((0, _creators.initYearIncrementor)(increment, speed));
     },
-    gedLoadingStatus: (message, show) => {
-      dispatch((0, _creators.gedLoadingStatus)(message, show));
-    },
-    setGedData: (persons, families, range) => {
-      dispatch((0, _creators.setGedData)(persons, families, range));
+    activateLayout: (isActive, graphActiveLayout, graphActiveSelection) => {
+      dispatch((0, _creators.activateLayout)(isActive, graphActiveLayout, graphActiveSelection));
     }
   };
 };
@@ -76243,7 +80063,7 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(SideDrawer));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","./SideDrawer.css":"../src/containers/SideDrawer.css","../DataLoader/GedLib.js":"../src/DataLoader/GedLib.js","./PersonList.jsx":"../src/containers/PersonList.jsx","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/data.css":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Switch":"../node_modules/@material-ui/core/Switch/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","./SideDrawer.css":"../src/containers/SideDrawer/SideDrawer.css","../../DataLoader/GedLib.js":"../src/DataLoader/GedLib.js","./PersonList.jsx":"../src/containers/SideDrawer/PersonList.jsx","./GedLoader.jsx":"../src/containers/SideDrawer/GedLoader.jsx","./LayoutSelect.jsx":"../src/containers/SideDrawer/LayoutSelect.jsx","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/data.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -76264,7 +80084,7 @@ var _Navbar = _interopRequireDefault(require("react-bootstrap/Navbar"));
 
 var _Nav = _interopRequireDefault(require("react-bootstrap/Nav"));
 
-var _SideDrawer = _interopRequireDefault(require("./SideDrawer"));
+var _SideDrawer = _interopRequireDefault(require("./SideDrawer/SideDrawer.jsx"));
 
 var _TopButtons = _interopRequireDefault(require("./ButtonBar/TopButtons.jsx"));
 
@@ -76302,7 +80122,7 @@ class Data extends _react.Component {
 }
 
 exports.default = Data;
-},{"react":"../node_modules/react/index.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","./SideDrawer":"../src/containers/SideDrawer.jsx","./ButtonBar/TopButtons.jsx":"../src/containers/ButtonBar/TopButtons.jsx","./data.css":"../src/containers/data.css"}],"../node_modules/mitt/dist/mitt.es.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","./SideDrawer/SideDrawer.jsx":"../src/containers/SideDrawer/SideDrawer.jsx","./ButtonBar/TopButtons.jsx":"../src/containers/ButtonBar/TopButtons.jsx","./data.css":"../src/containers/data.css"}],"../node_modules/mitt/dist/mitt.es.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -76588,6 +80408,23 @@ var _default = function _default() {
         orderBy: action.orderBy
       });
 
+    case "SET_LAYOUT":
+      return _objectSpread({}, state, {
+        layout: action.layout
+      });
+
+    case "SET_CONTEXT":
+      return _objectSpread({}, state, {
+        context: action.context
+      });
+
+    case "ACTIVATE_GRAPH":
+      return _objectSpread({}, state, {
+        graphActive: action.graphActive,
+        graphActiveLayout: action.graphActiveLayout,
+        graphActiveSelection: action.graphActiveSelection
+      });
+
     case "SET_DATA":
       return _objectSpread({}, state, {
         persons: action.persons,
@@ -76644,11 +80481,16 @@ var _default = (0, _redux.createStore)(_reducer.default, {
     e: 2000
   },
   page: 0,
-  rowsPerPage: 9,
+  rowsPerPage: 8,
+  layout: 'descendents',
   gedLoaded: true,
   gedError: '',
   gedLoadingMessage: '',
-  gedLoadingMessagesDisplayed: false
+  gedLoadingMessagesDisplayed: false,
+  graphActive: false,
+  graphActiveLayout: 'descendents',
+  graphActiveSelection: [],
+  context: null
 }, (0, _redux.applyMiddleware)(_reduxThunk.default));
 
 exports.default = _default;
@@ -76708,7 +80550,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56190" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "13609" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

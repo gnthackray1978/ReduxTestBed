@@ -7,6 +7,7 @@ import GraphControl from './MapControls/GraphControl.jsx';
 import TopButtons from './ButtonBar/TopButtons.jsx';
 import { connect } from "react-redux";
 import { switchControlVisbility,beginSearch,reset } from "../actions/creators.jsx";
+import VisualisationHandler from "./VisualisationHandler.jsx";
 
 import './graph.css';
 
@@ -15,10 +16,6 @@ class Graph extends Component {
 
   constructor(props) {
      super(props);
-//     this.state = {
-//         modalShow: false
-//     };
-
 
    }
 
@@ -31,48 +28,43 @@ class Graph extends Component {
       else
         this.props.switchControlVisbility(true);
     }
-    
-  //  this.setState({modalShow: !this.state.modalShow});
+
 
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //     console.log('Graph- componentWillReceiveProps' + e);
-  //     console.log("componentWillReceiveProps triggering...");
-  //     console.log("nextProps.objectOfIds ", nextProps);
-  //     console.log("nextProps.reduxData.objectOfIds ", nextProps);
-  //
-  // }
+  componentWillReceiveProps(nextProps) {
+
+    console.log('Graph componentWillReceiveProps' );
+
+    if (nextProps.loading !== this.props.loading &&
+        nextProps.success !== this.props.success &&
+        !nextProps.loading && nextprops.success) {
+
+    }
+  }
 
   render() {
-    console.log('Graph - render');
+    console.log('Graph render');
 
 
     return (
       <div>
+        <VisualisationHandler></VisualisationHandler>
+        
         <TopButtons isData = {false} modeChanged = { this.topButtonClicked }/>
 
         <Container className="cont-width">
 
-        <Row className="my-row">
-        </Row>
 
-        <Row className="my-row">
-            <Col xs={6} md={4}>
+            <Row className="my-row">
+              </Row>
 
-            </Col>
-            <Col xs={6} md={4} className="align-self-center">
-              <p>{this.props.status}</p>
-            </Col>
-            <Col xs={6} md={4}>
+              <Row className="my-row">
+                </Row>
 
-            </Col>
-          </Row>
-
-          <Row className="my-row">
-              <GraphControl modalShow={this.props.controlVisible}/>
-          </Row>
-
+                <Row className="my-row">
+                    <GraphControl modalShow={this.props.controlVisible}/>
+                </Row>
 
         </Container>
 

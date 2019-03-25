@@ -56,6 +56,15 @@ export const gedLoadingStatus = (message, show) => {
   };
 };
 
+export const setContext = (context) => {
+  return async dispatch  => {
+    dispatch({
+      type: "SET_CONTEXT",
+      context : context
+    });
+  };
+};
+
 export const gedLoadFailed = (message) => {
   return async dispatch  => {
     dispatch({
@@ -104,14 +113,25 @@ export const setOrder = (order,orderBy) =>{
   };
 }
 
-// export const setData = (rawData) =>{
-//   return async dispatch  => {
-//     dispatch({
-//       type: "SET_DATA",
-//       rawData : rawData
-//     });
-//   };
-// }
+export const setLayout = (layout) =>{
+  return async dispatch  => {
+    dispatch({
+      type: "SET_LAYOUT",
+      layout : layout
+    });
+  };
+}
+
+export const activateLayout = (isActive,graphActiveLayout,graphActiveSelection) =>{
+  return async dispatch  => {
+    dispatch({
+      type: "ACTIVATE_GRAPH",
+      graphActive : isActive,
+      graphActiveLayout : graphActiveLayout,
+      graphActiveSelection : graphActiveSelection
+    });
+  };
+}
 
 
 export const setGedData = (persons, families,range) =>{

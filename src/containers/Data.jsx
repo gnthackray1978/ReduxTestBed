@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Grid, Col,Row, Image ,Modal,Container,Button } from 'react-bootstrap';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import SideDrawer from './SideDrawer';
+import SideDrawer from './SideDrawer/SideDrawer.jsx';
 import TopButtons from './ButtonBar/TopButtons.jsx';
 import './data.css';
 

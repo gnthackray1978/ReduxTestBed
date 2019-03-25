@@ -107,6 +107,29 @@ export default (state = {}, action) => {
             orderBy: action.orderBy
           };
 
+    case "SET_LAYOUT":
+          return {
+            ...state,
+            layout : action.layout,
+
+          };
+
+    case "SET_CONTEXT":
+          return {
+            ...state,
+            context : action.context,
+          };
+
+    case "ACTIVATE_GRAPH":
+          return {
+            ...state,
+            graphActive : action.graphActive,
+            graphActiveLayout :action.graphActiveLayout,
+            graphActiveSelection :action.graphActiveSelection
+          };
+
+
+
     case "SET_DATA":
           return {
             ...state,

@@ -16,11 +16,16 @@ export default createStore(
     families :[],
     gedDataRange: {s:0, e:2000},
     page : 0,
-    rowsPerPage : 9,
+    rowsPerPage : 8,
+    layout : 'descendents',
     gedLoaded :true,
     gedError :'',
     gedLoadingMessage : '',
-    gedLoadingMessagesDisplayed : false
+    gedLoadingMessagesDisplayed : false,
+    graphActive : false,
+    graphActiveLayout  : 'descendents',
+    graphActiveSelection :[],
+    context : null
   },
   applyMiddleware(thunk)
 );

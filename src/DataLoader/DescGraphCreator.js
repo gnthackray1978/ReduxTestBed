@@ -1,5 +1,5 @@
 
-import {Bio} from "../Diagrams/Data/Bio.mjs";
+import {Bio} from "./Bio.js";
 import {GNGraph} from "./GNGraph.js";
 import {GedLib} from "./GedLib.js";
 

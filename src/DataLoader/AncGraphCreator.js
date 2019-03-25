@@ -1,7 +1,22 @@
 
-import {Bio} from "../Diagrams/Data/Bio.mjs";
+import {Bio} from "./Bio.js";
 import {GedLib} from "./GedLib.js";
 import {GNGraph} from "./GNGraph.js";
+
+const grep = function(items, callback) {
+    let filtered = [],
+        len = items.length,
+        i = 0;
+    for (i; i < len; i++) {
+        let item = items[i];
+        let cond = callback(item);
+        if (cond) {
+            filtered.push(item);
+        }
+    }
+
+    return filtered;
+};
 
 export class AncGraphCreator {
 
@@ -38,8 +53,8 @@ export class AncGraphCreator {
 
     addAncestorsToGraph(startperson) {
 
-        var family = $.grep(this.families, function (e) {
-            var innerresult = $.grep(e.children, function (a) {
+        var family = grep(this.families, function (e) {
+            var innerresult = grep(e.children, function (a) {
                 return a.id == startperson.id;
             });
 
@@ -118,9 +133,9 @@ export class AncGraphCreator {
 
 
                 // find this childs family
-                var familyi = $.grep(this.families,  (e) => {
+                var familyi = grep(this.families,  (e) => {
 
-                    var innerresult = $.grep(e.children,  (a) => {
+                    var innerresult = grep(e.children,  (a) => {
                         return a.id == currentChildId;
                     });
 
