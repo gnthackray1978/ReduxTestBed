@@ -22,10 +22,17 @@ export default createStore(
     gedError :'',
     gedLoadingMessage : '',
     gedLoadingMessagesDisplayed : false,
+    graphRunning : false,
     graphActive : false,
     graphActiveLayout  : 'descendents',
     graphActiveSelection :[],
-    context : null
+    context : null,
+    zoomin:false,
+    zoomout:false,
+    mapup:false,
+    mapdown: false,
+    mapleft :false,
+    mapright :false
   },
   applyMiddleware(thunk)
 );

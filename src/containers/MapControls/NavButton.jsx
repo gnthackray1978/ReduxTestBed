@@ -23,27 +23,52 @@ NavButton.propTypes = {
 //
 // }
 
-function NavButton({ onClick, type = 'LEFT' }){
+function NavButton({ onClick,onMouseDown, onMouseUp, type = 'LEFT' }){
   let directionClass = <IconButton ><ArrowBackward onClick = {onClick}/></IconButton>;
 
+ 
   switch(type){
     case 'LEFT':
-      directionClass = <IconButton ><ArrowBackward onClick = {onClick}/></IconButton>;
+      directionClass = <IconButton ><ArrowBackward
+        onClick ={(evt)=>onClick(evt,'LEFT')}
+        onMouseDown ={(evt)=>onMouseDown(evt,'LEFT')}
+        onMouseUp={(evt)=>onMouseUp(evt,'LEFT')}/>
+    </IconButton>;
       break;
     case 'RIGHT':
-      directionClass = <IconButton ><ArrowForward onClick = {onClick}/></IconButton>;
+      directionClass = <IconButton ><ArrowForward
+        onClick ={(evt)=>onClick(evt,'RIGHT')}
+        onMouseDown ={(evt)=>onMouseDown(evt,'RIGHT')}
+        onMouseUp={(evt)=>onMouseUp(evt,'RIGHT')}/>
+    </IconButton>;
       break;
     case 'UP':
-      directionClass = <IconButton ><ArrowUpward onClick = {onClick}/></IconButton>;
+      directionClass = <IconButton ><ArrowUpward
+        onClick ={(evt)=>onClick(evt,'UP')}
+        onMouseDown ={(evt)=>onMouseDown(evt,'UP')}
+        onMouseUp={(evt)=>onMouseUp(evt,'UP')}/>
+    </IconButton>;
       break;
     case 'DOWN':
-      directionClass = <IconButton ><ArrowDownward onClick = {onClick}/></IconButton>;
+      directionClass = <IconButton ><ArrowDownward
+        onClick ={(evt)=>onClick(evt,'DOWN')}
+        onMouseDown ={(evt)=>onMouseDown(evt,'DOWN')}
+        onMouseUp={(evt)=>onMouseUp(evt,'DOWN')}/>
+    </IconButton>;
       break;
     case 'ZOOMIN':
-      directionClass = <IconButton ><ZoomIn onClick = {onClick}/></IconButton>;
+      directionClass = <IconButton ><ZoomIn
+        onClick ={(evt)=>onClick(evt,'ZOOMIN')}
+        onMouseDown ={(evt)=>onMouseDown(evt,'ZOOMIN')}
+        onMouseUp={(evt)=>onMouseUp(evt,'ZOOMIN')}/>
+    </IconButton>;
       break;
     case 'ZOOMOUT':
-      directionClass = <IconButton ><ZoomOut onClick = {onClick}/></IconButton>;
+      directionClass = <IconButton ><ZoomOut
+        onClick ={(evt)=>onClick(evt,'ZOOMOUT')}
+        onMouseDown ={(evt)=>onMouseDown(evt,'ZOOMOUT')}
+        onMouseUp={(evt)=>onMouseUp(evt,'ZOOMOUT')}/>
+    </IconButton>;
       break;
   }
 

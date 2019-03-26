@@ -145,6 +145,71 @@ export const setGedData = (persons, families,range) =>{
   };
 }
 
+export const zoomIn = (isSet) =>{
+  return async dispatch  => {
+      dispatch({
+        type: "ZOOMIN_DOWN",
+        isSet : isSet,
+      });
+  };
+}
+
+export const zoomOut = (isSet) =>{
+  return async dispatch  => {
+      dispatch({
+        type: "ZOOMOUT_DOWN",
+        isSet : isSet,
+      });
+  };
+}
+
+
+export const mapUp = (isSet) =>{
+  return async dispatch  => {
+      dispatch({
+        type: "MAPUP_DOWN",
+        isSet : isSet,
+      });
+  };
+}
+
+export const mapDown = (isSet) =>{
+  return async dispatch  => {
+      dispatch({
+        type: "MAPDOWN_DOWN",
+        isSet : isSet,
+      });
+  };
+}
+
+export const mapLeft = (isSet) =>{
+  return async dispatch  => {
+      dispatch({
+        type: "MAPLEFT_DOWN",
+        isSet : isSet,
+      });
+  };
+}
+
+export const mapRight = (isSet) =>{
+  return async dispatch  => {
+      dispatch({
+        type: "MAPRIGHT_DOWN",
+        isSet : isSet,
+      });
+  };
+}
+
+export const toggleGraphRunning = (isSet) =>{
+  return async dispatch =>{
+    dispatch({
+      type: "TOGGLE_GRAPHRUNNING",
+      isSet : isSet
+    });
+  };
+}
+
+
 
 
 export const reset = term => {

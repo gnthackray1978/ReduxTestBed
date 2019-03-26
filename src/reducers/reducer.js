@@ -139,18 +139,47 @@ export default (state = {}, action) => {
             gedLoaded :true
           };
 
-    // case "INIT_PERSON_LIST" :
-    //       console.log("INIT_PERSON_LIST" );
-    //       return {
-    //         ...state,
-    //         order : action.order,
-    //         orderBy: action.orderBy,
-    //         selected : action.selected,
-    //         rawData: action.rawData,
-    //         page : action.page,
-    //         rowsPerPage: action.rowsPerPage,
-    //
-    //       };
+    case "ZOOMIN_DOWN":
+          return {
+            ...state,
+            zoomin : action.isSet,
+          };
+
+    case "ZOOMOUT_DOWN":
+          return {
+            ...state,
+            zoomout : action.isSet,
+          };
+
+    case "MAPUP_DOWN":
+          return {
+            ...state,
+            mapup : action.isSet,
+          };
+
+    case "MAPDOWN_DOWN":
+          return {
+            ...state,
+            mapdown : action.isSet,
+          };
+
+    case "MAPLEFT_DOWN":
+          return {
+            ...state,
+            mapleft : action.isSet,
+          };
+
+    case "MAPRIGHT_DOWN":
+          return {
+            ...state,
+            mapright : action.isSet,
+          };
+
+    case "TOGGLE_GRAPHRUNNING":
+          return {
+            ...state,
+            graphRunning : action.isSet,
+          };
 
     default:
       return state;

@@ -111,7 +111,7 @@ AncTree.prototype = {
   },
 
 
-    ContainsPerson : function (value) {
+   ContainsPerson : function (value) {
         for (var i = 0; i < this.length; i++) {
 
             if (this[i].PersonId == value.PersonId) {
@@ -122,11 +122,7 @@ AncTree.prototype = {
     },
 
     DrawTree :function () {
-      console.log('draw tree inner');
-      //  let that = this;
-    //    requestAnimationFrame(()=>{
-          this.DrawTreeInner();
-      //  }); //$.proxy(this.DrawTreeInner, this) );
+        this.DrawTreeInner();
     },
 
     DrawTreeInner :function () {
@@ -1052,6 +1048,7 @@ AncTree.prototype = {
 
     PerformClick: function (x, y) {
 
+        //uconsole.log('perform click: ' + x + ' ' + y);
       //  var mouseLink = this.bt_links.LinkContainingPoint(x, y);
 
         var mouseLink = this.LinkContainingPoint(this.bt_links,x, y);

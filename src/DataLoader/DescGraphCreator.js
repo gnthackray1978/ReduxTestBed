@@ -3,6 +3,21 @@ import {Bio} from "./Bio.js";
 import {GNGraph} from "./GNGraph.js";
 import {GedLib} from "./GedLib.js";
 
+const grep = function(items, callback) {
+    let filtered = [],
+        len = items.length,
+        i = 0;
+    for (i; i < len; i++) {
+        let item = items[i];
+        let cond = callback(item);
+        if (cond) {
+            filtered.push(item);
+        }
+    }
+
+    return filtered;
+};
+
 export class DescGraphCreator {
 
     constructor(families,persons){
@@ -103,7 +118,7 @@ export class DescGraphCreator {
         var idx = 0;
         var famidx = 0;
 
-        var familyFound = $.grep(this._workingFamilies, function (e) {
+        var familyFound = grep(this._workingFamilies, function (e) {
             if(startperson == null) return false;
             if(e.husband == null && e.wife == null) return false;
 
