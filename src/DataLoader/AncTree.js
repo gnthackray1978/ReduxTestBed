@@ -25,23 +25,26 @@ export function AncTree() {
   this.centrePointXOffset = 0.0;
   this.centrePointYOffset = 0.0;
 
-  this.original_distanceBetweenBoxs = 0.0;
-  this.original_distanceBetweenGens = 0.0;
-  this.original_boxWidth = 0.0;
-  this.original_boxHeight = 0.0;
-  this.original_distancesbetfam = 0.0;
-  this.original_lowerStalkHeight = 0.0;
+  this.layoutDefaults=null;
+  this.layoutVolatile =null;
 
-  this.original_middleSpan = 40.0;
-  this.original_topSpan = 20.0;
+  // this.original_distanceBetweenBoxs = 0.0;
+  // this.original_distanceBetweenGens = 0.0;
+  // this.original_boxWidth = 0.0;
+  // this.original_boxHeight = 0.0;
+  // this.original_distancesbetfam = 0.0;
+  // this.original_lowerSpan = 0.0;
+  //
+  // this.original_middleSpan = 40.0;
+  // this.original_topSpan = 20.0;
 
 
 
-  this.zoomPercentage = 0.0;
-  this.distanceBetweenBoxs = 0.0;
-  this.distanceBetweenGens = 0.0;
-  this.halfBox = 0.0;
-  this.halfBoxHeight = 0.0;
+  // this.zoomPercentage = 0.0;
+  // this.distanceBetweenBoxs = 0.0;
+  // this.distanceBetweenGens = 0.0;
+  // this.halfBox = 0.0;
+  // this.halfBoxHeight = 0.0;
 
 
   this.mouse_x = 0; //int
@@ -67,8 +70,8 @@ export function AncTree() {
 
   this.zoomAmount = 8; //int
 
-  this.boxWidth = 0.0;
-  this.boxHeight = 0.0;
+  // this.boxWidth = 0.0;
+  // this.boxHeight = 0.0;
   this.sourceId = null;
 
 
@@ -146,7 +149,7 @@ AncTree.prototype = {
 
 
           // var treeUI = new TreeUI(this.bt_screenWidth, this.bt_screenHeight, this.boxWidth, this.boxHeight,1,null);
-           this.treeUI.UpdateUI(this.bt_screenWidth, this.bt_screenHeight, this.boxWidth, this.boxHeight);
+           this.treeUI.UpdateUI(this.bt_screenWidth, this.bt_screenHeight, this.layoutVolatile.boxWidth, this.layoutVolatile.boxHeight);
 
 
            this.treeUI.ClearContext();
@@ -164,7 +167,7 @@ AncTree.prototype = {
 
                        var _person = this.generations[_genidx][_personIdx];
 
-                       var personLink = this.treeUI.DrawPerson(_person, this.sourceId, this.zoomPercentage);
+                       var personLink = this.treeUI.DrawPerson(_person, this.sourceId, this.layoutVolatile.zoomPercentage);
 
                        if(personLink !== null)
                         this.bt_links.push(personLink);
@@ -218,9 +221,9 @@ AncTree.prototype = {
 
 
         this.generations[0][0].X1 = this.centrePoint;
-        this.generations[0][0].X2 = this.centrePoint + this.boxWidth;
+        this.generations[0][0].X2 = this.centrePoint + this.layoutVolatile.boxWidth;
         this.generations[0][0].Y1 = _y;
-        this.generations[0][0].Y2 = _y + this.boxHeight;
+        this.generations[0][0].Y2 = _y + this.layoutVolatile.boxHeight;
 
 
         var idx = 0;
@@ -415,7 +418,7 @@ AncTree.prototype = {
                 personIdx++;
             }
 
-            _y -= this.distanceBetweenGens;
+            _y -= this.layoutVolatile.distanceBetweenGens;
 
             genidx++;
 
@@ -605,23 +608,23 @@ AncTree.prototype = {
 
             if (this.adjustedBoxWidths.length > movePerson.GenerationIdx)
             {
-                this.boxWidth = this.adjustedBoxWidths[movePerson.GenerationIdx];
+                this.layoutVolatile.boxWidth = this.adjustedBoxWidths[movePerson.GenerationIdx];
                 }
             else
             {
-                this.boxWidth = this.boxWidth;
+                this.layoutVolatile.boxWidth = this.layoutVolatile.boxWidth;
                 }
 
             if (movePerson.FatherIdx == -1)
             {
-                this.workingX1 = ((this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X1 + this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X2) / 2) - (this.boxWidth / 2);
-                this.workingX2 = this.workingX1 + this.boxWidth;
+                this.workingX1 = ((this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X1 + this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X2) / 2) - (this.layoutVolatile.boxWidth / 2);
+                this.workingX2 = this.workingX1 + this.layoutVolatile.boxWidth;
             }
 
             if (movePerson.MotherIdx == -1)
             {
-                this.workingX1 = ((this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X1 + this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X2) / 2) - (this.boxWidth / 2);
-                this.workingX2 = this.workingX1 + this.boxWidth;
+                this.workingX1 = ((this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X1 + this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X2) / 2) - (this.layoutVolatile.boxWidth / 2);
+                this.workingX2 = this.workingX1 + this.layoutVolatile.boxWidth;
             }
 
             var parentX1 = 0.0;
@@ -653,10 +656,10 @@ AncTree.prototype = {
             var childIdx = this.generations[genidx][personIdx].ChildIdx;
 
             if (genidx > 0) {
-                adjustedBoxHeight = this.boxHeight - ((this.boxHeight / 100) * percentageLess);
+                adjustedBoxHeight = this.layoutVolatile.boxHeight - ((this.layoutVolatile.boxHeight / 100) * percentageLess);
                 var childBoxWidth = (this.generations[genidx - 1][childIdx].X2 - this.generations[genidx - 1][childIdx].X1);
                 var childCentrePoint = this.generations[genidx - 1][childIdx].X1 + (childBoxWidth / 2);
-                adjustedDistanceApart = this.distanceBetweenBoxs - ((this.distanceBetweenBoxs / 100) * percentageLess);
+                adjustedDistanceApart = this.layoutVolatile.distanceBetweenBoxs - ((this.layoutVolatile.distanceBetweenBoxs / 100) * percentageLess);
                 adjustedBoxWidth = childBoxWidth - ((childBoxWidth / 100) * percentageLess);
 
                 var isFirstParent = false;
@@ -700,8 +703,8 @@ AncTree.prototype = {
                 // newX1 = initialCentrePoint - newX1;
             }
             else {
-                adjustedBoxHeight = this.boxHeight;
-                adjustedBoxWidth = this.boxWidth;
+                adjustedBoxHeight = this.layoutVolatile.boxHeight;
+                adjustedBoxWidth = this.layoutVolatile.boxWidth;
                 this.newX1 = this.centrePoint;
             }
 
@@ -768,18 +771,10 @@ AncTree.prototype = {
 
     },
 
-    SetInitialValues: function (zoomPerc,
-                                    dist_bet_box,
-                                    dist_bet_gen,
-                                    box_wid,
-                                    box_hig,
-                                    dist_bet_fam,
-                                    low_stalk_hi,
-                                    mid_span,
-                                    top_span,
-                                    screen_width,
-                                    screen_height
-                                    ) {
+    SetInitialValues: function (defaultLayout, screen_width, screen_height ) {
+
+      this.layoutDefaults=defaultLayout;
+      this.layoutVolatile ={...defaultLayout};
 
         this.centrePoint = 750.0;
         this.centreVerticalPoint = 0.0;
@@ -794,30 +789,30 @@ AncTree.prototype = {
         this.bt_screenHeight = screen_height;
         this.bt_screenWidth = screen_width;
 
-        this.zoomPercentage = zoomPerc;
-        this.original_distanceBetweenBoxs = dist_bet_box;
-        this.original_distanceBetweenGens = dist_bet_gen;
-        this.original_boxWidth = box_wid;
-        this.original_boxHeight = box_hig;
-        this.original_distancesbetfam = dist_bet_fam;
-        this.original_lowerStalkHeight = low_stalk_hi;
-        this.original_middleSpan = mid_span;
-        this.original_topSpan = top_span;
+    //    this.zoomPercentage = zoomPerc;
+        // this.original_distanceBetweenBoxs = dist_bet_box;
+        // this.original_distanceBetweenGens = dist_bet_gen;
+        // this.original_boxWidth = box_wid;
+        // this.original_boxHeight = box_hig;
+        // this.original_distancesbetfam = dist_bet_fam;
+        // this.original_lowerSpan = low_stalk_hi;
+        // this.original_middleSpan = mid_span;
+        // this.original_topSpan = top_span;
 
-
-        this.distanceBetweenBoxs = this.original_distanceBetweenBoxs;
-        this.distanceBetweenGens = this.original_distanceBetweenGens;
-        this.boxWidth = this.original_boxWidth;
-        this.boxHeight = this.original_boxHeight;
-        this.distancesbetfam = this.original_distancesbetfam;
-        this.halfBox = this.boxWidth / 2;
-        this.halfBoxHeight = this.boxHeight / 2;
-
-        this.lowerSpan = this.original_lowerStalkHeight;
-
-        this.middleSpan = this.original_middleSpan;
-
-        this.topSpan = this.original_topSpan;
+        //
+        // this.distanceBetweenBoxs = this.original_distanceBetweenBoxs;
+        // this.distanceBetweenGens = this.original_distanceBetweenGens;
+        // this.boxWidth = this.original_boxWidth;
+        // this.boxHeight = this.original_boxHeight;
+        // this.distancesbetfam = this.original_distancesbetfam;
+        // this.halfBox = this.boxWidth / 2;
+        // this.halfBoxHeight = this.boxHeight / 2;
+        //
+        // this.lowerSpan = this.original_lowerSpan;
+        //
+        // this.middleSpan = this.original_middleSpan;
+        //
+        // this.topSpan = this.original_topSpan;
 
 
 
@@ -891,7 +886,7 @@ AncTree.prototype = {
 
             this.SetZoomStart();
 
-            this.SetCentrePoint(1000000, 1000000);
+            this.SetCentrePoint();
 
 
             if (direction == 'UP') {
@@ -917,20 +912,20 @@ AncTree.prototype = {
             var _percLocal_y = 0.0;
 
             //zoom drawing components
-            this.zoomPercentage += percentage;
+            this.layoutVolatile.zoomPercentage += percentage;
             this.zoomLevel += percentage;
-            _workingtp = this.original_distanceBetweenBoxs / 100;
-            this.distanceBetweenBoxs = _workingtp * this.zoomPercentage;
-            _workingtp = this.original_boxWidth / 100;
-            this.boxWidth = _workingtp * this.zoomPercentage;
-            this.halfBox = this.boxWidth / 2;
-            _workingtp = this.original_distancesbetfam / 100;
-            _workingtp = this.original_distanceBetweenGens / 100;
-            this.distanceBetweenGens = _workingtp * this.zoomPercentage;
-            _workingtp = this.original_boxHeight / 100;
-            this.boxHeight = _workingtp * this.zoomPercentage;
+            _workingtp = this.layoutDefaults.distanceBetweenBoxs / 100;
+            this.layoutVolatile.distanceBetweenBoxs = _workingtp * this.layoutVolatile.zoomPercentage;
+            _workingtp = this.layoutDefaults.boxWidth / 100;
+            this.layoutVolatile.boxWidth = _workingtp * this.layoutVolatile.zoomPercentage;
+            this.layoutVolatile.halfBoxWidth = this.layoutVolatile.boxWidth / 2;
+            _workingtp = this.layoutDefaults.distancesbetfam / 100;
+            _workingtp = this.layoutDefaults.distanceBetweenGens / 100;
+            this.layoutVolatile.distanceBetweenGens = _workingtp * this.layoutVolatile.zoomPercentage;
+            _workingtp = this.layoutDefaults.boxHeight / 100;
+            this.layoutVolatile.boxHeight = _workingtp * this.layoutVolatile.zoomPercentage;
 
-            this.halfBoxHeight = this.boxHeight / 2;
+            this.layoutVolatile.halfBoxHeight = this.layoutVolatile.boxHeight / 2;
 
             this.ComputeLocations();
 
@@ -1106,7 +1101,8 @@ AncTree.prototype = {
 
     SetCentrePoint: function (param_x, param_y) {
 
-        if (param_x == 1000000 && param_y == 1000000) {
+        console.log(param_x + ' - '+ param_y);
+        if (param_x == undefined && param_y == undefined) {
             this.centrePointXOffset = 0;
             this.centrePointYOffset = 0;
         }
@@ -1150,28 +1146,28 @@ AncTree.prototype = {
         this.SetZoom(this.zoomAmount - (this.zoomAmount * 2));
         //  SetZoom(zoomAmount - (zoomAmount * 2));
     },
-    CalcZoomLevel: function (zoomPercentage) {
+    CalcZoomLevel: function (zoomPercParam) {
         var _retVal = 0;
 
-        if (zoomPercentage > 0 && zoomPercentage < 40) {
+        if (zoomPercParam > 0 && zoomPercParam < 40) {
             _retVal = 1;
         }
-        else if (zoomPercentage >= 40 && zoomPercentage < 60) {
+        else if (zoomPercParam >= 40 && zoomPercParam < 60) {
             _retVal = 2;
         }
-        else if (zoomPercentage >= 60 && zoomPercentage <= 150) {
+        else if (zoomPercParam >= 60 && zoomPercParam <= 150) {
             _retVal = 3;
         }
-        else if (zoomPercentage > 150 && zoomPercentage <= 200) {
+        else if (zoomPercParam > 150 && zoomPercParam <= 200) {
             _retVal = 4;
         }
-        else if (zoomPercentage > 200 && zoomPercentage <= 250) {
+        else if (zoomPercParam > 200 && zoomPercParam <= 250) {
             _retVal = 5;
         }
-        else if (zoomPercentage > 250 && zoomPercentage <= 300) {
+        else if (zoomPercParam > 250 && zoomPercParam <= 300) {
             _retVal = 6;
         }
-        else if (zoomPercentage > 300) {
+        else if (zoomPercParam > 300) {
             _retVal = 7;
         }
 
@@ -1257,7 +1253,7 @@ AncTree.prototype = {
 
             if (_ypos === 0.0) {
                 var _currentPersonLocation = (this.generations[0][0].Y1 + this.generations[0][0].Y2) / 2;
-                var _requiredLocation = this.boxHeight;
+                var _requiredLocation = this.layoutVolatile.boxHeight;
                 var _distanceToMove = _requiredLocation - _currentPersonLocation;
                 this.centreVerticalPoint -= _distanceToMove;
             }
@@ -1301,7 +1297,7 @@ AncTree.prototype = {
 
             this.SetMouse(x, y);
             this.SetZoomStart();
-            this.SetCentrePoint(1000000, 1000000);
+            this.SetCentrePoint();
 
 
             this.DrawTree();

@@ -99,28 +99,13 @@ class VisualisationHandler extends Component {
      return true;
    }
 
-   updateAnimationState() {
+   updateAnimationState(_point) {
+     if(_point!=undefined)
+      this._tree.SetCentrePoint(_point[0], _point[1]);
+     else
+      this._tree.SetCentrePoint();
 
-     while (this._moustQueue.length > 0) {
-         var _point = this._moustQueue.shift();
-
-        //  console.log(_point[0] + ","+ _point[1]);
-
-      //   this.props.context.canvas.width = window.innerWidth;
-      //   this.props.context.canvas.height = window.innerHeight;
-
-
-         this._tree.SetCentrePoint(_point[0], _point[1]);
-
-         this._tree.DrawTree();
-
-         this.rAF = requestAnimationFrame(this.updateAnimationState);
-
-
-
-     }
-
-
+     this._tree.DrawTree();
    }
 
    canvasclick(clientX , boundingrecleft, clientY , boundingrectop){
@@ -134,23 +119,19 @@ class VisualisationHandler extends Component {
        // if (this._tree.bt_refreshData) {
        //     getData(this._tree.selectedPersonId, this._tree.selectedPersonX, this._tree.selectedPersonY);
        // }
-       //
-       this._moustQueue[this._moustQueue.length] = new Array(1000000, 1000000);
 
+       this.updateAnimationState();
    }
 
    canvasmove(clientX , boundingrecleft, clientY , boundingrectop){
 
-     var _point = new Array(clientX - boundingrecleft, clientY- boundingrectop);
+     let _point = [clientX - boundingrecleft, clientY- boundingrectop];
 
      if(this._tree!= null && this._tree!=undefined)
       this._tree.SetMouse(_point[0], _point[1]);
 
-
      if (this._mouseDown) {
-         this._moustQueue.push(_point);
-
-         this.updateAnimationState();
+         this.updateAnimationState(_point);
      }
 
    }
@@ -164,8 +145,8 @@ class VisualisationHandler extends Component {
 
      this._mouseDown = false;
 
-     var _point = new Array(1000000, 1000000);
-     this._moustQueue[this._moustQueue.length] = _point;
+  //   var _point = new Array(1000000, 1000000);
+  //   this._moustQueue[this._moustQueue.length] = _point;
    }
 
    movebuttondown(_dir){
@@ -348,8 +329,7 @@ class VisualisationHandler extends Component {
      this._tree.selectedPersonX = 0;
      this._tree.selectedPersonY = 0;
 
-     console.log('screen width and height: ' + window.innerWidth + " "+window.innerHeight)
-     this._tree.SetInitialValues(Number(_zoomLevel), 30.0, 170.0, 70.0, 70.0, 100.0, 20.0, 40.0, 20.0, window.innerWidth, window.innerHeight);
+     this._tree.SetInitialValues(this.props.layoutDefaults, window.innerWidth, window.innerHeight);
 
      this._tree.treeUI = treeUI;
 
@@ -366,7 +346,6 @@ class VisualisationHandler extends Component {
    }
 
    runDescendants(selectedId, data, treeUI) {
-     var _zoomLevel = 100;
 
      this._tree = new DescTree();
 
@@ -374,8 +353,8 @@ class VisualisationHandler extends Component {
      this._tree.selectedPersonX = 0;
      this._tree.selectedPersonY = 0;
 
-     console.log('screen width and height: ' + window.innerWidth + " "+window.innerHeight);
-     this._tree.SetInitialValues(Number(_zoomLevel), 30.0, 170.0, 70.0, 70.0, 100.0, 20.0, 40.0, 20.0, window.innerWidth, window.innerHeight);
+
+     this._tree.SetInitialValues(this.props.layoutDefaults, window.innerWidth, window.innerHeight);
 
      this._tree.treeUI = treeUI;
 
@@ -422,7 +401,8 @@ const mapStateToProps = state => {
     mapup: state.mapup,
     mapdown:state.mapdown,
     status: state.status,
-    graphRunning : state.graphRunning
+    graphRunning : state.graphRunning,
+    layoutDefaults :state.layoutDefaults
   };
 };
 

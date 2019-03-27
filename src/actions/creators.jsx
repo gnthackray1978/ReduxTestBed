@@ -209,7 +209,14 @@ export const toggleGraphRunning = (isSet) =>{
   };
 }
 
-
+export const setLayoutDefaults = (defaults) =>{
+  return async dispatch =>{
+    dispatch({
+      type: "SET_LAYOUTDEFAULT",
+      layoutDefaults : defaults
+    });
+  };
+}
 
 
 export const reset = term => {

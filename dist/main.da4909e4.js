@@ -28422,7 +28422,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reset = exports.toggleGraphRunning = exports.mapRight = exports.mapLeft = exports.mapDown = exports.mapUp = exports.zoomOut = exports.zoomIn = exports.setGedData = exports.activateLayout = exports.setLayout = exports.setOrder = exports.setSelected = exports.setPage = exports.setRowsPerPage = exports.gedLoadFailed = exports.setContext = exports.gedLoadingStatus = exports.initYearIncrementor = exports.switchControlVisbility = exports.beginSearch = void 0;
+exports.reset = exports.setLayoutDefaults = exports.toggleGraphRunning = exports.mapRight = exports.mapLeft = exports.mapDown = exports.mapUp = exports.zoomOut = exports.zoomIn = exports.setGedData = exports.activateLayout = exports.setLayout = exports.setOrder = exports.setSelected = exports.setPage = exports.setRowsPerPage = exports.gedLoadFailed = exports.setContext = exports.gedLoadingStatus = exports.initYearIncrementor = exports.switchControlVisbility = exports.beginSearch = void 0;
 
 const beginSearch = term => {
   return async dispatch => {
@@ -28658,6 +28658,17 @@ const toggleGraphRunning = isSet => {
 };
 
 exports.toggleGraphRunning = toggleGraphRunning;
+
+const setLayoutDefaults = defaults => {
+  return async dispatch => {
+    dispatch({
+      type: "SET_LAYOUTDEFAULT",
+      layoutDefaults: defaults
+    });
+  };
+};
+
+exports.setLayoutDefaults = setLayoutDefaults;
 
 const reset = term => {
   if (term == "rubbish") {
@@ -65428,6 +65439,10 @@ exports.AncTree = AncTree;
 
 var _TreeUI = require("./TreeUI.js");
 
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function AncTree() {
   this._qryString = '';
   this.bt_refreshData = false;
@@ -65445,19 +65460,22 @@ function AncTree() {
   this.zoomLevel = 0.0;
   this.centrePointXOffset = 0.0;
   this.centrePointYOffset = 0.0;
-  this.original_distanceBetweenBoxs = 0.0;
-  this.original_distanceBetweenGens = 0.0;
-  this.original_boxWidth = 0.0;
-  this.original_boxHeight = 0.0;
-  this.original_distancesbetfam = 0.0;
-  this.original_lowerStalkHeight = 0.0;
-  this.original_middleSpan = 40.0;
-  this.original_topSpan = 20.0;
-  this.zoomPercentage = 0.0;
-  this.distanceBetweenBoxs = 0.0;
-  this.distanceBetweenGens = 0.0;
-  this.halfBox = 0.0;
-  this.halfBoxHeight = 0.0;
+  this.layoutDefaults = null;
+  this.layoutVolatile = null; // this.original_distanceBetweenBoxs = 0.0;
+  // this.original_distanceBetweenGens = 0.0;
+  // this.original_boxWidth = 0.0;
+  // this.original_boxHeight = 0.0;
+  // this.original_distancesbetfam = 0.0;
+  // this.original_lowerSpan = 0.0;
+  //
+  // this.original_middleSpan = 40.0;
+  // this.original_topSpan = 20.0;
+  // this.zoomPercentage = 0.0;
+  // this.distanceBetweenBoxs = 0.0;
+  // this.distanceBetweenGens = 0.0;
+  // this.halfBox = 0.0;
+  // this.halfBoxHeight = 0.0;
+
   this.mouse_x = 0; //int
 
   this.mouse_y = 0; //int
@@ -65476,9 +65494,9 @@ function AncTree() {
   this.mouseXPercLocat = 0.0;
   this.mouseYPercLocat = 0.0;
   this.zoomAmount = 8; //int
+  // this.boxWidth = 0.0;
+  // this.boxHeight = 0.0;
 
-  this.boxWidth = 0.0;
-  this.boxHeight = 0.0;
   this.sourceId = null;
   this.selectedPersonId = '';
   this.selectedPersonX = 0;
@@ -65527,7 +65545,7 @@ AncTree.prototype = {
     var _genidx = 0;
     var _personIdx = 0; // var treeUI = new TreeUI(this.bt_screenWidth, this.bt_screenHeight, this.boxWidth, this.boxHeight,1,null);
 
-    this.treeUI.UpdateUI(this.bt_screenWidth, this.bt_screenHeight, this.boxWidth, this.boxHeight);
+    this.treeUI.UpdateUI(this.bt_screenWidth, this.bt_screenHeight, this.layoutVolatile.boxWidth, this.layoutVolatile.boxHeight);
     this.treeUI.ClearContext();
 
     try {
@@ -65538,7 +65556,7 @@ AncTree.prototype = {
 
         while (_personIdx < this.generations[_genidx].length) {
           var _person = this.generations[_genidx][_personIdx];
-          var personLink = this.treeUI.DrawPerson(_person, this.sourceId, this.zoomPercentage);
+          var personLink = this.treeUI.DrawPerson(_person, this.sourceId, this.layoutVolatile.zoomPercentage);
           if (personLink !== null) this.bt_links.push(personLink);
           _personIdx++;
         }
@@ -65581,9 +65599,9 @@ AncTree.prototype = {
     this.adjustedBoxWidths = [];
     this.adjustedBoxHeights = [];
     this.generations[0][0].X1 = this.centrePoint;
-    this.generations[0][0].X2 = this.centrePoint + this.boxWidth;
+    this.generations[0][0].X2 = this.centrePoint + this.layoutVolatile.boxWidth;
     this.generations[0][0].Y1 = _y;
-    this.generations[0][0].Y2 = _y + this.boxHeight;
+    this.generations[0][0].Y2 = _y + this.layoutVolatile.boxHeight;
     var idx = 0;
     var pidx = 0;
     this.familySpanLines = [];
@@ -65720,7 +65738,7 @@ AncTree.prototype = {
         personIdx++;
       }
 
-      _y -= this.distanceBetweenGens;
+      _y -= this.layoutVolatile.distanceBetweenGens;
       genidx++;
     } //, ref newX1, ref newX2
 
@@ -65871,19 +65889,19 @@ AncTree.prototype = {
     this.workingX2 = 0.0;
 
     if (this.adjustedBoxWidths.length > movePerson.GenerationIdx) {
-      this.boxWidth = this.adjustedBoxWidths[movePerson.GenerationIdx];
+      this.layoutVolatile.boxWidth = this.adjustedBoxWidths[movePerson.GenerationIdx];
     } else {
-      this.boxWidth = this.boxWidth;
+      this.layoutVolatile.boxWidth = this.layoutVolatile.boxWidth;
     }
 
     if (movePerson.FatherIdx == -1) {
-      this.workingX1 = (this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X1 + this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X2) / 2 - this.boxWidth / 2;
-      this.workingX2 = this.workingX1 + this.boxWidth;
+      this.workingX1 = (this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X1 + this.generations[movePerson.GenerationIdx + 1][movePerson.MotherIdx].X2) / 2 - this.layoutVolatile.boxWidth / 2;
+      this.workingX2 = this.workingX1 + this.layoutVolatile.boxWidth;
     }
 
     if (movePerson.MotherIdx == -1) {
-      this.workingX1 = (this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X1 + this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X2) / 2 - this.boxWidth / 2;
-      this.workingX2 = this.workingX1 + this.boxWidth;
+      this.workingX1 = (this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X1 + this.generations[movePerson.GenerationIdx + 1][movePerson.FatherIdx].X2) / 2 - this.layoutVolatile.boxWidth / 2;
+      this.workingX2 = this.workingX1 + this.layoutVolatile.boxWidth;
     }
 
     var parentX1 = 0.0;
@@ -65909,10 +65927,10 @@ AncTree.prototype = {
     var childIdx = this.generations[genidx][personIdx].ChildIdx;
 
     if (genidx > 0) {
-      adjustedBoxHeight = this.boxHeight - this.boxHeight / 100 * percentageLess;
+      adjustedBoxHeight = this.layoutVolatile.boxHeight - this.layoutVolatile.boxHeight / 100 * percentageLess;
       var childBoxWidth = this.generations[genidx - 1][childIdx].X2 - this.generations[genidx - 1][childIdx].X1;
       var childCentrePoint = this.generations[genidx - 1][childIdx].X1 + childBoxWidth / 2;
-      adjustedDistanceApart = this.distanceBetweenBoxs - this.distanceBetweenBoxs / 100 * percentageLess;
+      adjustedDistanceApart = this.layoutVolatile.distanceBetweenBoxs - this.layoutVolatile.distanceBetweenBoxs / 100 * percentageLess;
       adjustedBoxWidth = childBoxWidth - childBoxWidth / 100 * percentageLess;
       var isFirstParent = false;
       var isLastParent = false;
@@ -65948,8 +65966,8 @@ AncTree.prototype = {
       } // newX1 = initialCentrePoint - newX1;
 
     } else {
-      adjustedBoxHeight = this.boxHeight;
-      adjustedBoxWidth = this.boxWidth;
+      adjustedBoxHeight = this.layoutVolatile.boxHeight;
+      adjustedBoxWidth = this.layoutVolatile.boxWidth;
       this.newX1 = this.centrePoint;
     }
 
@@ -65998,7 +66016,9 @@ AncTree.prototype = {
       moveGenIdx--;
     }
   },
-  SetInitialValues: function SetInitialValues(zoomPerc, dist_bet_box, dist_bet_gen, box_wid, box_hig, dist_bet_fam, low_stalk_hi, mid_span, top_span, screen_width, screen_height) {
+  SetInitialValues: function SetInitialValues(defaultLayout, screen_width, screen_height) {
+    this.layoutDefaults = defaultLayout;
+    this.layoutVolatile = _objectSpread({}, defaultLayout);
     this.centrePoint = 750.0;
     this.centreVerticalPoint = 0.0;
     this.zoomLevel = 0.0;
@@ -66011,26 +66031,29 @@ AncTree.prototype = {
     this.mouseXPercLocat = 0.0;
     this.mouseYPercLocat = 0.0;
     this.bt_screenHeight = screen_height;
-    this.bt_screenWidth = screen_width;
-    this.zoomPercentage = zoomPerc;
-    this.original_distanceBetweenBoxs = dist_bet_box;
-    this.original_distanceBetweenGens = dist_bet_gen;
-    this.original_boxWidth = box_wid;
-    this.original_boxHeight = box_hig;
-    this.original_distancesbetfam = dist_bet_fam;
-    this.original_lowerStalkHeight = low_stalk_hi;
-    this.original_middleSpan = mid_span;
-    this.original_topSpan = top_span;
-    this.distanceBetweenBoxs = this.original_distanceBetweenBoxs;
-    this.distanceBetweenGens = this.original_distanceBetweenGens;
-    this.boxWidth = this.original_boxWidth;
-    this.boxHeight = this.original_boxHeight;
-    this.distancesbetfam = this.original_distancesbetfam;
-    this.halfBox = this.boxWidth / 2;
-    this.halfBoxHeight = this.boxHeight / 2;
-    this.lowerSpan = this.original_lowerStalkHeight;
-    this.middleSpan = this.original_middleSpan;
-    this.topSpan = this.original_topSpan;
+    this.bt_screenWidth = screen_width; //    this.zoomPercentage = zoomPerc;
+    // this.original_distanceBetweenBoxs = dist_bet_box;
+    // this.original_distanceBetweenGens = dist_bet_gen;
+    // this.original_boxWidth = box_wid;
+    // this.original_boxHeight = box_hig;
+    // this.original_distancesbetfam = dist_bet_fam;
+    // this.original_lowerSpan = low_stalk_hi;
+    // this.original_middleSpan = mid_span;
+    // this.original_topSpan = top_span;
+    //
+    // this.distanceBetweenBoxs = this.original_distanceBetweenBoxs;
+    // this.distanceBetweenGens = this.original_distanceBetweenGens;
+    // this.boxWidth = this.original_boxWidth;
+    // this.boxHeight = this.original_boxHeight;
+    // this.distancesbetfam = this.original_distancesbetfam;
+    // this.halfBox = this.boxWidth / 2;
+    // this.halfBoxHeight = this.boxHeight / 2;
+    //
+    // this.lowerSpan = this.original_lowerSpan;
+    //
+    // this.middleSpan = this.original_middleSpan;
+    //
+    // this.topSpan = this.original_topSpan;
   },
   _GetTreePerson: function _GetTreePerson(graph, personId) {
     var _genidx = 0;
@@ -66082,7 +66105,7 @@ AncTree.prototype = {
       var y = this.bt_screenHeight / 2;
       this.SetMouse(x, y);
       this.SetZoomStart();
-      this.SetCentrePoint(1000000, 1000000);
+      this.SetCentrePoint();
 
       if (direction == 'UP') {
         this.ZoomIn();
@@ -66099,19 +66122,19 @@ AncTree.prototype = {
       var _percLocal_x = 0.0;
       var _percLocal_y = 0.0; //zoom drawing components
 
-      this.zoomPercentage += percentage;
+      this.layoutVolatile.zoomPercentage += percentage;
       this.zoomLevel += percentage;
-      _workingtp = this.original_distanceBetweenBoxs / 100;
-      this.distanceBetweenBoxs = _workingtp * this.zoomPercentage;
-      _workingtp = this.original_boxWidth / 100;
-      this.boxWidth = _workingtp * this.zoomPercentage;
-      this.halfBox = this.boxWidth / 2;
-      _workingtp = this.original_distancesbetfam / 100;
-      _workingtp = this.original_distanceBetweenGens / 100;
-      this.distanceBetweenGens = _workingtp * this.zoomPercentage;
-      _workingtp = this.original_boxHeight / 100;
-      this.boxHeight = _workingtp * this.zoomPercentage;
-      this.halfBoxHeight = this.boxHeight / 2;
+      _workingtp = this.layoutDefaults.distanceBetweenBoxs / 100;
+      this.layoutVolatile.distanceBetweenBoxs = _workingtp * this.layoutVolatile.zoomPercentage;
+      _workingtp = this.layoutDefaults.boxWidth / 100;
+      this.layoutVolatile.boxWidth = _workingtp * this.layoutVolatile.zoomPercentage;
+      this.layoutVolatile.halfBoxWidth = this.layoutVolatile.boxWidth / 2;
+      _workingtp = this.layoutDefaults.distancesbetfam / 100;
+      _workingtp = this.layoutDefaults.distanceBetweenGens / 100;
+      this.layoutVolatile.distanceBetweenGens = _workingtp * this.layoutVolatile.zoomPercentage;
+      _workingtp = this.layoutDefaults.boxHeight / 100;
+      this.layoutVolatile.boxHeight = _workingtp * this.layoutVolatile.zoomPercentage;
+      this.layoutVolatile.halfBoxHeight = this.layoutVolatile.boxHeight / 2;
       this.ComputeLocations();
       this.GetPercDistances();
       _percLocal_x = this.percX1;
@@ -66234,7 +66257,9 @@ AncTree.prototype = {
     }
   },
   SetCentrePoint: function SetCentrePoint(param_x, param_y) {
-    if (param_x == 1000000 && param_y == 1000000) {
+    console.log(param_x + ' - ' + param_y);
+
+    if (param_x == undefined && param_y == undefined) {
       this.centrePointXOffset = 0;
       this.centrePointYOffset = 0;
     } else {
@@ -66265,22 +66290,22 @@ AncTree.prototype = {
     if (this.zoomAmount > 7) this.zoomAmount--;
     this.SetZoom(this.zoomAmount - this.zoomAmount * 2); //  SetZoom(zoomAmount - (zoomAmount * 2));
   },
-  CalcZoomLevel: function CalcZoomLevel(zoomPercentage) {
+  CalcZoomLevel: function CalcZoomLevel(zoomPercParam) {
     var _retVal = 0;
 
-    if (zoomPercentage > 0 && zoomPercentage < 40) {
+    if (zoomPercParam > 0 && zoomPercParam < 40) {
       _retVal = 1;
-    } else if (zoomPercentage >= 40 && zoomPercentage < 60) {
+    } else if (zoomPercParam >= 40 && zoomPercParam < 60) {
       _retVal = 2;
-    } else if (zoomPercentage >= 60 && zoomPercentage <= 150) {
+    } else if (zoomPercParam >= 60 && zoomPercParam <= 150) {
       _retVal = 3;
-    } else if (zoomPercentage > 150 && zoomPercentage <= 200) {
+    } else if (zoomPercParam > 150 && zoomPercParam <= 200) {
       _retVal = 4;
-    } else if (zoomPercentage > 200 && zoomPercentage <= 250) {
+    } else if (zoomPercParam > 200 && zoomPercParam <= 250) {
       _retVal = 5;
-    } else if (zoomPercentage > 250 && zoomPercentage <= 300) {
+    } else if (zoomPercParam > 250 && zoomPercParam <= 300) {
       _retVal = 6;
-    } else if (zoomPercentage > 300) {
+    } else if (zoomPercParam > 300) {
       _retVal = 7;
     }
 
@@ -66355,7 +66380,7 @@ AncTree.prototype = {
       if (_ypos === 0.0) {
         var _currentPersonLocation = (this.generations[0][0].Y1 + this.generations[0][0].Y2) / 2;
 
-        var _requiredLocation = this.boxHeight;
+        var _requiredLocation = this.layoutVolatile.boxHeight;
 
         var _distanceToMove = _requiredLocation - _currentPersonLocation;
 
@@ -66398,7 +66423,7 @@ AncTree.prototype = {
 
       this.SetMouse(x, y);
       this.SetZoomStart();
-      this.SetCentrePoint(1000000, 1000000);
+      this.SetCentrePoint();
       this.DrawTree();
     }
   },
@@ -66949,7 +66974,33 @@ var _TreeBase = require("./TreeBase.js");
 
 var _TreeUI = require("./TreeUI.js");
 
-/*global requestAnimationFrame*/
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+class PureFunctions {
+  static LinkContainingPoint(list, mx, my) {
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].x1 <= mx && list[i].x2 >= mx && list[i].y1 <= my && list[i].y2 >= my) {
+        return list[i];
+      }
+    }
+
+    return null;
+  }
+
+  static ContainsPerson(personList, person) {
+    for (var i = 0; i < personList.length; i++) {
+      if (personList[i].PersonId == person.PersonId) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+}
+
 function DescTree() {
   console.log('tree created');
   this._qryString = '';
@@ -66965,29 +67016,15 @@ function DescTree() {
   this.childlessMarriages = [];
   this.centrePoint = 750.0;
   this.centreVerticalPoint = 0.0;
-  this.zoomLevel = 0.0;
   this.centrePointXOffset = 0.0;
   this.centrePointYOffset = 0.0;
-  this.original_distanceBetweenBoxs = 0.0;
-  this.original_distanceBetweenGens = 0.0;
-  this.original_boxWidth = 0.0;
-  this.original_boxHeight = 0.0;
-  this.original_distancesbetfam = 0.0;
-  this.original_lowerStalkHeight = 0.0;
-  this.original_middleSpan = 40.0;
-  this.original_topSpan = 20.0;
-  this.zoomPercentage = 0.0;
-  this.distanceBetweenBoxs = 0.0;
-  this.distanceBetweenGens = 0.0;
-  this.halfBox = 0.0;
-  this.halfBoxHeight = 0.0;
+  this.layoutDefaults = null;
+  this.layoutVolatile = null; //    this.zoomPercentage = 0.0;
+  //    this.zoomLevel = 0.0;
+
   this.mouse_x = 0; //int
 
   this.mouse_y = 0; //int
-  //    this.initial_mouse_x = 0; //int
-  //    this.initial_mouse_y = 0; //int
-  //  this.xFromCentre = 0.0;
-  //  this.yFromCentre = 0.0;
 
   this.drawingX1 = 0.0;
   this.drawingX2 = 0.0;
@@ -67000,54 +67037,29 @@ function DescTree() {
   this.mouseYPercLocat = 0.0;
   this.zoomAmount = 8; //int
 
-  this.boxWidth = 0.0;
-  this.boxHeight = 0.0;
   this.sourceId = null;
   this.selectedPersonId = '';
   this.selectedPersonX = 0;
   this.selectedPersonY = 0;
   this.treeUI;
-  this.distancesbetfam = 0.0;
-  this.lowerSpan = 0.0;
-  this.middleSpan = 0.0;
-  this.topSpan = 0.0;
   this.startx1 = 0.0; //this.endx2 = 0.0;
 
   this.firstPX = 0.0;
   this.secondPX = 0.0;
   this.percX1 = 0.0;
-  this.percY1 = 0.0; //  this.BaseSetZoom = this.SetZoom;
+  this.percY1 = 0.0;
 }
 
 DescTree.prototype = {
-  LinkContainingPoint: function LinkContainingPoint(list, mx, my) {
-    for (var i = 0; i < list.length; i++) {
-      if (list[i].x1 <= mx && list[i].x2 >= mx && list[i].y1 <= my && list[i].y2 >= my) {
-        return list[i];
-      }
-    }
-
-    return null;
-  },
-  ContainsPerson: function ContainsPerson(value) {
-    for (var i = 0; i < this.length; i++) {
-      if (this[i].PersonId == value.PersonId) {
-        return true;
-      }
-    }
-
-    return false;
-  },
   SetZoom: function SetZoom(p_percentage) {
-    var workingtp = this.original_lowerStalkHeight / 100;
-    this.lowerSpan = workingtp * this.zoomPercentage; // (int)original_lowerStalkHeight;
+    var workingtp = this.layoutDefaults.lowerSpan / 100;
+    this.layoutVolatile.lowerSpan = workingtp * this.layoutVolatile.zoomPercentage; // (int)layoutDefaults.lowerSpan;
 
-    workingtp = this.original_middleSpan / 100;
-    this.middleSpan = workingtp * this.zoomPercentage; //(int)original_middleSpan;
+    workingtp = this.layoutDefaults.middleSpan / 100;
+    this.layoutVolatile.middleSpan = workingtp * this.layoutVolatile.zoomPercentage; //(int)layoutDefaults.middleSpan;
 
-    workingtp = this.original_topSpan / 100;
-    this.topSpan = workingtp * this.zoomPercentage; //(int)original_topSpan;
-    //this.BaseSetZoom(Number(p_percentage));
+    workingtp = this.layoutDefaults.topSpan / 100;
+    this.layoutVolatile.topSpan = workingtp * this.layoutVolatile.zoomPercentage; //(int)layoutDefaults.topSpan;
 
     let percentage = Number(p_percentage);
 
@@ -67056,19 +67068,19 @@ DescTree.prototype = {
       var _percLocal_x = 0.0;
       var _percLocal_y = 0.0; //zoom drawing components
 
-      this.zoomPercentage += percentage;
-      this.zoomLevel += percentage;
-      _workingtp = this.original_distanceBetweenBoxs / 100;
-      this.distanceBetweenBoxs = _workingtp * this.zoomPercentage;
-      _workingtp = this.original_boxWidth / 100;
-      this.boxWidth = _workingtp * this.zoomPercentage;
-      this.halfBox = this.boxWidth / 2;
-      _workingtp = this.original_distancesbetfam / 100;
-      _workingtp = this.original_distanceBetweenGens / 100;
-      this.distanceBetweenGens = _workingtp * this.zoomPercentage;
-      _workingtp = this.original_boxHeight / 100;
-      this.boxHeight = _workingtp * this.zoomPercentage;
-      this.halfBoxHeight = this.boxHeight / 2;
+      this.layoutVolatile.zoomPercentage += percentage; //this.zoomLevel += percentage;
+
+      _workingtp = this.layoutDefaults.distanceBetweenBoxs / 100;
+      this.layoutVolatile.distanceBetweenBoxs = _workingtp * this.layoutVolatile.zoomPercentage;
+      _workingtp = this.layoutDefaults.boxWidth / 100;
+      this.layoutVolatile.boxWidth = _workingtp * this.layoutVolatile.zoomPercentage;
+      this.layoutVolatile.halfBoxWidth = this.layoutVolatile.boxWidth / 2;
+      _workingtp = this.layoutDefaults.distancesbetfam / 100;
+      _workingtp = this.layoutDefaults.distanceBetweenGens / 100;
+      this.layoutVolatile.distanceBetweenGens = _workingtp * this.layoutVolatile.zoomPercentage;
+      _workingtp = this.layoutDefaults.boxHeight / 100;
+      this.layoutVolatile.boxHeight = _workingtp * this.layoutVolatile.zoomPercentage;
+      this.layoutVolatile.halfBoxHeight = this.layoutVolatile.boxHeight / 2;
       this.ComputeLocations();
       this.GetPercDistances();
       _percLocal_x = this.percX1;
@@ -67076,8 +67088,7 @@ DescTree.prototype = {
       this.centreVerticalPoint += this.drawingHeight / 100 * (_percLocal_y - this.mouseYPercLocat);
       this.centrePoint += this.drawingWidth / 100 * (_percLocal_x - this.mouseXPercLocat);
       this.ComputeLocations();
-    } //end percentage ==0.0)
-
+    }
 
     this.DrawTree();
   },
@@ -67091,22 +67102,20 @@ DescTree.prototype = {
     var _personIdx = 0;
 
     try {
-      this.treeUI.UpdateUI(this.bt_screenWidth, this.bt_screenHeight, this.boxWidth, this.boxHeight);
+      this.treeUI.UpdateUI(this.bt_screenWidth, this.bt_screenHeight, this.layoutVolatile.boxWidth, this.layoutVolatile.boxHeight);
     } catch (e) {
       console.log('error UpdateUI ' + e);
     }
 
     this.bt_links = [];
-    this.bt_buttonLinks = []; //      $("#body").remove(".tree_Links");
-    //html('<span>Downloading Descendant Tree</span>');
-    // try {
+    this.bt_buttonLinks = [];
 
     while (_genidx < this.generations.length) {
       _personIdx = 0;
 
       while (_personIdx < this.generations[_genidx].length) {
         var _person = this.generations[_genidx][_personIdx];
-        var personLink = this.treeUI.DrawPerson(_person, this.sourceId, this.zoomPercentage);
+        var personLink = this.treeUI.DrawPerson(_person, this.sourceId, this.layoutVolatile.zoomPercentage);
         if (personLink !== null) this.bt_links.push(personLink);
 
         if (_person.GenerationIdx != 0) {
@@ -67118,14 +67127,10 @@ DescTree.prototype = {
       }
 
       _genidx++;
-    } //
-    // } catch (e) {
-    //     console.log('error drawing person or button: idx ' + _genidx + ' ' + _personIdx);
-    // }
-
+    }
 
     var _fslOuter = 0;
-    var _fslInner = 0; //   var _pointIdx = 0;
+    var _fslInner = 0;
 
     try {
       while (_fslOuter < this.familySpanLines.length) {
@@ -67188,7 +67193,7 @@ DescTree.prototype = {
         this.startx1 = this.SetScheduleVars(_genIdx, this.startx1);
         this.fillGenXs(_genIdx);
 
-        var _current_gen_upper_y = _genIdx * this.boxHeight + _genIdx * this.distanceBetweenGens + this.centreVerticalPoint;
+        var _current_gen_upper_y = _genIdx * this.layoutVolatile.boxHeight + _genIdx * this.layoutVolatile.distanceBetweenGens + this.centreVerticalPoint;
 
         var _increment_temp = 0.0;
         var _famIdx = 0;
@@ -67203,7 +67208,7 @@ DescTree.prototype = {
 
           if (genPerson.IsDisplayed) {
             //  console.log('displaying: ' + genPerson.Name);
-            genPerson.X2 = genPerson.X1 + this.boxWidth;
+            genPerson.X2 = genPerson.X1 + this.layoutVolatile.boxWidth;
             var _isDoubleSpouseEnd = false;
             var _isSpouse = genPerson.IsHtmlLink;
 
@@ -67228,13 +67233,13 @@ DescTree.prototype = {
               if (Math.abs(spouseIdx - _personIdx) <= 2) {
                 if (this.generations[_genIdx][spouseIdx].ChildCount === 0) {
                   var marriagePoints = new Array();
-                  var myArray = new Array(genPerson.X1 + this.halfBox, _current_gen_upper_y + this.boxHeight);
+                  var myArray = new Array(genPerson.X1 + this.layoutVolatile.halfBoxWidth, _current_gen_upper_y + this.layoutVolatile.boxHeight);
                   marriagePoints.push(myArray);
-                  myArray = new Array(genPerson.X1 + this.halfBox, _current_gen_upper_y + this.boxHeight + this.topSpan);
+                  myArray = new Array(genPerson.X1 + this.layoutVolatile.halfBoxWidth, _current_gen_upper_y + this.layoutVolatile.boxHeight + this.layoutVolatile.topSpan);
                   marriagePoints.push(myArray);
-                  myArray = new Array(tp + this.halfBox, _current_gen_upper_y + this.boxHeight + this.topSpan);
+                  myArray = new Array(tp + this.layoutVolatile.halfBoxWidth, _current_gen_upper_y + this.layoutVolatile.boxHeight + this.layoutVolatile.topSpan);
                   marriagePoints.push(myArray);
-                  myArray = new Array(tp + this.halfBox, _current_gen_upper_y + this.boxHeight);
+                  myArray = new Array(tp + this.layoutVolatile.halfBoxWidth, _current_gen_upper_y + this.layoutVolatile.boxHeight);
                   marriagePoints.push(myArray);
                   this.childlessMarriages.push(marriagePoints);
                 }
@@ -67255,24 +67260,24 @@ DescTree.prototype = {
               _parent_gen_lower_y = this.generations[_genIdx - 1][genPerson.FatherIdx].Y2;
             }
 
-            var _firstRow = _current_gen_upper_y - this.lowerSpan;
+            var _firstRow = _current_gen_upper_y - this.layoutVolatile.lowerSpan;
 
-            var _secondRow = _parent_gen_lower_y + this.middleSpan; // changed with increment later on - need to calculate the maximum and minimum this increment will be
+            var _secondRow = _parent_gen_lower_y + this.layoutVolatile.middleSpan; // changed with increment later on - need to calculate the maximum and minimum this increment will be
 
 
-            var _thirdRow = _parent_gen_lower_y + this.middleSpan;
+            var _thirdRow = _parent_gen_lower_y + this.layoutVolatile.middleSpan;
 
-            var _fourthRow = _parent_gen_lower_y + this.topSpan;
+            var _fourthRow = _parent_gen_lower_y + this.layoutVolatile.topSpan;
 
             if (!(genPerson.IsFamilyEnd && _isSpouse) && _genIdx > 0) {
               if (!_isDoubleSpouseEnd) {
                 var _family = this.familySpanLines[_genIdx][_familyIdx]; //  console.log(genPerson.Name);
 
-                _family.push(new Array(genPerson.X1 + this.halfBox, _firstRow));
+                _family.push(new Array(genPerson.X1 + this.layoutVolatile.halfBoxWidth, _firstRow));
 
-                if (!_isSpouse) _family.push(new Array(genPerson.X1 + this.halfBox, _current_gen_upper_y));
+                if (!_isSpouse) _family.push(new Array(genPerson.X1 + this.layoutVolatile.halfBoxWidth, _current_gen_upper_y));
 
-                _family.push(new Array(genPerson.X1 + this.halfBox, _firstRow));
+                _family.push(new Array(genPerson.X1 + this.layoutVolatile.halfBoxWidth, _firstRow));
               }
             }
 
@@ -67285,11 +67290,11 @@ DescTree.prototype = {
 
               this.GetParentXs(_genIdx, genPerson.FatherIdx, genPerson.MotherIdx);
               var incSize = 0;
-              incSize = this.distanceBetweenGens - this.middleSpan - this.lowerSpan;
+              incSize = this.layoutVolatile.distanceBetweenGens - this.layoutVolatile.middleSpan - this.layoutVolatile.lowerSpan;
               incSize = incSize / familydirectionCounts[_famIdx];
 
               if (_famIdx === 0) {
-                if (genPerson.X1 > _middleParents) _increment_temp = this.distanceBetweenGens - this.middleSpan - this.lowerSpan;else _increment_temp = 0.0;
+                if (genPerson.X1 > _middleParents) _increment_temp = this.layoutVolatile.distanceBetweenGens - this.layoutVolatile.middleSpan - this.layoutVolatile.lowerSpan;else _increment_temp = 0.0;
               }
 
               if (genPerson.X1 > _middleParents) {
@@ -67342,10 +67347,10 @@ DescTree.prototype = {
                 // and one of them is unusually large or something like that.
                 if (genPerson.IsFamilyStart) {
                   // tidy up the link to the parents
-                  var _sizeToAdd = this.halfBox;
+                  var _sizeToAdd = this.layoutVolatile.halfBoxWidth;
 
                   if (!genPerson.IsFamilyEnd) {
-                    _sizeToAdd = this.boxWidth;
+                    _sizeToAdd = this.layoutVolatile.boxWidth;
                   }
 
                   if (_secondStorkX == _thirdStorkX) {
@@ -67400,7 +67405,7 @@ DescTree.prototype = {
 
 
             genPerson.Y1 = _current_gen_upper_y;
-            genPerson.Y2 = _current_gen_upper_y + this.boxHeight;
+            genPerson.Y2 = _current_gen_upper_y + this.layoutVolatile.boxHeight;
             lastPersonY2 = genPerson.Y2;
             this.CalcTPZoom(_genIdx, _personIdx);
           } // end (genPerson.IsDisplayed)
@@ -67501,25 +67506,25 @@ DescTree.prototype = {
     try {
       if (genidx === 0) {
         this.drawingX1 = currentRowX1;
-        currentRowX1 = this.centrePoint - (this.generations[genidx].length * this.boxWidth + (this.generations[genidx].length - 1) * this.distanceBetweenBoxs) / 2;
+        currentRowX1 = this.centrePoint - (this.generations[genidx].length * this.layoutVolatile.boxWidth + (this.generations[genidx].length - 1) * this.layoutVolatile.distanceBetweenBoxs) / 2;
       } else {
         prevGenX1 = this.generations[genidx - 1][this.generations[genidx - 1].FirstFamilyIdx].X1;
-        prevGenX2 = this.generations[genidx - 1][this.generations[genidx - 1].LastFamilyIdx].X1 + this.boxWidth;
-        currentRowX1 = prevGenX1 + this.boxWidth / 2;
-        var endx2 = prevGenX2 - this.boxWidth / 2;
+        prevGenX2 = this.generations[genidx - 1][this.generations[genidx - 1].LastFamilyIdx].X1 + this.layoutVolatile.boxWidth;
+        currentRowX1 = prevGenX1 + this.layoutVolatile.boxWidth / 2;
+        var endx2 = prevGenX2 - this.layoutVolatile.boxWidth / 2;
 
         var _prevGenLen = endx2 - currentRowX1;
 
-        var _curGenLen = this.generations[genidx].VisiblePersonCount * (this.boxWidth + this.distanceBetweenBoxs) - this.distanceBetweenBoxs * this.generations[genidx].VisibleFamilyCount;
+        var _curGenLen = this.generations[genidx].VisiblePersonCount * (this.layoutVolatile.boxWidth + this.layoutVolatile.distanceBetweenBoxs) - this.layoutVolatile.distanceBetweenBoxs * this.generations[genidx].VisibleFamilyCount;
 
         if (_prevGenLen > _curGenLen) {
-          this.distancesbetfam = (_prevGenLen - _curGenLen) / this.generations[genidx].VisibleFamilyCount;
+          this.layoutVolatile.distancesbetfam = (_prevGenLen - _curGenLen) / this.generations[genidx].VisibleFamilyCount;
         } else {
-          this.distancesbetfam = this.original_distancesbetfam / 100 * this.zoomPercentage;
+          this.layoutVolatile.distancesbetfam = this.layoutDefaults.distancesbetfam / 100 * this.layoutVolatile.zoomPercentage;
         } //add in the distances between the families
 
 
-        _curGenLen = _curGenLen + this.distancesbetfam * (this.generations[genidx].VisibleFamilyCount - 1); // middle of the families of the previous generation
+        _curGenLen = _curGenLen + this.layoutVolatile.distancesbetfam * (this.generations[genidx].VisibleFamilyCount - 1); // middle of the families of the previous generation
 
         var _desiredMidPoint = (endx2 - currentRowX1) / 2 + currentRowX1; // set new start point by subtracting half the total space required for the generation
 
@@ -67547,16 +67552,16 @@ DescTree.prototype = {
       if (this.generations[genidx][idx].IsDisplayed) {
         if (innerIdx === 0) {
           this.generations[genidx][idx].X1 = this.startx1;
-          this.generations[genidx][idx].X2 = this.startx1 + this.boxWidth;
+          this.generations[genidx][idx].X2 = this.startx1 + this.layoutVolatile.boxWidth;
         } else {
           if (this.generations[genidx][idx].IsFamilyStart) {
-            _currentDistanceBetweenBoxes = this.distancesbetfam;
+            _currentDistanceBetweenBoxes = this.layoutVolatile.distancesbetfam;
           } else {
-            _currentDistanceBetweenBoxes = this.distanceBetweenBoxs;
+            _currentDistanceBetweenBoxes = this.layoutVolatile.distanceBetweenBoxs;
           }
 
-          this.generations[genidx][idx].X1 = prevPerson.X1 + this.boxWidth + _currentDistanceBetweenBoxes;
-          this.generations[genidx][idx].X2 = this.generations[genidx][idx].X1 + this.boxWidth;
+          this.generations[genidx][idx].X1 = prevPerson.X1 + this.layoutVolatile.boxWidth + _currentDistanceBetweenBoxes;
+          this.generations[genidx][idx].X2 = this.generations[genidx][idx].X1 + this.layoutVolatile.boxWidth;
         }
 
         prevPerson = this.generations[genidx][idx];
@@ -67632,11 +67637,11 @@ DescTree.prototype = {
       this.firstPX = this.centrePoint;
     } else {
       if (this.generations[genidx - 1][fatIdx].X1 > this.generations[genidx - 1][motIdx].X1) {
-        this.secondPX = this.generations[genidx - 1][fatIdx].X1 + this.halfBox;
-        this.firstPX = this.generations[genidx - 1][motIdx].X1 + this.halfBox;
+        this.secondPX = this.generations[genidx - 1][fatIdx].X1 + this.layoutVolatile.halfBoxWidth;
+        this.firstPX = this.generations[genidx - 1][motIdx].X1 + this.layoutVolatile.c;
       } else {
-        this.secondPX = this.generations[genidx - 1][motIdx].X1 + this.halfBox;
-        this.firstPX = this.generations[genidx - 1][fatIdx].X1 + this.halfBox;
+        this.secondPX = this.generations[genidx - 1][motIdx].X1 + this.layoutVolatile.halfBoxWidth;
+        this.firstPX = this.generations[genidx - 1][fatIdx].X1 + this.layoutVolatile.halfBoxWidth;
       }
     }
   },
@@ -67709,10 +67714,11 @@ DescTree.prototype = {
     if (_treePerson != null) prevParentLink = _treePerson.X2;
     return prevParentLink;
   },
-  SetInitialValues: function SetInitialValues(zoomPerc, dist_bet_box, dist_bet_gen, box_wid, box_hig, dist_bet_fam, low_stalk_hi, mid_span, top_span, screen_width, screen_height) {
+  SetInitialValues: function SetInitialValues(defaultLayout, screen_width, screen_height) {
+    this.layoutDefaults = defaultLayout;
+    this.layoutVolatile = _objectSpread({}, defaultLayout);
     this.centrePoint = 750.0;
     this.centreVerticalPoint = 0.0;
-    this.zoomLevel = 0.0;
     this.centrePointXOffset = 0.0;
     this.centrePointYOffset = 0.0;
     this.mouse_x = 0; //int
@@ -67722,26 +67728,8 @@ DescTree.prototype = {
     this.mouseXPercLocat = 0.0;
     this.mouseYPercLocat = 0.0;
     this.bt_screenHeight = screen_height;
-    this.bt_screenWidth = screen_width;
-    this.zoomPercentage = zoomPerc;
-    this.original_distanceBetweenBoxs = dist_bet_box;
-    this.original_distanceBetweenGens = dist_bet_gen;
-    this.original_boxWidth = box_wid;
-    this.original_boxHeight = box_hig;
-    this.original_distancesbetfam = dist_bet_fam;
-    this.original_lowerStalkHeight = low_stalk_hi;
-    this.original_middleSpan = mid_span;
-    this.original_topSpan = top_span;
-    this.distanceBetweenBoxs = this.original_distanceBetweenBoxs;
-    this.distanceBetweenGens = this.original_distanceBetweenGens;
-    this.boxWidth = this.original_boxWidth;
-    this.boxHeight = this.original_boxHeight;
-    this.distancesbetfam = this.original_distancesbetfam;
-    this.halfBox = this.boxWidth / 2;
-    this.halfBoxHeight = this.boxHeight / 2;
-    this.lowerSpan = this.original_lowerStalkHeight;
-    this.middleSpan = this.original_middleSpan;
-    this.topSpan = this.original_topSpan;
+    this.bt_screenWidth = screen_width; //  this.zoomPercentage = zoomPerc;
+    //    this.zoomLevel = 0.0;
   },
   _GetTreePerson: function _GetTreePerson(graph, personId) {
     var _genidx = 0;
@@ -67793,7 +67781,7 @@ DescTree.prototype = {
       var y = this.bt_screenHeight / 2;
       this.SetMouse(x, y);
       this.SetZoomStart();
-      this.SetCentrePoint(1000000, 1000000);
+      this.SetCentrePoint();
 
       if (direction == 'UP') {
         this.ZoomIn();
@@ -67804,49 +67792,6 @@ DescTree.prototype = {
       this.DrawTree();
     }
   },
-  // SetZoom: function (percentage) {
-  //
-  //
-  //     if (percentage !== 0.0) {
-  //         var _workingtp = 0.0;
-  //         var _percLocal_x = 0.0;
-  //         var _percLocal_y = 0.0;
-  //
-  //         //zoom drawing components
-  //         this.zoomPercentage += percentage;
-  //         this.zoomLevel += percentage;
-  //         _workingtp = this.original_distanceBetweenBoxs / 100;
-  //         this.distanceBetweenBoxs = _workingtp * this.zoomPercentage;
-  //         _workingtp = this.original_boxWidth / 100;
-  //         this.boxWidth = _workingtp * this.zoomPercentage;
-  //         this.halfBox = this.boxWidth / 2;
-  //         _workingtp = this.original_distancesbetfam / 100;
-  //         _workingtp = this.original_distanceBetweenGens / 100;
-  //         this.distanceBetweenGens = _workingtp * this.zoomPercentage;
-  //         _workingtp = this.original_boxHeight / 100;
-  //         this.boxHeight = _workingtp * this.zoomPercentage;
-  //
-  //         this.halfBoxHeight = this.boxHeight / 2;
-  //
-  //         this.ComputeLocations();
-  //
-  //         this.GetPercDistances();
-  //         _percLocal_x = this.percX1;
-  //         _percLocal_y = this.percY1;
-  //
-  //
-  //         this.centreVerticalPoint += (this.drawingHeight / 100) * (_percLocal_y - this.mouseYPercLocat);
-  //
-  //         this.centrePoint += (this.drawingWidth / 100) * (_percLocal_x - this.mouseXPercLocat);
-  //
-  //         this.ComputeLocations();
-  //     } //end percentage ==0.0)
-  //
-  //
-  //
-  //     this.DrawTree();
-  //
-  // },
   SetZoomStart: function SetZoomStart() {
     this.GetPercDistances();
     this.mouseXPercLocat = this.percX1;
@@ -67886,8 +67831,8 @@ DescTree.prototype = {
     this.mouse_x = x;
     this.mouse_y = y;
     if (mousestate == undefined) mousestate = false;
-    var mouseLink = this.LinkContainingPoint(this.bt_links, this.mouse_x, this.mouse_y);
-    var buttonLink = this.LinkContainingPoint(this.bt_buttonLinks, this.mouse_x, this.mouse_y);
+    var mouseLink = PureFunctions.LinkContainingPoint(this.bt_links, this.mouse_x, this.mouse_y);
+    var buttonLink = PureFunctions.LinkContainingPoint(this.bt_buttonLinks, this.mouse_x, this.mouse_y);
 
     if (mouseLink !== null || buttonLink !== null) {
       document.body.style.cursor = 'pointer'; //   console.log(mouseLink.action);
@@ -67916,23 +67861,17 @@ DescTree.prototype = {
   },
   // move this up to the derived classes
   PerformClick: function PerformClick(x, y) {
-    var mouseLink = this.LinkContainingPoint(this.bt_links, x, y);
+    var mouseLink = PureFunctions.LinkContainingPoint(this.bt_links, x, y);
 
     if (mouseLink !== null) {
-      var selectedPerson = this._GetTreePerson(this.generations, mouseLink.action); //     var zoomReq = this.zoomPercentage; //-100
-      //   var xpos = selectedPerson.X1;
-      //   var ypos = selectedPerson.Y1;
-
+      var selectedPerson = this._GetTreePerson(this.generations, mouseLink.action);
 
       this.selectedPersonId = selectedPerson.PersonId;
       this.selectedPersonX = selectedPerson.X1;
-      this.selectedPersonY = selectedPerson.Y1; //var queryStr = '?sid=' + '00000000-0000-0000-0000-000000000000' + '&id=' + selectedPerson.PersonId;
-      //queryStr += '&xpos=' + xpos + '&ypos=' + ypos + '&zoom=' + zoomReq;
-      //this._qryString = queryStr;
-
+      this.selectedPersonY = selectedPerson.Y1;
       this.bt_refreshData = true;
     } else {
-      var buttonLink = this.LinkContainingPoint(this.bt_buttonLinks, x, y);
+      var buttonLink = PureFunctions.LinkContainingPoint(this.bt_buttonLinks, x, y);
 
       if (buttonLink !== null) {
         var parts = buttonLink.action.split(',');
@@ -67952,7 +67891,7 @@ DescTree.prototype = {
     }
   },
   SetCentrePoint: function SetCentrePoint(param_x, param_y) {
-    if (param_x == 1000000 && param_y == 1000000) {
+    if (param_x == undefined && param_y == undefined) {
       this.centrePointXOffset = 0;
       this.centrePointYOffset = 0;
     } else {
@@ -67983,22 +67922,22 @@ DescTree.prototype = {
     if (this.zoomAmount > 7) this.zoomAmount--;
     this.SetZoom(this.zoomAmount - this.zoomAmount * 2); //  SetZoom(zoomAmount - (zoomAmount * 2));
   },
-  CalcZoomLevel: function CalcZoomLevel(zoomPercentage) {
+  CalcZoomLevel: function CalcZoomLevel(zoomPercParam) {
     var _retVal = 0;
 
-    if (zoomPercentage > 0 && zoomPercentage < 40) {
+    if (zoomPercParam > 0 && zoomPercParam < 40) {
       _retVal = 1;
-    } else if (zoomPercentage >= 40 && zoomPercentage < 60) {
+    } else if (zoomPercParam >= 40 && zoomPercParam < 60) {
       _retVal = 2;
-    } else if (zoomPercentage >= 60 && zoomPercentage <= 150) {
+    } else if (zoomPercParam >= 60 && zoomPercParam <= 150) {
       _retVal = 3;
-    } else if (zoomPercentage > 150 && zoomPercentage <= 200) {
+    } else if (zoomPercParam > 150 && zoomPercParam <= 200) {
       _retVal = 4;
-    } else if (zoomPercentage > 200 && zoomPercentage <= 250) {
+    } else if (zoomPercParam > 200 && zoomPercParam <= 250) {
       _retVal = 5;
-    } else if (zoomPercentage > 250 && zoomPercentage <= 300) {
+    } else if (zoomPercParam > 250 && zoomPercParam <= 300) {
       _retVal = 6;
-    } else if (zoomPercentage > 300) {
+    } else if (zoomPercParam > 300) {
       _retVal = 7;
     }
 
@@ -68073,7 +68012,7 @@ DescTree.prototype = {
       if (_ypos === 0.0) {
         var _currentPersonLocation = (this.generations[0][0].Y1 + this.generations[0][0].Y2) / 2;
 
-        var _requiredLocation = this.boxHeight;
+        var _requiredLocation = this.layoutVolatile.boxHeight;
 
         var _distanceToMove = _requiredLocation - _currentPersonLocation;
 
@@ -68116,7 +68055,7 @@ DescTree.prototype = {
 
       this.SetMouse(x, y);
       this.SetZoomStart();
-      this.SetCentrePoint(1000000, 1000000);
+      this.SetCentrePoint();
       this.DrawTree();
     }
   },
@@ -68266,19 +68205,10 @@ class VisualisationHandler extends _react.Component {
     return true;
   }
 
-  updateAnimationState() {
-    while (this._moustQueue.length > 0) {
-      var _point = this._moustQueue.shift(); //  console.log(_point[0] + ","+ _point[1]);
-      //   this.props.context.canvas.width = window.innerWidth;
-      //   this.props.context.canvas.height = window.innerHeight;
+  updateAnimationState(_point) {
+    if (_point != undefined) this._tree.SetCentrePoint(_point[0], _point[1]);else this._tree.SetCentrePoint();
 
-
-      this._tree.SetCentrePoint(_point[0], _point[1]);
-
-      this._tree.DrawTree();
-
-      this.rAF = requestAnimationFrame(this.updateAnimationState);
-    }
+    this._tree.DrawTree();
   }
 
   canvasclick(clientX, boundingrecleft, clientY, boundingrectop) {
@@ -68288,21 +68218,17 @@ class VisualisationHandler extends _react.Component {
     this._tree.UpdateGenerationState(); // if (this._tree.bt_refreshData) {
     //     getData(this._tree.selectedPersonId, this._tree.selectedPersonX, this._tree.selectedPersonY);
     // }
-    //
 
 
-    this._moustQueue[this._moustQueue.length] = new Array(1000000, 1000000);
+    this.updateAnimationState();
   }
 
   canvasmove(clientX, boundingrecleft, clientY, boundingrectop) {
-    var _point = new Array(clientX - boundingrecleft, clientY - boundingrectop);
-
+    let _point = [clientX - boundingrecleft, clientY - boundingrectop];
     if (this._tree != null && this._tree != undefined) this._tree.SetMouse(_point[0], _point[1]);
 
     if (this._mouseDown) {
-      this._moustQueue.push(_point);
-
-      this.updateAnimationState();
+      this.updateAnimationState(_point);
     }
   }
 
@@ -68311,11 +68237,8 @@ class VisualisationHandler extends _react.Component {
   }
 
   canvasmouseup() {
-    this._mouseDown = false;
-
-    var _point = new Array(1000000, 1000000);
-
-    this._moustQueue[this._moustQueue.length] = _point;
+    this._mouseDown = false; //   var _point = new Array(1000000, 1000000);
+    //   this._moustQueue[this._moustQueue.length] = _point;
   }
 
   movebuttondown(_dir) {
@@ -68450,9 +68373,8 @@ class VisualisationHandler extends _react.Component {
     this._tree.selectedPersonId = selectedId;
     this._tree.selectedPersonX = 0;
     this._tree.selectedPersonY = 0;
-    console.log('screen width and height: ' + window.innerWidth + " " + window.innerHeight);
 
-    this._tree.SetInitialValues(Number(_zoomLevel), 30.0, 170.0, 70.0, 70.0, 100.0, 20.0, 40.0, 20.0, window.innerWidth, window.innerHeight);
+    this._tree.SetInitialValues(this.props.layoutDefaults, window.innerWidth, window.innerHeight);
 
     this._tree.treeUI = treeUI;
     this._tree.generations = data.Generations;
@@ -68466,14 +68388,12 @@ class VisualisationHandler extends _react.Component {
   }
 
   runDescendants(selectedId, data, treeUI) {
-    var _zoomLevel = 100;
     this._tree = new _DescTree.DescTree();
     this._tree.selectedPersonId = selectedId;
     this._tree.selectedPersonX = 0;
     this._tree.selectedPersonY = 0;
-    console.log('screen width and height: ' + window.innerWidth + " " + window.innerHeight);
 
-    this._tree.SetInitialValues(Number(_zoomLevel), 30.0, 170.0, 70.0, 70.0, 100.0, 20.0, 40.0, 20.0, window.innerWidth, window.innerHeight);
+    this._tree.SetInitialValues(this.props.layoutDefaults, window.innerWidth, window.innerHeight);
 
     this._tree.treeUI = treeUI;
     this._tree.generations = data.Generations;
@@ -68516,7 +68436,8 @@ const mapStateToProps = state => {
     mapup: state.mapup,
     mapdown: state.mapdown,
     status: state.status,
-    graphRunning: state.graphRunning
+    graphRunning: state.graphRunning,
+    layoutDefaults: state.layoutDefaults
   };
 };
 
@@ -82305,19 +82226,6 @@ var _default = function _default() {
       return _objectSpread({}, state, {
         controlVisible: false
       });
-    // case "NO_GED_DATA":
-    //       return {
-    //         ...state,
-    //         gedLoaded: action.gedLoaded,
-    //         gedError : action.gedError
-    //       };
-    //
-    // case "GED_DATA_LOADED":
-    //       return {
-    //         ...state,
-    //         timerStartYear : action.timerStartYear,
-    //         gedLoaded : action.gedLoaded,
-    //       };
 
     case "YEAR_INCREMENT_INIT":
       return _objectSpread({}, state, {
@@ -82366,6 +82274,11 @@ var _default = function _default() {
     case "SET_CONTEXT":
       return _objectSpread({}, state, {
         context: action.context
+      });
+
+    case "SET_LAYOUTDEFAULT":
+      return _objectSpread({}, state, {
+        layoutDefaults: action.layoutDefaults
       });
 
     case "ACTIVATE_GRAPH":
@@ -82470,7 +82383,21 @@ var _default = (0, _redux.createStore)(_reducer.default, {
   mapup: false,
   mapdown: false,
   mapleft: false,
-  mapright: false
+  mapright: false,
+  layoutDefaults: {
+    topSpan: 20.0,
+    middleSpan: 40.0,
+    lowerSpan: 20.0,
+    distancesbetfam: 100.0,
+    boxHeight: 70.0,
+    boxWidth: 70.0,
+    distanceBetweenGens: 170.0,
+    distanceBetweenBoxs: 30.0,
+    zoomLevel: Number(100),
+    zoomPercentage: 100.0,
+    halfBoxWidth: 35.0,
+    halfBoxHeight: 35.0
+  }
 }, (0, _redux.applyMiddleware)(_reduxThunk.default));
 
 exports.default = _default;

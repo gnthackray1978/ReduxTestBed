@@ -48,19 +48,6 @@ export default (state = {}, action) => {
           controlVisible: false
         };
 
-    // case "NO_GED_DATA":
-    //       return {
-    //         ...state,
-    //         gedLoaded: action.gedLoaded,
-    //         gedError : action.gedError
-    //       };
-    //
-    // case "GED_DATA_LOADED":
-    //       return {
-    //         ...state,
-    //         timerStartYear : action.timerStartYear,
-    //         gedLoaded : action.gedLoaded,
-    //       };
 
     case "YEAR_INCREMENT_INIT":
           return {
@@ -119,6 +106,12 @@ export default (state = {}, action) => {
             ...state,
             context : action.context,
           };
+
+    case "SET_LAYOUTDEFAULT":
+          return {
+            ...state,
+            layoutDefaults : action.layoutDefaults,
+          };  
 
     case "ACTIVATE_GRAPH":
           return {

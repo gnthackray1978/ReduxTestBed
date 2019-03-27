@@ -32,7 +32,22 @@ export default createStore(
     mapup:false,
     mapdown: false,
     mapleft :false,
-    mapright :false
+    mapright :false,
+    layoutDefaults :{
+      topSpan :20.0,
+      middleSpan :40.0,
+      lowerSpan :20.0,
+      distancesbetfam :100.0,
+      boxHeight :70.0,
+      boxWidth :70.0,
+      distanceBetweenGens :170.0,
+      distanceBetweenBoxs :30.0,
+      zoomLevel :Number(100),
+      zoomPercentage : 100.0,
+      halfBoxWidth : 35.0,
+      halfBoxHeight :35.0
+    }
+
   },
   applyMiddleware(thunk)
 );
