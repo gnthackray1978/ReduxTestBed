@@ -17,6 +17,9 @@ import {DescGraphCreator} from "../DataLoader/DescGraphCreator.js";
 import {TreeUI} from "../DataLoader/TreeUI.js";
 import {AncTree} from "../DataLoader/AncTree.js";
 import {DescTree} from "../DataLoader/DescTree.js";
+import {ForceDirect} from "../ForceDirected/ForceDirect.js";
+
+
 
 const styles = {
 
@@ -74,22 +77,113 @@ class PureCanvas extends React.Component {
 }
 
 
+class GraphEventConnector{
+
+  constructor(){
+    this._connected=false;
+    this._mouseDown =false;
+  }
+
+  Connect(ctx,props, callback){
+
+  //  let mouseDown =false;
+  //  this.callback = callback;
+
+    this.parseMapButtonState(props,callback);
+
+    // dont subscribe to the events over and over
+    if(!this._connected)
+    {
+        ctx.canvas.addEventListener('mousedown', (evt) => {
+          evt.preventDefault();
+          this._mouseDown =true;
+          callback('canvas_mousedown',evt);
+        });
+
+        ctx.canvas.addEventListener('mouseup', (evt) => {
+          evt.preventDefault();
+          this._mouseDown = false;
+          callback('canvas_mouseup',evt);
+        });
+
+        ctx.canvas.addEventListener('dblclick', (evt) => {
+          evt.preventDefault();
+          callback('canvas_dblclick',evt);
+        });
+
+        ctx.canvas.addEventListener('click', (evt) => {
+          var boundingrec =  ctx.canvas.getBoundingClientRect();
+          //  this._tree.PerformClick(clientX- boundingrecleft, clientY - boundingrectop);
+
+          let point ={
+            x: (evt.clientX - boundingrec.left),
+            y: ( evt.clientY  - boundingrec.top),
+            evt : evt
+          };
+
+          callback('canvas_click', point);
+
+        });
+
+        ctx.canvas.addEventListener('mousemove', (evt) => {
+          var boundingrec =  ctx.canvas.getBoundingClientRect();
+        //  this.canvasmove(evt.clientX ,boundingrec.left, evt.clientY , boundingrec.top);
+
+          let point ={
+            x: (evt.clientX - boundingrec.left),
+            y: ( evt.clientY  - boundingrec.top),
+            mouseDown: this._mouseDown,
+            evt: evt
+          };
+
+          callback('canvas_mousemove', point);
+        });
+
+        this._connected =true;
+    }
+
+  }
+
+  parseMapButtonState(buttonState,callback){
+    let dir ='';
+
+    if(!buttonState.zoomin &&
+      !buttonState.zoomout &&
+      !buttonState.mapleft &&
+      !buttonState.mapright &&
+      !buttonState.mapup &&
+      !buttonState.mapdown)
+      {
+        clearInterval(this._moveTimer);
+        return;
+      }
+
+
+    if(buttonState.zoomin) dir ='DOWN';
+    if(buttonState.zoomout) dir ='UP';
+    if(buttonState.mapleft) dir ='EAST';
+    if(buttonState.mapright) dir ='RIGHT';
+    if(buttonState.mapup) dir ='NORTH';
+    if(buttonState.mapdown) dir ='SOUTH';
+
+    this._moveTimer = setInterval( () =>{ callback('control_down',dir); }, 100);
+  }
+
+
+}
 
 class VisualisationHandler extends Component {
 
-  // import {AncTree} from "../../DataLoader/AncTree.js";
-  // import {DescTree} from "../../DataLoader/DescTree.js";
-  // import {GedLib} from "../../DataLoader/GedLib.js";
-  // import {AncGraphCreator} from "../../DataLoader/AncGraphCreator.js";
-  // import {TreeUI} from "../../DataLoader/TreeUI.js";
   constructor(props) {
      super(props);
 
      //state
      this._tree =null;
-     this._moustQueue = [];
+     this._forceDirect =null;
+  //   this._moustQueue = [];
      this.updateAnimationState = this.updateAnimationState.bind(this);
 
+     this._graphEventConnnector = new GraphEventConnector();
 
    }
 
@@ -100,73 +194,81 @@ class VisualisationHandler extends Component {
    }
 
    updateAnimationState(_point) {
+
+
      if(_point!=undefined)
-      this._tree.SetCentrePoint(_point[0], _point[1]);
+      this._tree.SetCentrePoint(_point.x, _point.y);
      else
       this._tree.SetCentrePoint();
 
      this._tree.DrawTree();
    }
 
-   canvasclick(clientX , boundingrecleft, clientY , boundingrectop){
-
-      //  if(!this.validtree) return;
-
-       this._tree.PerformClick(clientX- boundingrecleft, clientY - boundingrectop);
-
-       this._tree.UpdateGenerationState();
-
-       // if (this._tree.bt_refreshData) {
-       //     getData(this._tree.selectedPersonId, this._tree.selectedPersonX, this._tree.selectedPersonY);
-       // }
-
-       this.updateAnimationState();
-   }
-
-   canvasmove(clientX , boundingrecleft, clientY , boundingrectop){
-
-     let _point = [clientX - boundingrecleft, clientY- boundingrectop];
-
-     if(this._tree!= null && this._tree!=undefined)
-      this._tree.SetMouse(_point[0], _point[1]);
-
-     if (this._mouseDown) {
-         this.updateAnimationState(_point);
-     }
-
-   }
-
-   canvasmousedown(){
-
-     this._mouseDown = true;
-   }
-
-   canvasmouseup(){
-
-     this._mouseDown = false;
-
-  //   var _point = new Array(1000000, 1000000);
-  //   this._moustQueue[this._moustQueue.length] = _point;
-   }
-
-   movebuttondown(_dir){
-
-     if(!this.validTree()) return;
-
-     console.log('movebuttondown: ' + _dir);
-
-     this._moveTimer = setInterval( () =>{ this._tree.MoveTree(_dir); }, 100);
-   }
-   movebuttonup(){
-
-     if(!this.validTree()) return;
-
-     clearInterval(this._moveTimer);
-   }
-
-
-    componentDidUpdate(){
+   componentDidUpdate(){
       console.log('VisualisationHandler componentDidUpdate' );
+
+      this._graphEventConnnector.Connect(this.props.context,this.props,  (actionName, data)=>{
+        switch (actionName) {
+          case 'canvas_mousedown':
+            if(this._forceDirect && this.props.graphActiveLayout == 'forceDirect')
+              this._forceDirect.mouseDown(data);
+          break;
+          case 'canvas_mouseup':
+          if(this._forceDirect && this.props.graphActiveLayout == 'forceDirect')
+            this._forceDirect.mouseUp(data);
+          break;
+          case 'canvas_mousemove':
+            if(this.props.graphActiveLayout != 'forceDirect'){
+              if(this.validTree())
+                this._tree.SetMouse(data.x,data.y);
+              if(data.mouseDown)
+                this.updateAnimationState(data);
+            }
+            else{
+              if(this._forceDirect && this.props.graphActiveLayout == 'forceDirect')
+                this._forceDirect.mouseMove(data.evt);
+            }
+
+          break;
+          case 'canvas_dblclick':
+            if(this._forceDirect && this.props.graphActiveLayout == 'forceDirect')
+              this._forceDirect.mouseDoubleClick(data);
+          break;
+          case 'canvas_click':
+            if(this.props.graphActiveLayout != 'forceDirect'){
+              if(this.validTree()){
+                this._tree.PerformClick(data.x,data.y);
+                this._tree.UpdateGenerationState();
+                this.updateAnimationState();
+              }
+            }
+            else{
+              if(this._forceDirect && this.props.graphActiveLayout == 'forceDirect')
+                this._forceDirect.mouseMove(data.evt);
+            }
+
+          break;
+          case 'control_down':
+            if(this.props.graphActiveLayout != 'forceDirect'){
+              if(this.validTree()){
+                this._tree.MoveTree(data);
+
+              }
+            }
+            else{
+
+            }
+
+          break;
+
+
+          default:
+
+        }
+      });
+
+
+
 
       if(this.props.graphActive){
         if(!this.props.graphRunning){
@@ -185,87 +287,24 @@ class VisualisationHandler extends Component {
 
           }
           if(this.props.graphActiveLayout== 'forceDirect'){
-            this.runGraphDirected();
+            this.props.toggleGraphRunning(true);
+            this.runGraphDirected(this.props.graphActiveSelection);
           }
         }
 
-        this.processButtonClicks();
+      //  this.processButtonClicks();
       }
 
 
 
     }
 
-
-
-    drawFrame(ctx){
-      // if(this._tree!=null){
-      //   console.log('drawing tree');
-      //   this._tree.DrawTree();
-      // }
-    }
     contextCreated (ctx){
      console.log('context created');
-
-
-
      this.props.setContext(ctx);
-
-     this.WireUp(ctx);
-
     }
 
-    processButtonClicks(){
-      let dir ='';
 
-      if(!this.props.zoomin &&
-        !this.props.zoomout &&
-        !this.props.mapleft &&
-        !this.props.mapright &&
-        !this.props.mapup &&
-        !this.props.mapdown){
-        this.movebuttonup();
-        return;
-      }
-
-
-      if(this.props.zoomin) dir ='DOWN';
-      if(this.props.zoomout) dir ='UP';
-      if(this.props.mapleft) dir ='EAST';
-      if(this.props.mapright) dir ='RIGHT';
-      if(this.props.mapup) dir ='NORTH';
-      if(this.props.mapdown) dir ='SOUTH';
-
-      this.movebuttondown(dir);
-
-    }
-
-    WireUp(ctx){
-
-      ctx.canvas.addEventListener('mousedown', (evt) => {
-        evt.preventDefault();
-
-        this.canvasmousedown();
-      });
-
-      ctx.canvas.addEventListener('mouseup', (evt) => {
-        evt.preventDefault();
-        this.canvasmouseup();
-      });
-
-      ctx.canvas.addEventListener('click', (evt) => {
-        var boundingrec =  ctx.canvas.getBoundingClientRect();
-        this.canvasclick(evt.clientX ,boundingrec.left, evt.clientY , boundingrec.top);
-      });
-
-      ctx.canvas.addEventListener('mousemove', (evt) => {
-        var boundingrec =  ctx.canvas.getBoundingClientRect();
-        this.canvasmove(evt.clientX ,boundingrec.left, evt.clientY , boundingrec.top);
-      });
-
-
-
-    }
 
    initDescendents(selectedId, complete){
      let context = this.props.context;
@@ -369,7 +408,23 @@ class VisualisationHandler extends Component {
      this.rAF = requestAnimationFrame(this.updateAnimationState);
    }
 
-   runGraphDirected(nextProps) {
+   runGraphDirected(selectedId) {
+
+     let context = this.props.context;
+
+     context.canvas.style.top=0;
+     context.canvas.style.left=0;
+
+     context.canvas.width = window.innerWidth;
+     context.canvas.height = window.innerHeight;
+
+     let loader = new DescGraphCreator(this.props.families,this.props.persons);
+
+     this._forceDirect = new ForceDirect(this.props.fdSettings,loader,context,(name,value)=>{
+
+      });
+
+      this._forceDirect.init(selectedId);
 
 
    }
@@ -378,9 +433,9 @@ class VisualisationHandler extends Component {
      console.log('clear all ');
    }
 
- render() {
-    return <GraphContainer drawFrame = {this.drawFrame.bind(this)}  contextCreated = {this.contextCreated.bind(this)}/>
- }
+    render() {
+      return <GraphContainer drawFrame = {(ctx)=>{}}  contextCreated = {this.contextCreated.bind(this)}/>
+    }
 
 }
 
@@ -402,7 +457,8 @@ const mapStateToProps = state => {
     mapdown:state.mapdown,
     status: state.status,
     graphRunning : state.graphRunning,
-    layoutDefaults :state.layoutDefaults
+    layoutDefaults :state.layoutDefaults,
+    fdSettings: state.fdSettings
   };
 };
 

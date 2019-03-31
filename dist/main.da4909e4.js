@@ -68091,7 +68091,2009 @@ DescTree.prototype = {
     }
   }
 };
-},{"./TreeBase.js":"../src/DataLoader/TreeBase.js","./TreeUI.js":"../src/DataLoader/TreeUI.js"}],"../src/containers/VisualisationHandler.jsx":[function(require,module,exports) {
+},{"./TreeBase.js":"../src/DataLoader/TreeBase.js","./TreeUI.js":"../src/DataLoader/TreeUI.js"}],"../src/ForceDirected/Vector.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Vector = Vector;
+
+// Vector
+function Vector(x, y) {
+  this.x = x;
+  this.y = y;
+}
+
+Vector.random = function () {
+  return new Vector(10.0 * (Math.random() - 0.5), 10.0 * (Math.random() - 0.5));
+};
+
+Vector.prototype.add = function (v2) {
+  return new Vector(this.x + v2.x, this.y + v2.y);
+};
+
+Vector.prototype.subtract = function (v2) {
+  return new Vector(this.x - v2.x, this.y - v2.y);
+};
+
+Vector.prototype.multiply = function (n) {
+  return new Vector(this.x * n, this.y * n);
+};
+
+Vector.prototype.divide = function (n) {
+  return new Vector(this.x / n || 0, this.y / n || 0); // Avoid divide by zero errors..
+};
+
+Vector.prototype.magnitude = function () {
+  return Math.sqrt(this.x * this.x + this.y * this.y);
+};
+
+Vector.prototype.normal = function () {
+  return new Vector(-this.y, this.x);
+};
+
+Vector.prototype.normalise = function () {
+  return this.divide(this.magnitude());
+};
+
+Vector.prototype.distance = function (d2) {
+  var x = d2.x - this.x;
+  x = x * x;
+  var y = d2.y - this.y;
+  y = y * y;
+  return Math.sqrt(x + y);
+};
+},{}],"../src/ForceDirected/Node.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Node = Node;
+
+function Node(id, data) {
+  this.id = id;
+  this.data = typeof data !== 'undefined' ? data : {};
+  this._widthCache = [];
+}
+
+Node.prototype.getWidth = function (ctx) {
+  var text = typeof this.data.label !== 'undefined' ? this.data.label : this.id;
+  if (this._widthCache && this._widthCache[text]) return this._widthCache[text];
+  ctx.save();
+  ctx.font = "16px Verdana, sans-serif";
+  var width = ctx.measureText(text).width + 10;
+  ctx.restore(); //  this._width || (this._width = {});
+
+  this._widthCache[text] = width;
+  return width;
+};
+
+Node.prototype.getHeight = function (ctx) {
+  return 20;
+};
+
+Node.prototype.match = function (id) {
+  if (!this.data.RecordId) return false;
+  return this.data.RecordId == id;
+};
+},{}],"../src/ForceDirected/Point.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Point = Point;
+
+var _Vector = require("./Vector.js");
+
+function Point(position, mass) {
+  this.p = position; // position
+
+  this.m = mass; // mass
+
+  this.v = new _Vector.Vector(0, 0); // velocity
+
+  this.a = new _Vector.Vector(0, 0); // acceleration
+}
+
+Point.prototype.applyForce = function (force) {
+  this.a = this.a.add(force.divide(this.m));
+};
+},{"./Vector.js":"../src/ForceDirected/Vector.js"}],"../src/ForceDirected/Spring.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Spring = Spring;
+
+// Spring
+function Spring(point1, point2, length, k) {
+  this.point1 = point1;
+  this.point2 = point2;
+  this.length = length; // spring length at rest
+
+  this.k = k; // spring constant (See Hooke's law) .. how stiff the spring is
+}
+},{}],"../src/ForceDirected/FDLayout.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.FDLayout = FDLayout;
+
+var _Vector = require("./Vector.js");
+
+var _Node = require("./Node.js");
+
+var _Point = require("./Point.js");
+
+var _Spring = require("./Spring.js");
+
+function FDLayout(ctx, channel, graph, camera, settings, parentNode, parentLayout, firstNode) {
+  this._channel = channel;
+  this.selected = {
+    node: new _Node.Node(-1, null),
+    point: new _Point.Point(new _Vector.Vector(0, 0), 0),
+    distance: -1
+  };
+  this.nearest = {
+    node: new _Node.Node(-1, null),
+    point: new _Point.Point(new _Vector.Vector(0, 0), 0),
+    distance: -1
+  };
+  this.dragged = {
+    node: new _Node.Node(-1, null),
+    point: new _Point.Point(new _Vector.Vector(0, 0), 0),
+    distance: -1
+  };
+  this.parentNode = parentNode;
+  this.parentLayout = parentLayout;
+  this.firstNode = firstNode;
+  this._cameraView = camera;
+  this.ctx = ctx;
+  this.mouseup = true;
+  this.graph = graph;
+  this.stiffness = settings.stiffness; // spring stiffness constant
+
+  this.repulsion = settings.repulsion; // repulsion constant
+
+  this.damping = settings.damping; // velocity damping factor
+
+  this.nodePoints = {}; // keep track of points associated with nodes
+
+  this.edgeSprings = {}; // keep track of springs associated with edges
+
+  this._cameraView.layout = this; // oh dear george!
+
+  this._cameraView.currentBB = this.getBoundingBox(); // fix this!!!
+
+  this.selectionChanged = null;
+  this.nearestChanged = null;
+  this.draggedChanged = null;
+  this.highLightedListeners = [];
+  this.selectedListeners = [];
+  this.dragList = [];
+  this.selectionMass = 0;
+}
+
+FDLayout.prototype = {
+  point: function point(node) {
+    if (typeof this.nodePoints[node.id] === 'undefined') {
+      var mass = typeof node.data.mass !== 'undefined' ? node.data.mass : 1.0;
+      this.nodePoints[node.id] = new _Point.Point(_Vector.Vector.random(), mass);
+    }
+
+    return this.nodePoints[node.id];
+  },
+  spring: function spring(edge) {
+    if (typeof this.edgeSprings[edge.id] === 'undefined') {
+      var length = typeof edge.data.length !== 'undefined' ? edge.data.length : 1.0;
+      var existingSpring = false;
+      var from = this.graph.getEdges(edge.source, edge.target);
+      from.forEach(function (e) {
+        if (existingSpring === false && typeof this.edgeSprings[e.id] !== 'undefined') {
+          existingSpring = this.edgeSprings[e.id];
+        }
+      }, this);
+
+      if (existingSpring !== false) {
+        return new _Spring.Spring(existingSpring.point1, existingSpring.point2, 0.0, 0.0);
+      }
+
+      var to = this.graph.getEdges(edge.target, edge.source);
+      from.forEach(function (e) {
+        if (existingSpring === false && typeof this.edgeSprings[e.id] !== 'undefined') {
+          existingSpring = this.edgeSprings[e.id];
+        }
+      }, this);
+
+      if (existingSpring !== false) {
+        return new _Spring.Spring(existingSpring.point2, existingSpring.point1, 0.0, 0.0);
+      }
+
+      this.edgeSprings[edge.id] = new _Spring.Spring(this.point(edge.source), this.point(edge.target), length, this.stiffness);
+    }
+
+    return this.edgeSprings[edge.id];
+  },
+  // callback should accept two arguments: Node, Point
+  eachNode: function eachNode(callback) {
+    var t = this;
+    this.graph.nodes.forEach(function (n) {
+      callback.call(t, n, t.point(n));
+    });
+  },
+  // callback should accept two arguments: Edge, Spring
+  eachEdge: function eachEdge(callback) {
+    var t = this;
+    this.graph.edges.forEach(function (e) {
+      callback.call(t, e, t.spring(e));
+    });
+  },
+  // callback should accept one argument: Spring
+  eachSpring: function eachSpring(callback) {
+    var t = this;
+    this.graph.edges.forEach(function (e) {
+      callback.call(t, t.spring(e));
+    });
+  },
+  // Physics stuff
+  applyCoulombsLaw: function applyCoulombsLaw() {
+    this.eachNode(function (n1, point1) {
+      this.eachNode(function (n2, point2) {
+        if (point1 !== point2) {
+          var d = point1.p.subtract(point2.p);
+          var distance = d.magnitude() + 0.1; // avoid massive forces at small distances (and divide by zero)
+
+          var direction = d.normalise(); // apply force to each end point
+
+          point1.applyForce(direction.multiply(this.repulsion).divide(distance * distance * 0.5));
+          point2.applyForce(direction.multiply(this.repulsion).divide(distance * distance * -0.5));
+        }
+      });
+    });
+  },
+  applyHookesLaw: function applyHookesLaw() {
+    this.eachSpring(function (spring) {
+      var d = spring.point2.p.subtract(spring.point1.p); // the direction of the spring
+
+      var displacement = spring.length - d.magnitude();
+      var direction = d.normalise(); // apply force to each end point
+
+      spring.point1.applyForce(direction.multiply(spring.k * displacement * -0.5));
+      spring.point2.applyForce(direction.multiply(spring.k * displacement * 0.5));
+    });
+  },
+  attractToCentre: function attractToCentre() {
+    this.eachNode(function (node, point) {
+      var direction = point.p.multiply(-1.0);
+      point.applyForce(direction.multiply(this.repulsion / 50.0));
+    });
+  },
+  updateVelocity: function updateVelocity(timestep) {
+    this.eachNode(function (node, point) {
+      // Is this, along with updatePosition below, the only places that your
+      // integration code exist?
+      point.v = point.v.add(point.a.multiply(timestep)).multiply(this.damping);
+      point.a = new _Vector.Vector(0, 0);
+    });
+  },
+  updatePosition: function updatePosition(timestep) {
+    this.eachNode(function (node, point) {
+      // Same question as above; along with updateVelocity, is this all of
+      // your integration code?
+      point.p = point.p.add(point.v.multiply(timestep));
+    });
+  },
+  // Calculate the total kinetic energy of the system
+  totalEnergy: function totalEnergy(timestep) {
+    var energy = 0.0;
+    this.eachNode(function (node, point) {
+      var speed = point.v.magnitude();
+      energy += 0.5 * point.m * speed * speed;
+    });
+    return energy;
+  },
+  //formerly mouse double click
+  resetDragListNodeMass: function resetDragListNodeMass(e) {
+    //reset nearest draglist node mass
+    console.log('mouseDoubleClick_');
+
+    if (e.currentTarget.localName == "canvas") {
+      var pos = {
+        top: 0,
+        left: 0
+      };
+
+      var p = this._cameraView.currentPositionFromScreen(pos, e);
+
+      var newNearest = this.nearestPoint(p);
+
+      if (newNearest.node != null) {
+        // find node in dragged list
+        // remove it
+        // reset its mass
+        var idx = 0;
+
+        while (idx < this.dragList.length) {
+          if (this.dragList[idx] != null && this.dragList[idx].id == newNearest.node.id) {
+            this.nodePoints[this.dragList[idx].id].m = this.dragList[idx].m;
+            this.dragList[idx] = null;
+          }
+
+          idx++;
+        }
+      }
+    }
+  },
+  //formerly mousedown
+  processNewSelections: function processNewSelections(e) {
+    console.log('mouseDown_');
+
+    if (e.currentTarget.localName == "canvas") {
+      this.mouseup = false; //        var pos = $(this.canvasId).offset();
+
+      var pos = {
+        top: 0,
+        left: 0
+      };
+
+      var p = this._cameraView.currentPositionFromScreen(pos, e);
+
+      var newNearest = this.nearestPoint(p);
+
+      if (newNearest.node != null) {
+        if (newNearest.node.id != this.selected.node.id) {
+          this.selected.point.m = 1;
+          this.resetMasses();
+          this.selected = newNearest;
+          console.log('selected changed: ' + this.selected);
+          this.notifySelection(this.selected);
+        }
+
+        if (newNearest.node.id != this.nearest.node.id) {
+          this.nearest = newNearest;
+          this.notifyHighLight(this.nearest);
+        }
+
+        if (newNearest.node.id != this.dragged.node.id) {
+          this.dragged = newNearest;
+        }
+      }
+
+      if (this.selected.node !== null) {
+        //    this.selectionMass = this.dragged.point.m;
+        if (this.dragged.node.id != -1) {
+          var idx = 0;
+          var found = false;
+
+          while (idx < this.dragList.length) {
+            if (this.dragList[idx] != null && this.dragList[idx].id == newNearest.node.id) {
+              found = true;
+            }
+
+            idx++;
+          }
+
+          if (!found) {
+            this.dragList.push({
+              id: this.dragged.node.id,
+              m: this.dragged.point.m
+            });
+            this.dragged.point.m = 10000;
+          }
+        }
+      }
+    }
+
+    if (e.target.id == "up") this._cameraView.moving = 'UP';
+    if (e.target.id == "dn") this._cameraView.moving = 'DOWN';
+    if (e.target.id == "we") this._cameraView.moving = 'WEST';
+    if (e.target.id == "no") this._cameraView.moving = 'NORTH';
+    if (e.target.id == "es") this._cameraView.moving = 'EAST';
+    if (e.target.id == "so") this._cameraView.moving = 'SOUTH';
+    if (e.target.id == "de") this._cameraView.moving = 'DEBUG';
+  },
+  resetMasses: function resetMasses(e) {
+    var idx = 0;
+
+    while (idx < this.dragList.length) {
+      if (this.dragList[idx] != null) this.nodePoints[this.dragList[idx].id].m = this.dragList[idx].m;
+      idx++;
+    }
+
+    this.dragList = [];
+  },
+  //mouseup
+  handlermouseUp: function handlermouseUp(e) {
+    console.log('mouseUp_');
+
+    if (e.currentTarget.localName == "canvas") {
+      this._cameraView.addToMouseQueue(1000000, 1000000);
+
+      this.dragged = {
+        node: new _Node.Node(-1, null),
+        point: new _Point.Point(new _Vector.Vector(0, 0), 0),
+        distance: -1
+      };
+      this.mouseup = true;
+    } else {
+      this._cameraView.moving = '';
+    }
+  },
+  //formerly mousemove
+  checkForHighLights: function checkForHighLights(e) {
+    //    console.log('mouseMove_');
+    //  var pos = $(this.canvasId).offset();
+    var pos = {
+      top: 0,
+      left: 0
+    };
+
+    var p = this._cameraView.currentPositionFromScreen(pos, e);
+
+    if (!this.mouseup && this.selected.node.id !== -1 && this.dragged.node.id == -1) {
+      this._cameraView.addToMouseQueue(e.clientX, e.clientY);
+    }
+
+    var newNearest = this.nearestPoint(p);
+
+    if (newNearest.node != null && newNearest.node.id != this.nearest.node.id) {
+      this.nearest = newNearest; //  console.log('nearest changed: ' + this.nearest);
+
+      this.notifyHighLight(this.nearest);
+    }
+
+    if (this.dragged.node.id !== -1) {
+      this.dragged.point.p.x = p.x;
+      this.dragged.point.p.y = p.y;
+    }
+  },
+  getSelection: function getSelection(node) {
+    // 1 nothing
+    // 2 nearest
+    // 3 selected
+    var selectedPersonId = '';
+    var nodePersonId = '';
+
+    if (this.selected != null && this.selected.node != undefined && this.selected.node.data != undefined && this.selected.node.data.RecordLink != undefined) {
+      selectedPersonId = this.selected.node.data.RecordLink.PersonId;
+    }
+
+    if (node.data != undefined && node.data.RecordLink != undefined) {
+      nodePersonId = node.data.RecordLink.PersonId;
+    }
+
+    if (selectedPersonId == nodePersonId && node.data.type != 'infonode') {
+      return 3;
+    } else if (this.nearest !== null && this.nearest.node !== null && this.nearest.node.id === node.id) {
+      return 2;
+    } else {
+      return 1;
+    }
+  },
+  notifyHighLight: function notifyHighLight(e) {
+    this._channel.emit("nodeHighlighted", {
+      value: e.node.data.RecordLink
+    });
+  },
+  notifySelection: function notifySelection(e) {
+    this._channel.emit("nodeSelected", {
+      value: e.node.data.RecordLink
+    });
+  },
+  //Find the nearest point to a particular position
+  nearestPoint: function nearestPoint(pos) {
+    var min = {
+      node: null,
+      point: null,
+      distance: 1
+    };
+    var t = this;
+    this.graph.nodes.forEach(function (n) {
+      if (n.data.type == 'normal') {
+        var point = t.point(n);
+        var distance = point.p.subtract(pos).magnitude();
+
+        if (min.distance === null || distance < min.distance) {
+          min = {
+            node: n,
+            point: point,
+            distance: distance
+          };
+        }
+      }
+    });
+    return min;
+  },
+  hasNearestNode: function hasNearestNode() {
+    if (this.nearest != null && this.nearest.node != null) return true;else return false;
+  },
+  nearestNodePoint: function nearestNodePoint() {
+    if (this.nearest.node != null) {
+      return this.nodePoints[this.nearest.node.id];
+    } else {
+      console.log('nearest node null');
+      return -1;
+    }
+  },
+  getBoundingBox: function getBoundingBox() {
+    var bottomleft = new _Vector.Vector(-2, -2);
+    var topright = new _Vector.Vector(2, 2);
+    this.eachNode(function (n, point) {
+      if (point.p.x < bottomleft.x) {
+        bottomleft.x = point.p.x;
+      }
+
+      if (point.p.y < bottomleft.y) {
+        bottomleft.y = point.p.y;
+      }
+
+      if (point.p.x > topright.x) {
+        topright.x = point.p.x;
+      }
+
+      if (point.p.y > topright.y) {
+        topright.y = point.p.y;
+      }
+    });
+    var padding = topright.subtract(bottomleft).multiply(0.07); // ~5% padding
+
+    return {
+      bottomleft: bottomleft.subtract(padding),
+      topright: topright.add(padding)
+    };
+  }
+};
+},{"./Vector.js":"../src/ForceDirected/Vector.js","./Node.js":"../src/ForceDirected/Node.js","./Point.js":"../src/ForceDirected/Point.js","./Spring.js":"../src/ForceDirected/Spring.js"}],"../src/ForceDirected/Utils.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Utils = Utils;
+
+var _Vector = require("./Vector.js");
+
+function Utils(currentBB, gwidth, hwidth) {
+  this.currentBB = currentBB;
+  this.graph_width = gwidth;
+  this.graph_height = hwidth;
+}
+
+Utils.prototype = {
+  toScreen: function toScreen(p) {
+    var size = this.currentBB.topright.subtract(this.currentBB.bottomleft);
+    var sx = p.subtract(this.currentBB.bottomleft).divide(size.x).x * this.graph_width;
+    var sy = p.subtract(this.currentBB.bottomleft).divide(size.y).y * this.graph_height;
+    return new _Vector.Vector(sx, sy);
+  },
+  fromScreen: function fromScreen(s) {
+    var size = this.currentBB.topright.subtract(this.currentBB.bottomleft);
+    var px = s.x / this.graph_width * size.x + this.currentBB.bottomleft.x;
+    var py = s.y / this.graph_height * size.y + this.currentBB.bottomleft.y;
+    return new _Vector.Vector(px, py);
+  },
+  intersect_line_line: function intersect_line_line(p1, p2, p3, p4) {
+    var denom = (p4.y - p3.y) * (p2.x - p1.x) - (p4.x - p3.x) * (p2.y - p1.y); // lines are parallel
+
+    if (denom === 0) {
+      return false;
+    }
+
+    var ua = ((p4.x - p3.x) * (p1.y - p3.y) - (p4.y - p3.y) * (p1.x - p3.x)) / denom;
+    var ub = ((p2.x - p1.x) * (p1.y - p3.y) - (p2.y - p1.y) * (p1.x - p3.x)) / denom;
+
+    if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
+      return false;
+    }
+
+    return new _Vector.Vector(p1.x + ua * (p2.x - p1.x), p1.y + ua * (p2.y - p1.y));
+  },
+  intersect_line_box: function intersect_line_box(p1, p2, p3, w, h) {
+    var tl = {
+      x: p3.x,
+      y: p3.y
+    };
+    var tr = {
+      x: p3.x + w,
+      y: p3.y
+    };
+    var bl = {
+      x: p3.x,
+      y: p3.y + h
+    };
+    var br = {
+      x: p3.x + w,
+      y: p3.y + h
+    };
+    var result;
+
+    if (result == this.intersect_line_line(p1, p2, tl, tr)) {
+      return result;
+    } // top
+
+
+    if (result == this.intersect_line_line(p1, p2, tr, br)) {
+      return result;
+    } // right
+
+
+    if (result == this.intersect_line_line(p1, p2, br, bl)) {
+      return result;
+    } // bottom
+
+
+    if (result == this.intersect_line_line(p1, p2, bl, tl)) {
+      return result;
+    } // left
+
+
+    return false;
+  },
+  getLevel: function getLevel(count, number, data) {
+    var idx = 0;
+    var chunk = count / data.length;
+    var chunkIdx = chunk;
+    var selectedIdx = 0;
+
+    while (idx < data.length) {
+      var bottom = chunkIdx - chunk;
+
+      if (number >= bottom && number < chunkIdx) {
+        selectedIdx = idx;
+      }
+
+      idx++;
+      chunkIdx += chunk;
+    }
+
+    return data[selectedIdx];
+  },
+  validDisplayPeriod: function validDisplayPeriod(dob, currentyear, offset) {
+    if (!dob) dob = 1600;
+    if (!currentyear) currentyear = 1600;
+    if (!offset) offset = 0;
+    var min = currentyear - offset;
+    var max = currentyear + offset;
+    return dob >= min && dob <= max ? true : false;
+  },
+  star: function star(map, ctx, x, y, r, p, m, filled, type, state) {
+    //var radgrad = ctx.createRadialGradient(s.x + 2, s.y + 3, 1, s.x + 5, s.y + 5, 5);
+    //radgrad.addColorStop(0, '#CCFFFF');
+    //radgrad.addColorStop(0.9, 'FFFFFF');
+    //radgrad.addColorStop(1, 'rgba(1,159,98,0)');
+    var colour = '';
+
+    switch (state) {
+      case 1:
+        colour = map.colourScheme.normalMainShapeBackground;
+        break;
+
+      case 2:
+        colour = map.colourScheme.nearestMainShapeBackground;
+        break;
+
+      case 3:
+        colour = map.colourScheme.selectedMainShapeBackground;
+        break;
+    }
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.translate(x, y);
+    ctx.moveTo(0, 0 - r);
+
+    for (var i = 0; i < p; i++) {
+      ctx.rotate(Math.PI / p);
+      ctx.lineTo(0, 0 - r * m);
+      ctx.rotate(Math.PI / p);
+      ctx.lineTo(0, 0 - r);
+    }
+
+    if (filled) {
+      ctx.fillStyle = colour;
+      ctx.fill();
+    }
+
+    {
+      ctx.strokeStyle = colour;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    } //whaeever
+
+    ctx.restore();
+  },
+  drawText: function drawText(map, ctx, x, y, text, type, state) {
+    //boxWidth = node.getWidth();
+    //boxHeight = node.getHeight();
+    if (!type) type = 'normal';
+    if (!state) state = 1;
+    if (!text) text = ''; //  text = text.replace(' ', '');
+    // 1 nothing
+    // 2 nearest
+    // 3 selected
+
+    switch (state) {
+      case 1:
+        ctx.fillStyle = type == 'normal' ? map.colourScheme.normalMainLabelBackground : map.colourScheme.normalInfoLabelBackground;
+        break;
+
+      case 2:
+        ctx.fillStyle = type == 'normal' ? map.colourScheme.nearestMainLabelBackground : map.colourScheme.nearestInfoLabelBackground;
+        break;
+
+      case 3:
+        ctx.fillStyle = type == 'normal' ? map.colourScheme.selectedMainLabelBackground : map.colourScheme.selectedInfoLabelBackground;
+        break;
+    }
+
+    let boxWidth = ctx.measureText(text).width + 10;
+    ctx.fillRect(x, y, boxWidth, 20);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+
+    switch (state) {
+      case 1:
+        ctx.fillStyle = type == 'normal' ? map.colourScheme.normalMainLabelColour : map.colourScheme.normalInfoLabelColour;
+        break;
+
+      case 2:
+        ctx.fillStyle = type == 'normal' ? map.colourScheme.selectedMainLabelColour : map.colourScheme.selectedInfoLabelColour;
+        break;
+
+      case 3:
+        ctx.fillStyle = type == 'normal' ? map.colourScheme.nearestMainLabelColour : map.colourScheme.nearestInfoLabelColour;
+        break;
+    }
+
+    ctx.font = "16px Verdana, sans-serif";
+    ctx.fillText(text, x, y); // x - boxWidth / 2 + 5, y - 8);
+  }
+};
+},{"./Vector.js":"../src/ForceDirected/Vector.js"}],"../src/ForceDirected/CameraView.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CameraView = CameraView;
+
+var _Vector = require("./Vector.js");
+
+var _Utils = require("./Utils.js");
+
+//GET http://127.0.0.1:1337/JSVisualizers/Diagrams/Types/Vector net::ERR_ABORTED 404 (Not Found)
+function CameraView(channel, colourScheme, startwidth, startheight) {
+  this.layout = null; //this.graph = graph;
+
+  this.channel = channel;
+  this.currentBB = null; // layout.getBoundingBox();
+  // this.targetBB = null;
+
+  this.targetBB = {
+    bottomleft: new _Vector.Vector(-2, -2),
+    topright: new _Vector.Vector(2, 2)
+  };
+  this.colourScheme = colourScheme; // graph size
+
+  this.original_graph_width = startwidth;
+  this.original_graph_height = startheight; // graph size
+
+  this.graph_width = this.original_graph_width;
+  this.graph_height = this.original_graph_height; //display size
+
+  this.display_width = window.innerWidth + 500;
+  this.display_height = window.innerHeight + 500; //save screen width/height
+
+  this.bt_screenHeight = screen.height;
+  this.bt_screenWidth = screen.width; //positional controls
+
+  this.centrePoint = 0;
+  this.centreVerticalPoint = 0;
+  this.zoomOffset = 0;
+  this.centrePointXOffset = 0.0;
+  this.centrePointYOffset = 0.0;
+  this.mouse_x = 0;
+  this.mouse_y = 0; // queue of points to move graph to
+
+  this.mouseQueue = [];
+  this.mouseXPercLocat = 0.0;
+  this.mouseYPercLocat = 0.0;
+  this.percX1 = 0.0;
+  this.percY1 = 0.0; // zoom level
+
+  this.zoompercentage = 0; //info tracker
+
+  this.infoDisplayed = [];
+  this.moving = '';
+}
+
+CameraView.prototype = {
+  SetCentrePoint: function SetCentrePoint(param_x, param_y) {
+    if (param_x == 1000000 && param_y == 1000000) {
+      this.centrePointXOffset = 0;
+      this.centrePointYOffset = 0;
+    } else {
+      if (this.centrePointXOffset === 0) {
+        this.centrePointXOffset = this.centrePoint - param_x;
+      } else {
+        this.centrePoint = param_x + this.centrePointXOffset;
+      }
+
+      if (this.centrePointYOffset === 0) {
+        this.centrePointYOffset = this.centreVerticalPoint - param_y;
+      } else {
+        this.centreVerticalPoint = param_y + this.centrePointYOffset;
+      }
+    }
+  },
+  SetZoomStart: function SetZoomStart() {
+    this.GetPercDistances();
+    this.mouseXPercLocat = this.percX1;
+    this.mouseYPercLocat = this.percY1;
+  },
+  GetPercDistances: function GetPercDistances() {
+    var _distanceFromX1 = 0.0;
+    var _distanceFromY1 = 0.0;
+    var _onePercentDistance = 0.0;
+    this.percX1 = 0.0;
+    this.percY1 = 0.0; //   this.drawingWidth = this.drawingX2 - this.drawingX1;
+    //  this.drawingHeight = this.drawingY2 - this.drawingY1;
+
+    if (this.graph_width !== 0 && this.graph_height !== 0) {
+      if (this.centrePoint > 0) {
+        _distanceFromX1 = this.mouse_x - this.centrePoint; //;
+      } else {
+        _distanceFromX1 = Math.abs(this.centrePoint) + this.mouse_x;
+      }
+
+      _onePercentDistance = this.graph_width / 100;
+      this.percX1 = _distanceFromX1 / _onePercentDistance;
+
+      if (this.centreVerticalPoint > 0) {
+        _distanceFromY1 = this.mouse_y - this.centreVerticalPoint; // ;
+      } else {
+        _distanceFromY1 = Math.abs(this.centreVerticalPoint) + this.mouse_y;
+      }
+
+      _onePercentDistance = this.graph_height / 100;
+      this.percY1 = _distanceFromY1 / _onePercentDistance;
+    }
+  },
+  UpdatePosition: function UpdatePosition(_dir) {
+    var increment = 2;
+
+    if (_dir == 'SOUTH') {
+      console.log('south');
+      this.centreVerticalPoint -= increment;
+    }
+
+    if (_dir == 'NORTH') {
+      this.centreVerticalPoint += increment;
+    }
+
+    if (_dir == 'EAST') {
+      this.centrePoint += increment;
+    }
+
+    if (_dir == 'WEST') {
+      this.centrePoint -= increment;
+    }
+
+    if (_dir == 'UP' || _dir == 'DOWN') {
+      this.mouse_x = this.bt_screenWidth / 2;
+      this.mouse_y = this.bt_screenHeight / 2;
+      this.GetPercDistances();
+      this.mouseXPercLocat = this.percX1;
+      this.mouseYPercLocat = this.percY1; // zero the centre point
+
+      this.SetCentrePoint(1000000, 1000000);
+
+      if (_dir == 'UP') {
+        this.graph_width += 50;
+        this.graph_height += 50;
+      } else {
+        this.graph_width -= 50;
+        this.graph_height -= 50;
+      }
+
+      this.GetPercDistances(); //console.log('y zoom ' + percY1 + ' ' + mouseYPercLocat);
+
+      this.centreVerticalPoint += this.graph_height / 100 * (this.percY1 - this.mouseYPercLocat); //console.log('x zoom ' + percX1 + ' ' + mouseXPercLocat);
+
+      this.centrePoint += this.graph_width / 100 * (this.percX1 - this.mouseXPercLocat);
+    }
+
+    if (_dir == 'DEBUG') {
+      console.log('debug: ' + this.onscreenNodes(25));
+    }
+
+    var old_area = this.original_graph_width * this.original_graph_height;
+    var new_area = this.graph_width * this.graph_height;
+    this.zoompercentage = (new_area - old_area) / old_area * 100; // $('#cdup').html(Math.round(this.zoompercentage));
+    // $('#map_X').html(Math.round(this.centrePoint));
+    // $('#map_Y').html(Math.round(this.centreVerticalPoint));
+
+    let debugData = {
+      map_zoom: Math.round(this.zoompercentage),
+      map_x: Math.round(this.centrePoint),
+      map_Y: Math.round(this.centreVerticalPoint)
+    };
+    this.channel.emit("cameradebug", {
+      value: debugData
+    });
+  },
+  zoomCurrentBB: function zoomCurrentBB(targetBB, amount) {
+    this.currentBB = {
+      bottomleft: this.currentBB.bottomleft.add(targetBB.bottomleft.subtract(this.currentBB.bottomleft).divide(amount)),
+      topright: this.currentBB.topright.add(targetBB.topright.subtract(this.currentBB.topright).divide(amount))
+    };
+  },
+  currentPositionFromScreen: function currentPositionFromScreen(pos, e) {
+    var utils = new _Utils.Utils(this.currentBB, this.graph_width, this.graph_height);
+    var p = utils.fromScreen({
+      x: e.pageX - this.centrePoint - pos.left,
+      y: e.pageY - this.centreVerticalPoint - pos.top
+    });
+    return p;
+  },
+  currentPositionToScreen: function currentPositionToScreen(pos, e) {
+    var utils = new _Utils.Utils(this.currentBB, this.graph_width, this.graph_height);
+    var p = utils.toScreen({
+      x: e.pageX - this.centrePoint - pos.left,
+      y: e.pageY - this.centreVerticalPoint - pos.top
+    });
+    return p;
+  },
+  addToMouseQueue: function addToMouseQueue(x, y) {
+    var _point = new Array(x, y);
+
+    this.mouseQueue[this.mouseQueue.length] = _point;
+  },
+  validToDraw: function validToDraw(x1, y1, margin) {
+    var validDraw = true;
+    if (margin == undefined) margin = 500;
+    if (x1 > this.display_width + margin) validDraw = false;
+    if (x1 < 0 - margin) validDraw = false;
+    if (y1 > this.display_height + margin) validDraw = false;
+    if (y1 < 0 - margin) validDraw = false;
+    return validDraw;
+  },
+  mapOffset: function mapOffset(v1) {
+    v1.x += this.centrePoint;
+    v1.y += this.centreVerticalPoint;
+    return v1;
+  },
+  adjustPosition: function adjustPosition() {
+    if (this.layout.parentNode == undefined) {
+      this.targetBB = this.layout.getBoundingBox(); // current gets 20% closer to target every iteration
+
+      this.zoomCurrentBB(this.targetBB, 10);
+
+      while (this.mouseQueue.length > 0) {
+        var _point = this.mouseQueue.shift();
+
+        this.SetCentrePoint(_point[0], _point[1]);
+      }
+
+      this.UpdatePosition(this.moving);
+    } else {
+      if (this.layout.parentNode && this.layout.firstNode) {
+        var firstNodePoint = this.layout.nodePoints[this.layout.firstNode.id].p;
+        var currentUtils = new _Utils.Utils(this.currentBB, this.graph_width, this.graph_height);
+        var screenFirstNode = currentUtils.toScreen(firstNodePoint);
+        var parentLayoutCameraView = this.layout.parentLayout._cameraView;
+        var parentUtils = new _Utils.Utils(parentLayoutCameraView.currentBB, parentLayoutCameraView.graph_width, parentLayoutCameraView.graph_height);
+        var parentPoint = this.layout.parentLayout.nodePoints[this.layout.parentNode.id].p;
+        var screenParentNode = parentUtils.toScreen(parentPoint); // add parentlayout centre points !
+
+        this.centrePoint = parentLayoutCameraView.centrePoint + screenParentNode.x - screenFirstNode.x; // (this.graph_width / 2);
+
+        this.centreVerticalPoint = parentLayoutCameraView.centreVerticalPoint + screenParentNode.y - screenFirstNode.y; // (this.graph_height / 2);
+      }
+    }
+  },
+  onscreenNodes: function onscreenNodes(maxnumber) {
+    var that = this;
+    var countonscreen = 0;
+    var onscreenNodes = [];
+    var offscreenNodes = [];
+    var maxNodes = false; //console.log('debug');
+
+    this.layout.eachNode(function (node, point) {
+      //console.log(node.data.label);
+      var _utils = new _Utils.Utils(that.currentBB, that.graph_width, that.graph_height);
+
+      var x1 = that.mapOffset(_utils.toScreen(point.p)).x;
+      var y1 = that.mapOffset(_utils.toScreen(point.p)).y;
+
+      if (that.validToDraw(x1, y1, 0)) {
+        if (countonscreen <= maxnumber) onscreenNodes.push(node);
+        if (node.data.type == 'normal') countonscreen++;
+      } else {
+        if (!that.validToDraw(x1, y1, 2000)) {
+          if (node.data.type == 'normal') offscreenNodes.push(node);
+        }
+      } // console.log(node.data.label + ' - ' + x1 + ' ' + y1);
+
+    }); // if there are more nodes on the screen than the max allowed then we arent interested
+
+    if (countonscreen > maxnumber) onscreenNodes = [];
+    return onscreenNodes;
+  },
+  countOnscreenNodes: function countOnscreenNodes() {
+    var that = this;
+    var countonscreen = 0;
+    var onscreenNodes = [];
+    var offscreenNodes = [];
+    var maxNodes = false;
+    this.layout.eachNode(function (node, point) {
+      //console.log(node.data.label);
+      var _utils = new _Utils.Utils(that.currentBB, that.graph_width, that.graph_height);
+
+      var x1 = that.mapOffset(_utils.toScreen(point.p)).x;
+      var y1 = that.mapOffset(_utils.toScreen(point.p)).y;
+
+      if (that.validToDraw(x1, y1, 0)) {
+        onscreenNodes.push(node);
+        if (node.data.type == 'normal') countonscreen++;
+      } else {
+        if (!that.validToDraw(x1, y1, 2000)) {
+          if (node.data.type == 'normal') offscreenNodes.push(node);
+        }
+      }
+    });
+    return countonscreen;
+  }
+};
+},{"./Vector.js":"../src/ForceDirected/Vector.js","./Utils.js":"../src/ForceDirected/Utils.js"}],"../src/ForceDirected/Edge.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Edge = Edge;
+
+function Edge(id, source, target, data) {
+  this.id = id;
+  this.source = source;
+  this.target = target;
+  this.data = typeof data !== 'undefined' ? data : {};
+}
+},{}],"../src/ForceDirected/Graph.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Graph = Graph;
+
+var _Node = require("./Node.js");
+
+var _Edge = require("./Edge.js");
+
+function Graph(channel) {
+  this.channel = channel;
+  this.nodeSet = {};
+  this.nodes = [];
+  this.edges = [];
+  this.adjacency = {};
+  this.nextNodeId = 0;
+  this.nextEdgeId = 0;
+  this.eventListeners = []; //todo get rid of this and just iterate nodes collection
+
+  this.addedNodes = [];
+  var that = this;
+  /*save add delete is work in progress and needs fixing
+   */
+  // this.channel.on("requestAdd", function(data, envelope) {
+  //     that.Add(data.value);
+  // });
+  // this.channel.on("requestSave", function(data, envelope) {
+  //     that.Save(data.value);
+  // });
+  // this.channel.on("requestDelete", function(data, envelope) {
+  //     that.Delete();
+  // });
+}
+
+Graph.prototype = {
+  addNode: function addNode(node) {
+    if (typeof this.nodeSet[node.id] === 'undefined') {
+      this.nodes.push(node);
+    }
+
+    this.nodeSet[node.id] = node;
+    this.notify();
+    return node;
+  },
+  addEdge: function addEdge(edge) {
+    var exists = false;
+    this.edges.forEach(function (e) {
+      if (edge.id === e.id) {
+        exists = true;
+      }
+    });
+
+    if (!exists) {
+      this.edges.push(edge);
+    }
+
+    if (typeof this.adjacency[edge.source.id] === 'undefined') {
+      this.adjacency[edge.source.id] = {};
+    }
+
+    if (typeof this.adjacency[edge.source.id][edge.target.id] === 'undefined') {
+      this.adjacency[edge.source.id][edge.target.id] = [];
+    }
+
+    exists = false;
+    this.adjacency[edge.source.id][edge.target.id].forEach(function (e) {
+      if (edge.id === e.id) {
+        exists = true;
+      }
+    });
+
+    if (!exists) {
+      this.adjacency[edge.source.id][edge.target.id].push(edge);
+    }
+
+    this.notify();
+    return edge;
+  },
+  newNode: function newNode(data) {
+    var node = new _Node.Node(this.nextNodeId++, data);
+    this.addedNodes.push(node);
+    this.addNode(node);
+    return node;
+  },
+  newEdge: function newEdge(source, target, data) {
+    var edge = new _Edge.Edge(this.nextEdgeId++, source, target, data);
+    this.addEdge(edge);
+    return edge;
+  },
+  // find the edges from node1 to node2
+  getEdges: function getEdges(node1, node2) {
+    if (typeof this.adjacency[node1.id] !== 'undefined' && typeof this.adjacency[node1.id][node2.id] !== 'undefined') {
+      return this.adjacency[node1.id][node2.id];
+    }
+
+    return [];
+  },
+  // remove a node and it's associated edges from the graph
+  removeNode: function removeNode(node) {
+    if (typeof this.nodeSet[node.id] !== 'undefined') {
+      delete this.nodeSet[node.id];
+    }
+
+    for (var i = this.nodes.length - 1; i >= 0; i--) {
+      if (this.nodes[i].id === node.id) {
+        this.nodes.splice(i, 1);
+      }
+    }
+
+    this.detachNode(node);
+  },
+  // removes edges associated with a given node
+  detachNode: function detachNode(node) {
+    var tmpEdges = this.edges.slice();
+    tmpEdges.forEach(function (e) {
+      if (e.source.id === node.id || e.target.id === node.id) {
+        this.removeEdge(e);
+      }
+    }, this);
+    this.notify();
+  },
+  // remove a node and it's associated edges from the graph
+  removeEdge: function removeEdge(edge) {
+    for (var i = this.edges.length - 1; i >= 0; i--) {
+      if (this.edges[i].id === edge.id) {
+        this.edges.splice(i, 1);
+      }
+    }
+
+    for (var x in this.adjacency) {
+      for (var y in this.adjacency[x]) {
+        var edges = this.adjacency[x][y];
+
+        for (var j = edges.length - 1; j >= 0; j--) {
+          if (this.adjacency[x][y][j].id === edge.id) {
+            this.adjacency[x][y].splice(j, 1);
+          }
+        }
+      }
+    }
+
+    this.notify();
+  },
+  containsNode: function containsNode(recordId) {
+    var nodePresent = false;
+    this.addedNodes.forEach(function (entry) {
+      if (entry.match(recordId)) {
+        nodePresent = true;
+      }
+    });
+    return nodePresent;
+  },
+  addGraphListener: function addGraphListener(obj) {
+    this.eventListeners.push(obj);
+  },
+  notify: function notify() {
+    // this.eventListeners.forEach(function (obj) {
+    //     obj.graphChanged();
+    // });
+    this.channel.emit("graphChanged", {
+      value: undefined
+    });
+  },
+
+  /*save add delete is work in progress and needs fixing
+    */
+  Save: function Save(recordLink) {
+    console.log('Saved ' + recordLink.PersonId); //this.layout.selected.
+
+    if (this.layout.selected.node.data.RecordLink.PersonId == recordLink.PersonId) {
+      this.layout.selected.node.data.RecordLink.BaptismDate = recordLink.BaptismDate;
+      this.layout.selected.node.data.RecordLink.BirthDate = recordLink.BirthDate;
+      this.layout.selected.node.data.RecordLink.BirthLocation = recordLink.BirthLocation;
+      this.layout.selected.node.data.RecordLink.DOB = recordLink.DOB;
+      this.layout.selected.node.data.RecordLink.DOD = recordLink.DOD;
+      this.layout.selected.node.data.RecordLink.DeathLocation = recordLink.DeathLocation;
+      this.layout.selected.node.data.RecordLink.FirstName = recordLink.FirstName;
+      this.layout.selected.node.data.RecordLink.Name = recordLink.FirstName + ' ' + recordLink.Surname;
+      this.layout.selected.node.data.RecordLink.Occupation = recordLink.Occupation;
+      this.layout.selected.node.data.RecordLink.OccupationDate = recordLink.OccupationDate;
+      this.layout.selected.node.data.RecordLink.OccupationPlace = recordLink.OccupationPlace;
+      this.layout.selected.node.data.RecordLink.PersonId = recordLink.PersonId;
+      this.layout.selected.node.data.RecordLink.Surname = recordLink.Surname;
+    }
+  },
+  Add: function Add(recordLink) {
+    recordLink.PersonId = 1234;
+    console.log('Add ' + recordLink.PersonId);
+    var nodeLink = this.graph.newNode({
+      label: 'new one',
+      RecordLink: recordLink,
+      type: 'normal'
+    });
+    this.graph.newEdge(this.layout.selected.node, nodeLink, {
+      type: 'person'
+    });
+  },
+  Delete: function Delete() {
+    console.log('Delete ');
+  }
+};
+},{"./Node.js":"../src/ForceDirected/Node.js","./Edge.js":"../src/ForceDirected/Edge.js"}],"../src/ForceDirected/LayoutList.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.LayoutList = LayoutList;
+
+var _FDLayout = require("./FDLayout.js");
+
+var _CameraView = require("./CameraView.js");
+
+var _Graph = require("./Graph.js");
+
+function LayoutList(channel, graph, ctx, settings, data) {
+  this.graph = graph;
+  this.ctx = ctx;
+  this.settings = settings;
+  this.channel = channel;
+  this.layouts = [];
+  this.data = data;
+  this.topYear = this.data.TopYear;
+  this.bottomYear = this.data.BottomYear;
+  this.currentYear = this.data.BottomYear;
+} //init
+//add new layout
+
+
+LayoutList.prototype = {
+  Init: function Init() {
+    var parentLayout = this.layout = new _FDLayout.FDLayout(this.ctx, this.channel, this.graph, new _CameraView.CameraView(this.channel, this.settings.colourScheme, window.innerWidth, window.innerHeight), this.settings);
+    this.layouts.push({
+      layout: parentLayout,
+      type: 'parent'
+    });
+  },
+  AddLayout: function AddLayout(parentLayout, entry) {
+    var infoGraph = new _Graph.Graph(this.channel);
+    var centreNode = infoGraph.newNode({
+      label: '',
+      parentId: entry.data.RecordLink.PersonId,
+      type: 'infonode'
+    });
+
+    if (entry.data.RecordLink.Name != '') {
+      var nameNode = infoGraph.newNode({
+        label: entry.data.RecordLink.Name,
+        parentId: entry.data.RecordLink.PersonId,
+        type: 'infonode'
+      });
+      infoGraph.newEdge(centreNode, nameNode, {
+        type: 'data',
+        directional: false
+      });
+    }
+
+    if (entry.data.RecordLink.DOB != '') {
+      var dobNode = infoGraph.newNode({
+        label: 'DOB:' + entry.data.RecordLink.DOB,
+        parentId: entry.data.RecordLink.PersonId,
+        type: 'infonode'
+      });
+      infoGraph.newEdge(centreNode, dobNode, {
+        type: 'data',
+        directional: false
+      });
+    }
+
+    if (entry.data.RecordLink.DOD != '') {
+      var dodNode = infoGraph.newNode({
+        label: 'DOD:' + entry.data.RecordLink.DOD,
+        parentId: entry.data.RecordLink.PersonId,
+        type: 'infonode'
+      });
+      infoGraph.newEdge(centreNode, dodNode, {
+        type: 'data',
+        directional: false
+      });
+    }
+
+    if (entry.data.RecordLink.BirthLocation != '') {
+      var blocNode = infoGraph.newNode({
+        label: 'Born: ' + entry.data.RecordLink.BirthLocation,
+        parentId: entry.data.RecordLink.PersonId,
+        type: 'infonode'
+      });
+      infoGraph.newEdge(centreNode, blocNode, {
+        type: 'data',
+        directional: false
+      });
+    }
+
+    if (entry.data.RecordLink.DeathLocation != '') {
+      var dlocNode = infoGraph.newNode({
+        label: 'Died:' + entry.data.RecordLink.DeathLocation,
+        parentId: entry.data.RecordLink.PersonId,
+        type: 'infonode'
+      });
+      infoGraph.newEdge(centreNode, dlocNode, {
+        type: 'data',
+        directional: false
+      });
+    }
+
+    return new _FDLayout.FDLayout(this.ctx, this.channel, infoGraph, new _CameraView.CameraView(this.channel, this.settings.colourScheme, 200, 200), this.settings, entry, parentLayout, centreNode);
+  },
+  UpdateActiveLayouts: function UpdateActiveLayouts() {
+    var that = this;
+    var onScreenList = [];
+    if (that.layouts[0].layout._cameraView.zoompercentage > that.settings.sublayoutZoom) onScreenList = that.layouts[0].layout._cameraView.onscreenNodes(that.settings.sublayoutNodeThreshold); // create a list of the new layouts we need to add
+
+    onScreenList.forEach(function (node, index, ar) {
+      var nodePresent = false;
+      that.layouts.forEach(function (value, index, ar) {
+        if (value.type == 'child' && value.layout.parentNode.id == node.id) nodePresent = true;
+      });
+      if (!nodePresent) that.layouts.push({
+        layout: that.AddLayout(that.layouts[0].layout, node),
+        type: 'child'
+      });
+    }); //remove the layouts for nodes that are no longer on the screen
+
+    for (var i = that.layouts.length - 1; i >= 0; i--) {
+      if (that.layouts[i].type == 'child') {
+        var nodePresent = false;
+
+        let layoutOnScreen = function layoutOnScreen(value) {
+          if (that.layouts[i].layout.parentNode.id == value.id) nodePresent = true;
+        };
+
+        onScreenList.forEach(layoutOnScreen);
+        if (!nodePresent) that.layouts.splice(i, 1);
+      }
+    }
+
+    that.layouts.forEach(function (layout, index, ar) {
+      // if (layout.layout.graph.eventListeners.length == 0)
+      //     layout.layout.graph.addGraphListener(that);
+      layout.layout._cameraView.adjustPosition();
+    });
+  },
+  _createDOB: function _createDOB(genIdx, personIdx) {
+    var _dob = 0;
+
+    try {
+      _dob = this.data.Generations[genIdx][personIdx].RecordLink.DOB;
+
+      if (_dob == 0) //try estimate dob if there is a father
+        {
+          var tpFIDX = this.data.Generations[genIdx][personIdx].FatherIdx;
+
+          if (genIdx > 0 && tpFIDX) {
+            if (this.data.Generations[genIdx - 1][tpFIDX].RecordLink.DOB > 0) {
+              _dob = this.data.Generations[genIdx - 1][tpFIDX].RecordLink.DOB + 18;
+            }
+          }
+        }
+    } catch (e) {
+      console.log(e);
+    }
+
+    return _dob;
+  },
+  populateGraph: function populateGraph(year) {
+    var mygraph = this.graph;
+    var genIdx = 0;
+
+    while (genIdx < this.data.Generations.length) {
+      var personIdx = 0;
+
+      while (personIdx < this.data.Generations[genIdx].length) {
+        var currentPerson = this.data.Generations[genIdx][personIdx];
+
+        if (!currentPerson.IsHtmlLink) {
+          var descriptor = '.'; // currentPerson.DOB + ' ' + currentPerson.Name;
+          // add the person to the graph if he/she was born in the current time period
+
+          var _dob = this._createDOB(genIdx, personIdx); //if (_dob == (year - 4) || _dob == (year - 3) || _dob == (year - 2) || _dob == (year - 1) || _dob == year) {
+
+
+          if (_dob < year && _dob != 0) {
+            var personId = currentPerson.PersonId;
+
+            if (!mygraph.containsNode(personId)) {
+              if (currentPerson.nodeLink == undefined || currentPerson.nodeLink == null) {
+                this.data.Generations[genIdx][personIdx].nodeLink = mygraph.newNode({
+                  label: descriptor,
+                  RecordLink: currentPerson.RecordLink,
+                  RecordId: personId,
+                  type: 'normal'
+                });
+              }
+
+              var fatherEdge = this.data.FatherEdge(genIdx, personIdx);
+              if (fatherEdge.IsValid) mygraph.newEdge(fatherEdge.FatherNode, fatherEdge.ChildNode, {
+                type: 'person'
+              });
+            } else {//    console.log('person present');
+            }
+          } // count how many desendants this person has in the diagram already.
+
+
+          if (this.data.Generations[genIdx][personIdx].nodeLink != undefined) this.data.Generations[genIdx][personIdx].nodeLink.data.RecordLink.currentDescendantCount = this.data.DescendantCount(genIdx, personIdx);
+        }
+
+        personIdx++;
+      }
+
+      genIdx++;
+    }
+  },
+  TopLayout: function TopLayout() {
+    return this.layouts[0].layout;
+  },
+  mouseDoubleClick: function mouseDoubleClick(evt) {
+    this.layouts.forEach(l => {
+      l.layout.resetDragListNodeMass(evt);
+    });
+  },
+  mouseDown: function mouseDown(evt) {
+    this.layouts.forEach(l => {
+      l.layout.processNewSelections(evt);
+    });
+  },
+  mouseUp: function mouseUp(evt) {
+    this.layouts.forEach(l => {
+      l.layout.handlermouseUp(evt);
+    });
+  },
+  // buttondown : function(evt){
+  //   this.layouts.foreach((layout)=>{
+  //     layout.processNewSelections(evt);
+  //   });
+  // },
+  //
+  // buttonup : function(evt){
+  //   this.layouts.foreach((layout)=>{
+  //     layout.handlermouseUp(evt);
+  //   });
+  // },
+  mouseMove: function mouseMove(evt) {
+    this.layouts.forEach(l => {
+      l.layout.checkForHighLights(evt);
+    });
+  }
+};
+},{"./FDLayout.js":"../src/ForceDirected/FDLayout.js","./CameraView.js":"../src/ForceDirected/CameraView.js","./Graph.js":"../src/ForceDirected/Graph.js"}],"../src/ForceDirected/RenderLib.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.RenderLib = void 0;
+
+var _Vector = require("./Vector.js");
+
+var _Utils = require("./Utils.js");
+
+class RenderLib {
+  constructor(graph, ctx) {
+    this.graph = graph;
+    this.ctx = ctx;
+  }
+
+  clear(cameraView) {
+    this.ctx.clearRect(0, 0, cameraView.graph_width, cameraView.graph_height);
+  }
+
+  drawEdges(map, edge, p1, p2) {
+    var _utils = new _Utils.Utils(map.currentBB, map.graph_width, map.graph_height);
+
+    var x1 = map.mapOffset(_utils.toScreen(p1)).x;
+    var y1 = map.mapOffset(_utils.toScreen(p1)).y;
+    var x2 = map.mapOffset(_utils.toScreen(p2)).x;
+    var y2 = map.mapOffset(_utils.toScreen(p2)).y;
+    if (!map.validToDraw(x1, y1) && !map.validToDraw(x2, y2)) return;
+
+    if (edge.data.type == 'data' && map.colourScheme.infoLineColour == map.colourScheme.mapbackgroundColour) {
+      return;
+    }
+
+    var direction = new _Vector.Vector(x2 - x1, y2 - y1); // negate y
+
+    var normal = direction.normal().normalise();
+    var from = this.graph.getEdges(edge.source, edge.target);
+    var to = this.graph.getEdges(edge.target, edge.source);
+    var total = from.length + to.length; // Figure out edge's position in relation to other edges between the same nodes
+
+    var n = 0;
+
+    for (var i = 0; i < from.length; i++) {
+      if (from[i].id === edge.id) {
+        n = i;
+      }
+    }
+
+    var spacing = 6.0; // Figure out how far off center the line should be drawn
+
+    var offset = normal.multiply(-((total - 1) * spacing) / 2.0 + n * spacing);
+    var s1 = map.mapOffset(_utils.toScreen(p1).add(offset));
+    var s2 = map.mapOffset(_utils.toScreen(p2).add(offset));
+    var boxWidth = edge.target.getWidth(this.ctx);
+    var boxHeight = edge.target.getHeight(this.ctx);
+
+    var intersection = _utils.intersect_line_box(s1, s2, {
+      x: x2 - boxWidth / 2.0,
+      y: y2 - boxHeight / 2.0
+    }, boxWidth, boxHeight);
+
+    if (!intersection) {
+      intersection = s2;
+    }
+
+    var arrowWidth;
+    var arrowLength;
+    var weight = typeof edge.data.weight !== 'undefined' ? edge.data.weight : 1.0;
+    this.ctx.lineWidth = Math.max(weight * 2, 0.1);
+    arrowWidth = 10 + this.ctx.lineWidth;
+    arrowLength = 10;
+    var stroke = '';
+
+    if (edge.data.type == 'data') {
+      stroke = map.colourScheme.infoLineColour;
+    } else {
+      var averagedesc = (edge.source.data.RecordLink.currentDescendantCount + edge.target.data.RecordLink.currentDescendantCount) / 2;
+      stroke = _utils.getLevel(300, averagedesc, map.colourScheme.normalLineGradient);
+    }
+
+    this.ctx.strokeStyle = stroke;
+    this.ctx.beginPath();
+    this.ctx.moveTo(s1.x, s1.y);
+    this.ctx.lineTo(s2.x, s2.y);
+    this.ctx.stroke(); // arrow
+
+    var distance = s1.distance(s2);
+    var directional = typeof edge.data.directional !== 'undefined' ? edge.data.directional : true;
+
+    if (directional && distance > 75) {
+      this.ctx.save();
+      this.ctx.fillStyle = stroke;
+      this.ctx.translate((intersection.x + s1.x) / 2, (intersection.y + s1.y) / 2);
+      this.ctx.rotate(Math.atan2(y2 - y1, x2 - x1));
+      this.ctx.beginPath();
+      this.ctx.moveTo(-arrowLength, arrowWidth);
+      this.ctx.lineTo(0, 0);
+      this.ctx.lineTo(-arrowLength, -arrowWidth);
+      this.ctx.lineTo(-arrowLength * 0.8, -0);
+      this.ctx.closePath();
+      this.ctx.fill();
+      this.ctx.restore();
+    }
+  }
+
+  drawNodes(layout, map, node, p) {
+    var _utils = new _Utils.Utils(map.currentBB, map.graph_width, map.graph_height);
+
+    var x1 = map.mapOffset(_utils.toScreen(p)).x;
+    var y1 = map.mapOffset(_utils.toScreen(p)).y;
+    if (!map.validToDraw(x1, y1)) return;
+    var s = map.mapOffset(_utils.toScreen(p));
+    var distance = 0;
+
+    if (map.layout.parentNode != undefined && map.layout.parentLayout != undefined) {
+      // get parent location
+      var _tp = new _Utils.Utils(map.layout.parentLayout._cameraView.currentBB, map.layout.parentLayout._cameraView.graph_width, map.layout.parentLayout._cameraView.graph_height);
+
+      var pV = map.layout.parentLayout.nodePoints[map.layout.parentNode.id];
+      pV = map.layout.parentLayout._cameraView.mapOffset(_tp.toScreen(pV.p)); //  s.distance(pV)
+
+      distance = s.distance(pV);
+    }
+
+    this.ctx.save(); //2 = nearest
+
+    var selectionId = layout.getSelection(node);
+
+    if (node.data.type != undefined && node.data.type == 'infonode') {
+      if (node.data.label != '' && distance < 150) {
+        _utils.drawText(map, this.ctx, s.x, s.y + 20, node.data.label, node.data.type, selectionId);
+
+        _utils.star(map, this.ctx, s.x, s.y, 5, 5, 0.4, false, node.data.type, selectionId);
+      }
+    } else {
+      if (map.layout.nodePoints[node.id].m == 1) _utils.star(map, this.ctx, s.x, s.y, 12, 5, 0.4, false, node.data.type, selectionId);else _utils.star(map, this.ctx, s.x, s.y, 12, 3, 0.4, false, node.data.type, selectionId);
+
+      if (node.data.RecordLink != undefined) {
+        var name = node.data.RecordLink.Name;
+        var m = map.layout.nodePoints[node.id].m;
+
+        if (node.data.RecordLink.DescendentCount > 10 && _utils.validDisplayPeriod(node.data.RecordLink.DOB, this.year, 20)) {
+          _utils.drawText(map, this.ctx, s.x, s.y, name + ' ' + node.data.RecordLink.currentDescendantCount, node.data.type, selectionId);
+        }
+
+        if (selectionId == 3) {
+          _utils.drawText(map, this.ctx, s.x, s.y, name + ' ' + m, node.data.type, selectionId);
+        }
+
+        if (selectionId == 2) {
+          _utils.drawText(map, this.ctx, s.x, s.y, name + ' ' + m, node.data.type, selectionId);
+
+          var bstring = node.data.RecordLink.DOB + ' ' + node.data.RecordLink.BirthLocation;
+          if (bstring == '') bstring = 'Birth Unknown';else bstring = 'Born: ' + bstring;
+
+          _utils.drawText(map, this.ctx, s.x, s.y + 20, bstring, node.data.type, selectionId);
+
+          var dstring = node.data.RecordLink.DOD + ' ' + node.data.RecordLink.DeathLocation;
+          if (dstring == ' ') dstring = 'Death Unknown';else dstring = 'Death: ' + dstring;
+
+          _utils.drawText(map, this.ctx, s.x, s.y + 40, dstring, node.data.type, selectionId); //that.layout.nodePoints[node.id].m
+          //Occupation
+
+
+          if (node.data.RecordLink.Occupation != '') _utils.drawText(map, this.ctx, s.x, s.y + 60, node.data.RecordLink.Occupation, node.data.type, selectionId); // _utils.drawText(map, that.ctx, s.x, s.y + 40, 'mass : ' + that.layout.nodePoints[node.id].m, node.data.type, selectionId);
+        }
+      }
+    }
+
+    this.ctx.restore();
+  }
+
+}
+
+exports.RenderLib = RenderLib;
+},{"./Vector.js":"../src/ForceDirected/Vector.js","./Utils.js":"../src/ForceDirected/Utils.js"}],"../src/ForceDirected/RenderingHandler.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.RenderingHandler = RenderingHandler;
+
+//renderer
+function RenderingHandler(channel, layoutList, renderer) {
+  this._channel = channel;
+  this.layouts = layoutList;
+  this.renderer = renderer;
+  var that = this;
+
+  this._channel.on("graphChanged", function (data, envelope) {
+    that.start();
+  });
+}
+
+RenderingHandler.prototype = {
+  start: function start() {
+    if (this._started) return;
+    this._started = true;
+    var that = this;
+    requestAnimationFrame(function step() {
+      that.layouts.UpdateActiveLayouts();
+      var energyCount = 0;
+      that.renderer.clear(that.layouts.TopLayout()._cameraView);
+
+      that._channel.emit("nodecount", {
+        value: that.layouts.TopLayout()._cameraView.countOnscreenNodes()
+      });
+
+      that.layouts.layouts.forEach(function (layout, idx) {
+        layout.layout.applyCoulombsLaw();
+        layout.layout.applyHookesLaw();
+        layout.layout.attractToCentre();
+        layout.layout.updateVelocity(0.03);
+        layout.layout.updatePosition(0.03);
+        var map = layout.layout._cameraView; // render
+
+        layout.layout.eachEdge(function (edge, spring) {
+          // $.proxy(that.renderer.drawEdges(map, edge, spring.point1.p, spring.point2.p), that);
+          that.renderer.drawEdges(map, edge, spring.point1.p, spring.point2.p);
+        });
+        layout.layout.eachNode(function (node, point) {
+          //$.proxy(that.renderer.drawNodes(layout.layout, map, node, point.p), that);
+          that.renderer.drawNodes(layout.layout, map, node, point.p);
+        });
+        energyCount += layout.layout.totalEnergy();
+        idx++;
+      });
+
+      that._channel.emit("energy", {
+        value: energyCount.toFixed(2)
+      }); // stop simulation when energy of the system goes below a threshold
+
+
+      if (energyCount < 0.01) {
+        that._started = false;
+
+        if (typeof done !== 'undefined') {
+          that.done();
+        }
+      } else {
+        requestAnimationFrame(step);
+      }
+    });
+  },
+  done: function done() {}
+};
+},{}],"../node_modules/mitt/dist/mitt.es.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+//      
+// An event handler can take an optional event argument
+// and should not return a value
+// An array of all currently registered event handlers for a type
+// A map of event types and their corresponding event handlers.
+
+/** Mitt: Tiny (~200b) functional event emitter / pubsub.
+ *  @name mitt
+ *  @returns {Mitt}
+ */
+function mitt(all) {
+  all = all || Object.create(null);
+  return {
+    /**
+     * Register an event handler for the given type.
+     *
+     * @param  {String} type	Type of event to listen for, or `"*"` for all events
+     * @param  {Function} handler Function to call in response to given event
+     * @memberOf mitt
+     */
+    on: function on(type, handler) {
+      (all[type] || (all[type] = [])).push(handler);
+    },
+
+    /**
+     * Remove an event handler for the given type.
+     *
+     * @param  {String} type	Type of event to unregister `handler` from, or `"*"`
+     * @param  {Function} handler Handler function to remove
+     * @memberOf mitt
+     */
+    off: function off(type, handler) {
+      if (all[type]) {
+        all[type].splice(all[type].indexOf(handler) >>> 0, 1);
+      }
+    },
+
+    /**
+     * Invoke all handlers for the given type.
+     * If present, `"*"` handlers are invoked after type-matched handlers.
+     *
+     * @param {String} type  The event type to invoke
+     * @param {Any} [evt]  Any value (object is recommended and powerful), passed to each handler
+     * @memberOf mitt
+     */
+    emit: function emit(type, evt) {
+      (all[type] || []).slice().map(function (handler) {
+        handler(evt);
+      });
+      (all['*'] || []).slice().map(function (handler) {
+        handler(type, evt);
+      });
+    }
+  };
+}
+
+var _default = mitt;
+exports.default = _default;
+},{}],"../src/ForceDirected/ForceDirect.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ForceDirect = ForceDirect;
+
+var _LayoutList = require("./LayoutList.js");
+
+var _Graph = require("./Graph.js");
+
+var _RenderLib = require("./RenderLib.js");
+
+var _RenderingHandler = require("./RenderingHandler.js");
+
+var _mitt = _interopRequireDefault(require("mitt"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+Copyright (c) 2010 Dennis Hotson
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+*/
+//test
+function ForceDirect(settings, gedPreLoader, context, callback) {
+  this._context = context;
+  this.channel = (0, _mitt.default)();
+  this._layoutList = null;
+  this.settings = settings;
+  this.renderingHandler = null;
+  this.gedPreLoader = gedPreLoader;
+  this.yearTimer = null;
+  this.channel.on("nodeHighlighted", function (data, envelope) {
+    console.log("nodeHighlighted");
+    callback("nodeHighlighted", data.value);
+  });
+  this.channel.on("nodeSelected", function (data, envelope) {
+    console.log("nodeSelected");
+    callback("nodeSelected", data.value);
+  });
+  this.channel.on("mapyear", function (data, envelope) {
+    console.log("mapyear: " + data.value);
+    callback("mapyear", data.value);
+  });
+  this.channel.on("graphChanged", function (data, envelope) {
+    console.log("graphChanged");
+    callback("graphChanged", data.value);
+  }); // this.channel.on("mapyear", function(data, envelope) {
+  //   console.log("mapyear: " +data.value);
+  //   callback("mapyear", data.value);
+  // });
+
+  this.channel.on("graphChanged", function (data, envelope) {
+    console.log("graphChanged");
+    callback("graphChanged", data.value);
+  }); //
+
+  this.channel.on("cameradebug", function (data, envelope) {
+    console.log("cameradebug");
+    callback("cameradebug", data.value);
+  });
+}
+
+ForceDirect.prototype = {
+  init: function init(id) {
+    var that = this;
+    this.gedPreLoader.GetGenerations(id, function (data) {
+      that.run(data);
+    });
+  },
+  kill: function kill() {
+    if (this.gedPreLoader) {
+      this.gedPreLoader.generations = [];
+      this.gedPreLoader.searchDepth = 0;
+    }
+
+    this.gedPreLoader = undefined;
+    this.graph = null;
+    this.treeLinker = null;
+    this.renderingHandler = null;
+    this.layout = null;
+    if (this.yearTimer) clearInterval(this.yearTimer);
+  },
+  run: function run(data) {
+    var that = this;
+    let graph = new _Graph.Graph(that.channel);
+    that._layoutList = new _LayoutList.LayoutList(that.channel, graph, that.context, that.settings, data);
+
+    that._layoutList.Init();
+
+    that.yearTimer = setInterval(myTimer, that.settings.speed);
+
+    function myTimer() {
+      that.channel.emit("mapyear", {
+        value: that.settings.year
+      });
+
+      that._layoutList.populateGraph(that.settings.year);
+
+      that.settings.year += that.settings.increment;
+      if (Number(that.settings.year) > that._layoutList.topYear) clearInterval(that.yearTimer);
+    }
+
+    that.renderingHandler = new _RenderingHandler.RenderingHandler(that.channel, that._layoutList, new _RenderLib.RenderLib(graph, that._context));
+    that.renderingHandler.start();
+    return this;
+  },
+  mouseDoubleClick: function mouseDoubleClick(evt) {
+    if (this._layoutList) {
+      this._layoutList.mouseDoubleClick(evt);
+    }
+  },
+  mouseDown: function mouseDown(evt) {
+    if (this._layoutList) {
+      this._layoutList.mouseDown(evt);
+    }
+
+    if (this.renderingHandler) // hack until i can be bothered add bus in for the events
+      this.renderingHandler.start();
+  },
+  mouseUp: function mouseUp(evt) {
+    if (this._layoutList) {
+      this._layoutList.mouseUp(evt);
+    }
+  },
+  buttondown: function buttondown(evt) {
+    if (this._layoutList) {
+      this._layoutList.buttondown(evt);
+    }
+  },
+  buttonup: function buttonup(evt) {
+    if (this._layoutList) {
+      this._layoutList.buttonup(evt);
+    }
+  },
+  mouseMove: function mouseMove(evt) {
+    if (this._layoutList) {
+      this._layoutList.mouseMove(evt);
+    }
+
+    if (this.renderingHandler) // hack until i can be bothered add bus in for the events
+      this.renderingHandler.start();
+  }
+};
+},{"./LayoutList.js":"../src/ForceDirected/LayoutList.js","./Graph.js":"../src/ForceDirected/Graph.js","./RenderLib.js":"../src/ForceDirected/RenderLib.js","./RenderingHandler.js":"../src/ForceDirected/RenderingHandler.js","mitt":"../node_modules/mitt/dist/mitt.es.js"}],"../src/containers/VisualisationHandler.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -68132,6 +70134,8 @@ var _TreeUI = require("../DataLoader/TreeUI.js");
 var _AncTree = require("../DataLoader/AncTree.js");
 
 var _DescTree = require("../DataLoader/DescTree.js");
+
+var _ForceDirect = require("../ForceDirected/ForceDirect.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -68186,18 +70190,87 @@ class PureCanvas extends _react.default.Component {
 
 }
 
+class GraphEventConnector {
+  constructor() {
+    this._connected = false;
+    this._mouseDown = false;
+  }
+
+  Connect(ctx, props, callback) {
+    //  let mouseDown =false;
+    //  this.callback = callback;
+    this.parseMapButtonState(props, callback); // dont subscribe to the events over and over
+
+    if (!this._connected) {
+      ctx.canvas.addEventListener('mousedown', evt => {
+        evt.preventDefault();
+        this._mouseDown = true;
+        callback('canvas_mousedown', evt);
+      });
+      ctx.canvas.addEventListener('mouseup', evt => {
+        evt.preventDefault();
+        this._mouseDown = false;
+        callback('canvas_mouseup', evt);
+      });
+      ctx.canvas.addEventListener('dblclick', evt => {
+        evt.preventDefault();
+        callback('canvas_dblclick', evt);
+      });
+      ctx.canvas.addEventListener('click', evt => {
+        var boundingrec = ctx.canvas.getBoundingClientRect(); //  this._tree.PerformClick(clientX- boundingrecleft, clientY - boundingrectop);
+
+        let point = {
+          x: evt.clientX - boundingrec.left,
+          y: evt.clientY - boundingrec.top,
+          evt: evt
+        };
+        callback('canvas_click', point);
+      });
+      ctx.canvas.addEventListener('mousemove', evt => {
+        var boundingrec = ctx.canvas.getBoundingClientRect(); //  this.canvasmove(evt.clientX ,boundingrec.left, evt.clientY , boundingrec.top);
+
+        let point = {
+          x: evt.clientX - boundingrec.left,
+          y: evt.clientY - boundingrec.top,
+          mouseDown: this._mouseDown,
+          evt: evt
+        };
+        callback('canvas_mousemove', point);
+      });
+      this._connected = true;
+    }
+  }
+
+  parseMapButtonState(buttonState, callback) {
+    let dir = '';
+
+    if (!buttonState.zoomin && !buttonState.zoomout && !buttonState.mapleft && !buttonState.mapright && !buttonState.mapup && !buttonState.mapdown) {
+      clearInterval(this._moveTimer);
+      return;
+    }
+
+    if (buttonState.zoomin) dir = 'DOWN';
+    if (buttonState.zoomout) dir = 'UP';
+    if (buttonState.mapleft) dir = 'EAST';
+    if (buttonState.mapright) dir = 'RIGHT';
+    if (buttonState.mapup) dir = 'NORTH';
+    if (buttonState.mapdown) dir = 'SOUTH';
+    this._moveTimer = setInterval(() => {
+      callback('control_down', dir);
+    }, 100);
+  }
+
+}
+
 class VisualisationHandler extends _react.Component {
-  // import {AncTree} from "../../DataLoader/AncTree.js";
-  // import {DescTree} from "../../DataLoader/DescTree.js";
-  // import {GedLib} from "../../DataLoader/GedLib.js";
-  // import {AncGraphCreator} from "../../DataLoader/AncGraphCreator.js";
-  // import {TreeUI} from "../../DataLoader/TreeUI.js";
   constructor(props) {
     super(props); //state
 
     this._tree = null;
-    this._moustQueue = [];
+    this._forceDirect = null; //   this._moustQueue = [];
+
     this.updateAnimationState = this.updateAnimationState.bind(this);
+    this._graphEventConnnector = new GraphEventConnector();
   }
 
   validTree() {
@@ -68206,56 +70279,65 @@ class VisualisationHandler extends _react.Component {
   }
 
   updateAnimationState(_point) {
-    if (_point != undefined) this._tree.SetCentrePoint(_point[0], _point[1]);else this._tree.SetCentrePoint();
+    if (_point != undefined) this._tree.SetCentrePoint(_point.x, _point.y);else this._tree.SetCentrePoint();
 
     this._tree.DrawTree();
   }
 
-  canvasclick(clientX, boundingrecleft, clientY, boundingrectop) {
-    //  if(!this.validtree) return;
-    this._tree.PerformClick(clientX - boundingrecleft, clientY - boundingrectop);
-
-    this._tree.UpdateGenerationState(); // if (this._tree.bt_refreshData) {
-    //     getData(this._tree.selectedPersonId, this._tree.selectedPersonX, this._tree.selectedPersonY);
-    // }
-
-
-    this.updateAnimationState();
-  }
-
-  canvasmove(clientX, boundingrecleft, clientY, boundingrectop) {
-    let _point = [clientX - boundingrecleft, clientY - boundingrectop];
-    if (this._tree != null && this._tree != undefined) this._tree.SetMouse(_point[0], _point[1]);
-
-    if (this._mouseDown) {
-      this.updateAnimationState(_point);
-    }
-  }
-
-  canvasmousedown() {
-    this._mouseDown = true;
-  }
-
-  canvasmouseup() {
-    this._mouseDown = false; //   var _point = new Array(1000000, 1000000);
-    //   this._moustQueue[this._moustQueue.length] = _point;
-  }
-
-  movebuttondown(_dir) {
-    if (!this.validTree()) return;
-    console.log('movebuttondown: ' + _dir);
-    this._moveTimer = setInterval(() => {
-      this._tree.MoveTree(_dir);
-    }, 100);
-  }
-
-  movebuttonup() {
-    if (!this.validTree()) return;
-    clearInterval(this._moveTimer);
-  }
-
   componentDidUpdate() {
     console.log('VisualisationHandler componentDidUpdate');
+
+    this._graphEventConnnector.Connect(this.props.context, this.props, (actionName, data) => {
+      switch (actionName) {
+        case 'canvas_mousedown':
+          if (this._forceDirect && this.props.graphActiveLayout == 'forceDirect') this._forceDirect.mouseDown(data);
+          break;
+
+        case 'canvas_mouseup':
+          if (this._forceDirect && this.props.graphActiveLayout == 'forceDirect') this._forceDirect.mouseUp(data);
+          break;
+
+        case 'canvas_mousemove':
+          if (this.props.graphActiveLayout != 'forceDirect') {
+            if (this.validTree()) this._tree.SetMouse(data.x, data.y);
+            if (data.mouseDown) this.updateAnimationState(data);
+          } else {
+            if (this._forceDirect && this.props.graphActiveLayout == 'forceDirect') this._forceDirect.mouseMove(data.evt);
+          }
+
+          break;
+
+        case 'canvas_dblclick':
+          if (this._forceDirect && this.props.graphActiveLayout == 'forceDirect') this._forceDirect.mouseDoubleClick(data);
+          break;
+
+        case 'canvas_click':
+          if (this.props.graphActiveLayout != 'forceDirect') {
+            if (this.validTree()) {
+              this._tree.PerformClick(data.x, data.y);
+
+              this._tree.UpdateGenerationState();
+
+              this.updateAnimationState();
+            }
+          } else {
+            if (this._forceDirect && this.props.graphActiveLayout == 'forceDirect') this._forceDirect.mouseMove(data.evt);
+          }
+
+          break;
+
+        case 'control_down':
+          if (this.props.graphActiveLayout != 'forceDirect') {
+            if (this.validTree()) {
+              this._tree.MoveTree(data);
+            }
+          } else {}
+
+          break;
+
+        default:
+      }
+    });
 
     if (this.props.graphActive) {
       if (!this.props.graphRunning) {
@@ -68274,60 +70356,17 @@ class VisualisationHandler extends _react.Component {
         }
 
         if (this.props.graphActiveLayout == 'forceDirect') {
-          this.runGraphDirected();
+          this.props.toggleGraphRunning(true);
+          this.runGraphDirected(this.props.graphActiveSelection);
         }
-      }
+      } //  this.processButtonClicks();
 
-      this.processButtonClicks();
     }
-  }
-
-  drawFrame(ctx) {// if(this._tree!=null){
-    //   console.log('drawing tree');
-    //   this._tree.DrawTree();
-    // }
   }
 
   contextCreated(ctx) {
     console.log('context created');
     this.props.setContext(ctx);
-    this.WireUp(ctx);
-  }
-
-  processButtonClicks() {
-    let dir = '';
-
-    if (!this.props.zoomin && !this.props.zoomout && !this.props.mapleft && !this.props.mapright && !this.props.mapup && !this.props.mapdown) {
-      this.movebuttonup();
-      return;
-    }
-
-    if (this.props.zoomin) dir = 'DOWN';
-    if (this.props.zoomout) dir = 'UP';
-    if (this.props.mapleft) dir = 'EAST';
-    if (this.props.mapright) dir = 'RIGHT';
-    if (this.props.mapup) dir = 'NORTH';
-    if (this.props.mapdown) dir = 'SOUTH';
-    this.movebuttondown(dir);
-  }
-
-  WireUp(ctx) {
-    ctx.canvas.addEventListener('mousedown', evt => {
-      evt.preventDefault();
-      this.canvasmousedown();
-    });
-    ctx.canvas.addEventListener('mouseup', evt => {
-      evt.preventDefault();
-      this.canvasmouseup();
-    });
-    ctx.canvas.addEventListener('click', evt => {
-      var boundingrec = ctx.canvas.getBoundingClientRect();
-      this.canvasclick(evt.clientX, boundingrec.left, evt.clientY, boundingrec.top);
-    });
-    ctx.canvas.addEventListener('mousemove', evt => {
-      var boundingrec = ctx.canvas.getBoundingClientRect();
-      this.canvasmove(evt.clientX, boundingrec.left, evt.clientY, boundingrec.top);
-    });
   }
 
   initDescendents(selectedId, complete) {
@@ -68406,7 +70445,17 @@ class VisualisationHandler extends _react.Component {
     this.rAF = requestAnimationFrame(this.updateAnimationState);
   }
 
-  runGraphDirected(nextProps) {}
+  runGraphDirected(selectedId) {
+    let context = this.props.context;
+    context.canvas.style.top = 0;
+    context.canvas.style.left = 0;
+    context.canvas.width = window.innerWidth;
+    context.canvas.height = window.innerHeight;
+    let loader = new _DescGraphCreator.DescGraphCreator(this.props.families, this.props.persons);
+    this._forceDirect = new _ForceDirect.ForceDirect(this.props.fdSettings, loader, context, (name, value) => {});
+
+    this._forceDirect.init(selectedId);
+  }
 
   stopAll() {
     console.log('clear all ');
@@ -68414,7 +70463,7 @@ class VisualisationHandler extends _react.Component {
 
   render() {
     return _react.default.createElement(GraphContainer, {
-      drawFrame: this.drawFrame.bind(this),
+      drawFrame: ctx => {},
       contextCreated: this.contextCreated.bind(this)
     });
   }
@@ -68437,7 +70486,8 @@ const mapStateToProps = state => {
     mapdown: state.mapdown,
     status: state.status,
     graphRunning: state.graphRunning,
-    layoutDefaults: state.layoutDefaults
+    layoutDefaults: state.layoutDefaults,
+    fdSettings: state.fdSettings
   };
 };
 
@@ -68455,7 +70505,7 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(VisualisationHandler));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/Radio":"../node_modules/@material-ui/core/Radio/index.js","@material-ui/core/RadioGroup":"../node_modules/@material-ui/core/RadioGroup/index.js","@material-ui/core/FormControlLabel":"../node_modules/@material-ui/core/FormControlLabel/index.js","@material-ui/core/FormControl":"../node_modules/@material-ui/core/FormControl/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx","../DataLoader/AncGraphCreator.js":"../src/DataLoader/AncGraphCreator.js","../DataLoader/DescGraphCreator.js":"../src/DataLoader/DescGraphCreator.js","../DataLoader/TreeUI.js":"../src/DataLoader/TreeUI.js","../DataLoader/AncTree.js":"../src/DataLoader/AncTree.js","../DataLoader/DescTree.js":"../src/DataLoader/DescTree.js"}],"../src/containers/graph.css":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/Radio":"../node_modules/@material-ui/core/Radio/index.js","@material-ui/core/RadioGroup":"../node_modules/@material-ui/core/RadioGroup/index.js","@material-ui/core/FormControlLabel":"../node_modules/@material-ui/core/FormControlLabel/index.js","@material-ui/core/FormControl":"../node_modules/@material-ui/core/FormControl/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx","../DataLoader/AncGraphCreator.js":"../src/DataLoader/AncGraphCreator.js","../DataLoader/DescGraphCreator.js":"../src/DataLoader/DescGraphCreator.js","../DataLoader/TreeUI.js":"../src/DataLoader/TreeUI.js","../DataLoader/AncTree.js":"../src/DataLoader/AncTree.js","../DataLoader/DescTree.js":"../src/DataLoader/DescTree.js","../ForceDirected/ForceDirect.js":"../src/ForceDirected/ForceDirect.js"}],"../src/containers/graph.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -81993,73 +84043,7 @@ class Data extends _react.Component {
 }
 
 exports.default = Data;
-},{"react":"../node_modules/react/index.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","./SideDrawer/SideDrawer.jsx":"../src/containers/SideDrawer/SideDrawer.jsx","./ButtonBar/TopButtons.jsx":"../src/containers/ButtonBar/TopButtons.jsx","./data.css":"../src/containers/data.css"}],"../node_modules/mitt/dist/mitt.es.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-//      
-// An event handler can take an optional event argument
-// and should not return a value
-// An array of all currently registered event handlers for a type
-// A map of event types and their corresponding event handlers.
-
-/** Mitt: Tiny (~200b) functional event emitter / pubsub.
- *  @name mitt
- *  @returns {Mitt}
- */
-function mitt(all) {
-  all = all || Object.create(null);
-  return {
-    /**
-     * Register an event handler for the given type.
-     *
-     * @param  {String} type	Type of event to listen for, or `"*"` for all events
-     * @param  {Function} handler Function to call in response to given event
-     * @memberOf mitt
-     */
-    on: function on(type, handler) {
-      (all[type] || (all[type] = [])).push(handler);
-    },
-
-    /**
-     * Remove an event handler for the given type.
-     *
-     * @param  {String} type	Type of event to unregister `handler` from, or `"*"`
-     * @param  {Function} handler Handler function to remove
-     * @memberOf mitt
-     */
-    off: function off(type, handler) {
-      if (all[type]) {
-        all[type].splice(all[type].indexOf(handler) >>> 0, 1);
-      }
-    },
-
-    /**
-     * Invoke all handlers for the given type.
-     * If present, `"*"` handlers are invoked after type-matched handlers.
-     *
-     * @param {String} type  The event type to invoke
-     * @param {Any} [evt]  Any value (object is recommended and powerful), passed to each handler
-     * @memberOf mitt
-     */
-    emit: function emit(type, evt) {
-      (all[type] || []).slice().map(function (handler) {
-        handler(evt);
-      });
-      (all['*'] || []).slice().map(function (handler) {
-        handler(type, evt);
-      });
-    }
-  };
-}
-
-var _default = mitt;
-exports.default = _default;
-},{}],"../src/containers/App.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-bootstrap":"../node_modules/react-bootstrap/es/index.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","./SideDrawer/SideDrawer.jsx":"../src/containers/SideDrawer/SideDrawer.jsx","./ButtonBar/TopButtons.jsx":"../src/containers/ButtonBar/TopButtons.jsx","./data.css":"../src/containers/data.css"}],"../src/containers/App.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -82078,8 +84062,6 @@ var _styles = require("@material-ui/core/styles");
 var _Graph = _interopRequireDefault(require("./Graph"));
 
 var _Data = _interopRequireDefault(require("./Data"));
-
-var _mitt = _interopRequireDefault(require("mitt"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -82133,7 +84115,7 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _styles.withStyles)(styles)((0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(App));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","./Graph":"../src/containers/Graph.jsx","./Data":"../src/containers/Data.jsx","mitt":"../node_modules/mitt/dist/mitt.es.js"}],"../src/main.css":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","./Graph":"../src/containers/Graph.jsx","./Data":"../src/containers/Data.jsx"}],"../src/main.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -82397,6 +84379,40 @@ var _default = (0, _redux.createStore)(_reducer.default, {
     zoomPercentage: 100.0,
     halfBoxWidth: 35.0,
     halfBoxHeight: 35.0
+  },
+  fdSettings: {
+    stiffness: 400.0,
+    repulsion: 500.0,
+    damping: 0.5,
+    colourScheme: {
+      mapbackgroundColour: 'white',
+      //'#0A0A33',
+      normalMainLabelColour: 'black',
+      normalMainLabelBackground: 'white',
+      normalMainShapeBackground: 'black',
+      selectedMainLabelColour: 'purple',
+      selectedMainLabelBackground: 'white',
+      selectedMainShapeBackground: 'black',
+      nearestMainLabelColour: 'blue',
+      nearestMainLabelBackground: 'white',
+      nearestMainShapeBackground: 'blue',
+      normalInfoLabelColour: 'black',
+      normalInfoLabelBackground: 'white',
+      selectedInfoLabelColour: 'black',
+      selectedInfoLabelBackground: 'white',
+      nearestInfoLabelColour: 'white',
+      nearestInfoLabelBackground: '#0A0A33',
+      infoLineColour: '#0A0A33',
+      normalLineGradient: ['#0066FF', '#1975FF', '#3385FF', '#4D94FF', '#66A3FF', '#80B2FF', '#99C2FF', '#CCE0FF', '#E6F0FF'],
+      shadowColour: 'black' // maleColour: 'purple',
+      //    femaleColour: 'purple'
+
+    },
+    speed: 500,
+    increment: 5,
+    year: 1670,
+    sublayoutZoom: 8500,
+    sublayoutNodeThreshold: 20
   }
 }, (0, _redux.applyMiddleware)(_reduxThunk.default));
 
@@ -82457,7 +84473,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "3722" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41609" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

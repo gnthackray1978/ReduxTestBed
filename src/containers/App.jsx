@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import Graph from './Graph';
 import Data from './Data';
-import mitt from 'mitt';
+
 
 
 const styles = theme => ({
