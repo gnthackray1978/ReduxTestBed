@@ -70093,7 +70093,89 @@ ForceDirect.prototype = {
       this.renderingHandler.start();
   }
 };
-},{"./LayoutList.js":"../src/ForceDirected/LayoutList.js","./Graph.js":"../src/ForceDirected/Graph.js","./RenderLib.js":"../src/ForceDirected/RenderLib.js","./RenderingHandler.js":"../src/ForceDirected/RenderingHandler.js","mitt":"../node_modules/mitt/dist/mitt.es.js"}],"../src/containers/VisualisationHandler.jsx":[function(require,module,exports) {
+},{"./LayoutList.js":"../src/ForceDirected/LayoutList.js","./Graph.js":"../src/ForceDirected/Graph.js","./RenderLib.js":"../src/ForceDirected/RenderLib.js","./RenderingHandler.js":"../src/ForceDirected/RenderingHandler.js","mitt":"../node_modules/mitt/dist/mitt.es.js"}],"../src/containers/Canvas/PureCanvas.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _styles = require("@material-ui/core/styles");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+const cStyle = {
+  position: 'absolute'
+};
+
+class PureCanvas extends _react.default.Component {
+  shouldComponentUpdate() {
+    return false;
+  }
+
+  render() {
+    return _react.default.createElement("canvas", {
+      style: cStyle,
+      ref: node => node ? this.props.contextRef(node.getContext('2d')) : null
+    });
+  }
+
+}
+
+var _default = (0, _styles.withStyles)(cStyle)(PureCanvas);
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js"}],"../src/containers/Canvas/GraphContainer.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _styles = require("@material-ui/core/styles");
+
+var _PureCanvas = _interopRequireDefault(require("./PureCanvas.jsx"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+class GraphContainer extends _react.default.Component {
+  constructor(props) {
+    super(props);
+    this.saveContext = this.saveContext.bind(this);
+  }
+
+  saveContext(ctx) {
+    this.props.contextCreated(ctx);
+  }
+
+  componentDidUpdate() {
+    this.props.drawFrame();
+  }
+
+  render() {
+    return _react.default.createElement(_PureCanvas.default, {
+      contextRef: this.saveContext
+    });
+  }
+
+}
+
+exports.default = GraphContainer;
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","./PureCanvas.jsx":"../src/containers/Canvas/PureCanvas.jsx"}],"../src/containers/VisualisationHandler.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -70137,6 +70219,8 @@ var _DescTree = require("../DataLoader/DescTree.js");
 
 var _ForceDirect = require("../ForceDirected/ForceDirect.js");
 
+var _GraphContainer = _interopRequireDefault(require("./Canvas/GraphContainer.jsx"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
@@ -70149,46 +70233,36 @@ const styles = {
   label: {
     textAlign: 'center'
   }
-};
-const cStyle = {
-  position: 'absolute'
-};
-
-class GraphContainer extends _react.default.Component {
-  constructor(props) {
-    super(props);
-    this.saveContext = this.saveContext.bind(this);
-  }
-
-  saveContext(ctx) {
-    this.props.contextCreated(ctx);
-  }
-
-  componentDidUpdate() {
-    this.props.drawFrame();
-  }
-
-  render() {
-    return _react.default.createElement(PureCanvas, {
-      contextRef: this.saveContext
-    });
-  }
-
-}
-
-class PureCanvas extends _react.default.Component {
-  shouldComponentUpdate() {
-    return false;
-  }
-
-  render() {
-    return _react.default.createElement("canvas", {
-      style: cStyle,
-      ref: node => node ? this.props.contextRef(node.getContext('2d')) : null
-    });
-  }
-
-}
+}; // class GraphContainer extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.saveContext = this.saveContext.bind(this);
+//   }
+//
+//   saveContext(ctx) {
+//     this.props.contextCreated(ctx);
+//   }
+//
+//   componentDidUpdate() {
+//     this.props.drawFrame();
+//   }
+//
+//   render() {
+//     return <PureCanvas contextRef={this.saveContext}></PureCanvas>;
+//   }
+// }
+//
+// class PureCanvas extends React.Component {
+//   shouldComponentUpdate() { return false; }
+//
+//   render() {
+//     return (
+//       <canvas style={cStyle}
+//         ref={node => node ? this.props.contextRef(node.getContext('2d')) : null}
+//       />
+//     )
+//   }
+// }
 
 class GraphEventConnector {
   constructor() {
@@ -70462,7 +70536,7 @@ class VisualisationHandler extends _react.Component {
   }
 
   render() {
-    return _react.default.createElement(GraphContainer, {
+    return _react.default.createElement(_GraphContainer.default, {
       drawFrame: ctx => {},
       contextCreated: this.contextCreated.bind(this)
     });
@@ -70505,7 +70579,7 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(VisualisationHandler));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/Radio":"../node_modules/@material-ui/core/Radio/index.js","@material-ui/core/RadioGroup":"../node_modules/@material-ui/core/RadioGroup/index.js","@material-ui/core/FormControlLabel":"../node_modules/@material-ui/core/FormControlLabel/index.js","@material-ui/core/FormControl":"../node_modules/@material-ui/core/FormControl/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx","../DataLoader/AncGraphCreator.js":"../src/DataLoader/AncGraphCreator.js","../DataLoader/DescGraphCreator.js":"../src/DataLoader/DescGraphCreator.js","../DataLoader/TreeUI.js":"../src/DataLoader/TreeUI.js","../DataLoader/AncTree.js":"../src/DataLoader/AncTree.js","../DataLoader/DescTree.js":"../src/DataLoader/DescTree.js","../ForceDirected/ForceDirect.js":"../src/ForceDirected/ForceDirect.js"}],"../src/containers/graph.css":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/Radio":"../node_modules/@material-ui/core/Radio/index.js","@material-ui/core/RadioGroup":"../node_modules/@material-ui/core/RadioGroup/index.js","@material-ui/core/FormControlLabel":"../node_modules/@material-ui/core/FormControlLabel/index.js","@material-ui/core/FormControl":"../node_modules/@material-ui/core/FormControl/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","react-redux":"../node_modules/react-redux/es/index.js","../actions/creators.jsx":"../src/actions/creators.jsx","../DataLoader/AncGraphCreator.js":"../src/DataLoader/AncGraphCreator.js","../DataLoader/DescGraphCreator.js":"../src/DataLoader/DescGraphCreator.js","../DataLoader/TreeUI.js":"../src/DataLoader/TreeUI.js","../DataLoader/AncTree.js":"../src/DataLoader/AncTree.js","../DataLoader/DescTree.js":"../src/DataLoader/DescTree.js","../ForceDirected/ForceDirect.js":"../src/ForceDirected/ForceDirect.js","./Canvas/GraphContainer.jsx":"../src/containers/Canvas/GraphContainer.jsx"}],"../src/containers/graph.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -84473,7 +84547,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41609" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44110" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

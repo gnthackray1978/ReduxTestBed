@@ -9,6 +9,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 
+
+
 import { connect } from "react-redux";
 import {setLayout,setContext,toggleGraphRunning} from "../actions/creators.jsx";
 
@@ -18,7 +20,7 @@ import {TreeUI} from "../DataLoader/TreeUI.js";
 import {AncTree} from "../DataLoader/AncTree.js";
 import {DescTree} from "../DataLoader/DescTree.js";
 import {ForceDirect} from "../ForceDirected/ForceDirect.js";
-
+import GraphContainer from "./Canvas/GraphContainer.jsx";
 
 
 const styles = {
@@ -40,41 +42,39 @@ const styles = {
 
 };
 
-const cStyle = {
-  position: 'absolute'
-};
 
 
-class GraphContainer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.saveContext = this.saveContext.bind(this);
-  }
 
-  saveContext(ctx) {
-    this.props.contextCreated(ctx);
-  }
-
-  componentDidUpdate() {
-    this.props.drawFrame();
-  }
-
-  render() {
-    return <PureCanvas contextRef={this.saveContext}></PureCanvas>;
-  }
-}
-
-class PureCanvas extends React.Component {
-  shouldComponentUpdate() { return false; }
-
-  render() {
-    return (
-      <canvas style={cStyle}
-        ref={node => node ? this.props.contextRef(node.getContext('2d')) : null}
-      />
-    )
-  }
-}
+// class GraphContainer extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.saveContext = this.saveContext.bind(this);
+//   }
+//
+//   saveContext(ctx) {
+//     this.props.contextCreated(ctx);
+//   }
+//
+//   componentDidUpdate() {
+//     this.props.drawFrame();
+//   }
+//
+//   render() {
+//     return <PureCanvas contextRef={this.saveContext}></PureCanvas>;
+//   }
+// }
+//
+// class PureCanvas extends React.Component {
+//   shouldComponentUpdate() { return false; }
+//
+//   render() {
+//     return (
+//       <canvas style={cStyle}
+//         ref={node => node ? this.props.contextRef(node.getContext('2d')) : null}
+//       />
+//     )
+//   }
+// }
 
 
 class GraphEventConnector{
