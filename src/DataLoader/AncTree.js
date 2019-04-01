@@ -13,7 +13,7 @@ export function AncTree() {
   this.bt_links = [];
 
 //  this.inLink = false;
-
+this.ctx =null;
   this.generations = [];
 //  this.familiesPerGeneration = [];
   this.familySpanLines = [];
@@ -27,34 +27,10 @@ export function AncTree() {
 
   this.layoutDefaults=null;
   this.layoutVolatile =null;
-
-  // this.original_distanceBetweenBoxs = 0.0;
-  // this.original_distanceBetweenGens = 0.0;
-  // this.original_boxWidth = 0.0;
-  // this.original_boxHeight = 0.0;
-  // this.original_distancesbetfam = 0.0;
-  // this.original_lowerSpan = 0.0;
-  //
-  // this.original_middleSpan = 40.0;
-  // this.original_topSpan = 20.0;
-
-
-
-  // this.zoomPercentage = 0.0;
-  // this.distanceBetweenBoxs = 0.0;
-  // this.distanceBetweenGens = 0.0;
-  // this.halfBox = 0.0;
-  // this.halfBoxHeight = 0.0;
-
+  this.colourScheme =null;
 
   this.mouse_x = 0; //int
   this.mouse_y = 0; //int
-
-//    this.initial_mouse_x = 0; //int
-//    this.initial_mouse_y = 0; //int
-
-//  this.xFromCentre = 0.0;
-//  this.yFromCentre = 0.0;
 
   this.drawingX1 = 0.0;
   this.drawingX2 = 0.0;
@@ -70,8 +46,6 @@ export function AncTree() {
 
   this.zoomAmount = 8; //int
 
-  // this.boxWidth = 0.0;
-  // this.boxHeight = 0.0;
   this.sourceId = null;
 
 
@@ -124,35 +98,24 @@ AncTree.prototype = {
         return false;
     },
 
-    DrawTree :function () {
-        this.DrawTreeInner();
-    },
 
-    DrawTreeInner :function () {
+   DrawTree :function () {
 
-
-
-
-            try
-            {
-                this.ComputeLocations();
-            }
-            catch(err)
-            {
-                console.log('error computing locations');
-                console.log(err);
-            }
+        try
+        {
+            this.ComputeLocations();
+        }
+        catch(err)
+        {
+            console.log('error computing locations');
+            console.log(err);
+        }
 
 
-           var _genidx = 0;
-           var _personIdx = 0;
+         var _genidx = 0;
+         var _personIdx = 0;
 
-
-          // var treeUI = new TreeUI(this.bt_screenWidth, this.bt_screenHeight, this.boxWidth, this.boxHeight,1,null);
-           this.treeUI.UpdateUI(this.bt_screenWidth, this.bt_screenHeight, this.layoutVolatile.boxWidth, this.layoutVolatile.boxHeight);
-
-
-           this.treeUI.ClearContext();
+         this.treeUI.ClearContext(this.ctx);
 
             try
             {
@@ -167,7 +130,7 @@ AncTree.prototype = {
 
                        var _person = this.generations[_genidx][_personIdx];
 
-                       var personLink = this.treeUI.DrawPerson(_person, this.sourceId, this.layoutVolatile.zoomPercentage);
+                       var personLink = this.treeUI.DrawPerson(this.ctx,this.colourScheme,_person, this.sourceId, this.layoutVolatile.zoomPercentage);
 
                        if(personLink !== null)
                         this.bt_links.push(personLink);
@@ -193,7 +156,7 @@ AncTree.prototype = {
                while (_fslOuter < this.familySpanLines.length) {
                    _fslInner = 0;
                    while (_fslInner < this.familySpanLines[_fslOuter].length) {
-                       this.treeUI.DrawLine(this.familySpanLines[_fslOuter][_fslInner]);
+                       this.treeUI.DrawLine(this.ctx,this.colourScheme,this.familySpanLines[_fslOuter][_fslInner]);
                        _fslInner++;
                    } // end familySpanLines[_fslOuter].length
 
@@ -771,50 +734,24 @@ AncTree.prototype = {
 
     },
 
-    SetInitialValues: function (defaultLayout, screen_width, screen_height ) {
+    SetInitialValues: function (ctx, staticSettings, screen_width, screen_height ) {
 
-      this.layoutDefaults=defaultLayout;
-      this.layoutVolatile ={...defaultLayout};
+      this.layoutDefaults=staticSettings.layoutDefaults;
+      this.layoutVolatile ={...staticSettings.layoutDefaults};
+      this.colourScheme = staticSettings.colourScheme.ancestor;
+      this.bt_screenHeight = ctx.canvas.height;
+      this.bt_screenWidth = ctx.canvas.width;
+      this.ctx = ctx;
 
-        this.centrePoint = 750.0;
-        this.centreVerticalPoint = 0.0;
-        this.zoomLevel = 0.0;
-        this.centrePointXOffset = 0.0;
-        this.centrePointYOffset = 0.0;
-        this.mouse_x = 0; //int
-        this.mouse_y = 0; //int
-        this.mouseXPercLocat = 0.0;
-        this.mouseYPercLocat = 0.0;
-
-        this.bt_screenHeight = screen_height;
-        this.bt_screenWidth = screen_width;
-
-    //    this.zoomPercentage = zoomPerc;
-        // this.original_distanceBetweenBoxs = dist_bet_box;
-        // this.original_distanceBetweenGens = dist_bet_gen;
-        // this.original_boxWidth = box_wid;
-        // this.original_boxHeight = box_hig;
-        // this.original_distancesbetfam = dist_bet_fam;
-        // this.original_lowerSpan = low_stalk_hi;
-        // this.original_middleSpan = mid_span;
-        // this.original_topSpan = top_span;
-
-        //
-        // this.distanceBetweenBoxs = this.original_distanceBetweenBoxs;
-        // this.distanceBetweenGens = this.original_distanceBetweenGens;
-        // this.boxWidth = this.original_boxWidth;
-        // this.boxHeight = this.original_boxHeight;
-        // this.distancesbetfam = this.original_distancesbetfam;
-        // this.halfBox = this.boxWidth / 2;
-        // this.halfBoxHeight = this.boxHeight / 2;
-        //
-        // this.lowerSpan = this.original_lowerSpan;
-        //
-        // this.middleSpan = this.original_middleSpan;
-        //
-        // this.topSpan = this.original_topSpan;
-
-
+      this.centrePoint = 750.0;
+      this.centreVerticalPoint = 0.0;
+      this.zoomLevel = 0.0;
+      this.centrePointXOffset = 0.0;
+      this.centrePointYOffset = 0.0;
+      this.mouse_x = 0; //int
+      this.mouse_y = 0; //int
+      this.mouseXPercLocat = 0.0;
+      this.mouseYPercLocat = 0.0;
 
 
     },

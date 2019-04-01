@@ -45,38 +45,6 @@ const styles = {
 
 
 
-// class GraphContainer extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.saveContext = this.saveContext.bind(this);
-//   }
-//
-//   saveContext(ctx) {
-//     this.props.contextCreated(ctx);
-//   }
-//
-//   componentDidUpdate() {
-//     this.props.drawFrame();
-//   }
-//
-//   render() {
-//     return <PureCanvas contextRef={this.saveContext}></PureCanvas>;
-//   }
-// }
-//
-// class PureCanvas extends React.Component {
-//   shouldComponentUpdate() { return false; }
-//
-//   render() {
-//     return (
-//       <canvas style={cStyle}
-//         ref={node => node ? this.props.contextRef(node.getContext('2d')) : null}
-//       />
-//     )
-//   }
-// }
-
-
 class GraphEventConnector{
 
   constructor(){
@@ -177,10 +145,9 @@ class VisualisationHandler extends Component {
   constructor(props) {
      super(props);
 
-     //state
      this._tree =null;
      this._forceDirect =null;
-  //   this._moustQueue = [];
+
      this.updateAnimationState = this.updateAnimationState.bind(this);
 
      this._graphEventConnnector = new GraphEventConnector();
@@ -368,7 +335,7 @@ class VisualisationHandler extends Component {
      this._tree.selectedPersonX = 0;
      this._tree.selectedPersonY = 0;
 
-     this._tree.SetInitialValues(this.props.layoutDefaults, window.innerWidth, window.innerHeight);
+     this._tree.SetInitialValues(this.props.context, this.props.staticSettings);
 
      this._tree.treeUI = treeUI;
 
@@ -393,7 +360,7 @@ class VisualisationHandler extends Component {
      this._tree.selectedPersonY = 0;
 
 
-     this._tree.SetInitialValues(this.props.layoutDefaults, window.innerWidth, window.innerHeight);
+     this._tree.SetInitialValues(this.props.context, this.props.staticSettings);
 
      this._tree.treeUI = treeUI;
 
@@ -457,7 +424,7 @@ const mapStateToProps = state => {
     mapdown:state.mapdown,
     status: state.status,
     graphRunning : state.graphRunning,
-    layoutDefaults :state.layoutDefaults,
+    staticSettings :state.staticSettings,
     fdSettings: state.fdSettings
   };
 };

@@ -1,6 +1,5 @@
 /*global requestAnimationFrame*/
 
-import {TreeBase} from "./TreeBase.js";
 import {TreeUI} from "./TreeUI.js";
 
 
@@ -33,6 +32,7 @@ export function DescTree() {
 
 
     this._qryString = '';
+
     this.bt_refreshData =false;
     this.bt_screenHeight = 0.0;
     this.bt_screenWidth = 0.0;
@@ -40,10 +40,11 @@ export function DescTree() {
     this.bt_buttonLinks = [];
     this.bt_links = [];
 
-  //  this.inLink = false;
+    this.ctx =null;
+    this.colourScheme =null;
 
     this.generations = [];
-  //  this.familiesPerGeneration = [];
+
     this.familySpanLines = [];
     this.childlessMarriages = [];
 
@@ -55,9 +56,6 @@ export function DescTree() {
 
     this.layoutDefaults=null;
     this.layoutVolatile =null;
-
-//    this.zoomPercentage = 0.0;
-//    this.zoomLevel = 0.0;
 
     this.mouse_x = 0; //int
     this.mouse_y = 0; //int
@@ -98,6 +96,8 @@ export function DescTree() {
 
 
 DescTree.prototype = {
+
+
 
     SetZoom: function (p_percentage) {
 
@@ -158,27 +158,13 @@ DescTree.prototype = {
     },
 
     DrawTree: function () {
-       this.DrawTreeInner();
-    },
-
-    DrawTreeInner: function () {
 
         this.ComputeLocations();
 
-        this.treeUI.ClearContext();
+        this.treeUI.ClearContext(this.ctx);
 
         var _genidx = 0;
         var _personIdx = 0;
-
-        try {
-            this.treeUI.UpdateUI(this.bt_screenWidth, this.bt_screenHeight, this.layoutVolatile.boxWidth, this.layoutVolatile.boxHeight);
-        } catch(e) {
-            console.log('error UpdateUI ' + e);
-        }
-
-
-
-
 
         this.bt_links = [];
         this.bt_buttonLinks = [];
@@ -191,13 +177,13 @@ DescTree.prototype = {
 
                     var _person = this.generations[_genidx][_personIdx];
 
-                    var personLink = this.treeUI.DrawPerson(_person, this.sourceId, this.layoutVolatile.zoomPercentage);
+                    var personLink = this.treeUI.DrawPerson(this.ctx,this.colourScheme,_person, this.sourceId, this.layoutVolatile.zoomPercentage);
 
                     if (personLink !== null)
                         this.bt_links.push(personLink);
 
                     if (_person.GenerationIdx != 0) {
-                        var buttonLink = this.treeUI.DrawButton(_person, this.GetChildDisplayStatus(_person));
+                        var buttonLink = this.treeUI.DrawButton(this.ctx,this.colourScheme,_person, this.GetChildDisplayStatus(_person));
 
                         if (buttonLink !== null)
                             this.bt_buttonLinks.push(buttonLink);
@@ -219,7 +205,7 @@ DescTree.prototype = {
                 while (_fslInner < this.familySpanLines[_fslOuter].length) {
 
                     //if (_fslOuter == 7 && _fslInner == 15) {
-                    this.treeUI.DrawLine(this.familySpanLines[_fslOuter][_fslInner]);
+                    this.treeUI.DrawLine(this.ctx,this.colourScheme, this.familySpanLines[_fslOuter][_fslInner]);
                     // }
                     _fslInner++;
 
@@ -241,7 +227,7 @@ DescTree.prototype = {
         try {
             while (_fslOuter < this.childlessMarriages.length) {
 
-                this.treeUI.DrawLine(this.childlessMarriages[_fslOuter]);
+                this.treeUI.DrawLine(this.ctx,this.colourScheme,this.childlessMarriages[_fslOuter]);
 
                 _fslOuter++;
             }
@@ -946,10 +932,15 @@ DescTree.prototype = {
         return prevParentLink;
     },
 
-    SetInitialValues: function (defaultLayout, screen_width, screen_height) {
+    SetInitialValues: function (ctx, staticSettings) {
 
-        this.layoutDefaults=defaultLayout;
-        this.layoutVolatile ={...defaultLayout};
+        this.layoutDefaults=staticSettings.layoutDefaults;
+        this.layoutVolatile ={...staticSettings.layoutDefaults};
+        this.colourScheme = staticSettings.colourScheme.ancestor;
+        this.bt_screenHeight = ctx.canvas.height;
+        this.bt_screenWidth = ctx.canvas.width;
+        this.ctx = ctx;
+
         this.centrePoint = 750.0;
         this.centreVerticalPoint = 0.0;
         this.centrePointXOffset = 0.0;
@@ -958,8 +949,7 @@ DescTree.prototype = {
         this.mouse_y = 0; //int
         this.mouseXPercLocat = 0.0;
         this.mouseYPercLocat = 0.0;
-        this.bt_screenHeight = screen_height;
-        this.bt_screenWidth = screen_width;
+
       //  this.zoomPercentage = zoomPerc;
     //    this.zoomLevel = 0.0;
 

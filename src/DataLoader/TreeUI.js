@@ -7,32 +7,6 @@ export class TreeUI {
       this.docClose = new Image();
       this.docNew = new Image();
       this.modelCode = isAnc;
-      this.canvas = context.canvas;
-      this.context = context;
-
-
-      if (this.modelCode == 0) {
-          // descendants
-          this.backgroundcolour = 'black';
-          this.linecolour = '#99CCFF';
-          this.textcolour = 'black';// 'white';
-          this.spousecolour = 'slateblue';
-
-      //    $("#map_control").removeClass("ancestorstyle").addClass("descendantstyle");
-      //    $("#map_label").removeClass("ancestorstyle").addClass("descendantstyle");
-
-      }
-      else {
-
-          this.backgroundcolour = 'white';
-          this.linecolour = 'black';
-          this.textcolour = 'black';
-          this.spousecolour = 'slateblue';
-
-      //    $("#map_control").removeClass("descendantstyle").addClass("ancestorstyle");
-      //    $("#map_label").removeClass("descendantstyle").addClass("ancestorstyle");
-
-      }
 
       this.docClose.src = plusImg;
 
@@ -47,32 +21,19 @@ export class TreeUI {
       };
     }
 
-    UpdateUI (screen_width, screen_height, box_width, box_height) {
-
-        this.screen_width = screen_width;
-        this.screen_height = screen_height;
-      //  this.canvas = document.getElementById("myCanvas");
-
-
-    //    this.context = this.canvas.getContext("2d");
-
-        this.boxWidth = box_width;
-        this.boxHeight = box_height;
+    ClearContext (ctx){
+      ctx.clearRect (0, 0, ctx.canvas.width, ctx.canvas.height);
     }
 
-    ClearContext (){
-      this.context.clearRect (0, 0, this.context.canvas.width, this.context.canvas.height);
-    }
-
-    DrawLine(points) {
+    DrawLine(ctx, colourScheme, points) {
 
         var _pointIdx = 0;
-        this.context.beginPath();
+        ctx.beginPath();
         var _validLine = false;
         var _sx1 = -100; //screen left
-        var _sx2 = this.screen_width + 100; // screen right
+        var _sx2 = ctx.canvas.width + 100; // screen right
         var _sy1 = -100;
-        var _sy2 = this.screen_height + 100;
+        var _sy2 = ctx.canvas.height + 100;
 
 
         while (_pointIdx < points.length) {
@@ -103,33 +64,33 @@ export class TreeUI {
             while (_pointIdx < points.length) {
                 let _Point = points[_pointIdx];
                 if (_pointIdx === 0) {
-                    this.context.moveTo(_Point[0], _Point[1]);
+                    ctx.moveTo(_Point[0], _Point[1]);
                 }
                 else {
-                    this.context.lineTo(_Point[0], _Point[1]);
+                    ctx.lineTo(_Point[0], _Point[1]);
                 }
                 _pointIdx++;
             }
 
-            this.context.globalAlpha = 0.5;
-            this.context.lineWidth = 2;
+            ctx.globalAlpha = colourScheme.globalAlpha;
+            ctx.lineWidth = colourScheme.lineWidth;
 
-            this.context.strokeStyle = this.linecolour;
+            ctx.strokeStyle = colourScheme.linecolour;
 
-            this.context.stroke();
+            ctx.stroke();
         }
 
 
     }
 
-    DrawButton (_person, checked) {
+    DrawButton (ctx,colourScheme, _person, checked) {
         var linkArea = { x1: 0, x2: 0, y1: 0, y2: 0, action: 'box' };
         //
         if (_person.IsDisplayed &&
                     _person.X2 > 0 &&
-                    _person.X1 < this.screen_width &&
+                    _person.X1 < ctx.canvas.width &&
                     _person.Y2 > -100 &&
-                    _person.Y1 < this.screen_height &&
+                    _person.Y1 < ctx.canvas.height &&
                     _person.ChildLst.length > 0 &&
                     _person.zoom >= 3 &&
                     !_person.IsHtmlLink
@@ -139,12 +100,12 @@ export class TreeUI {
             // because obviously the we want the parent to stay visible so we
             // can turn on and off the childrens visibility. if we cant see it , we cant turn anything on and off..
             if (checked) {
-                  this.context.fillStyle = "red";
-                this.context.drawImage(this.docClose, _person.X1 - 10, _person.Y1 + 5);
+                ctx.fillStyle = colourScheme.checkedOpenColour;
+                ctx.drawImage(this.docClose, _person.X1 - 10, _person.Y1 + 5);
             }
             else {
-                 this.context.fillStyle = "black";
-                this.context.drawImage(this.docNew, _person.X1 - 10, _person.Y1 + 5);
+                ctx.fillStyle  = colourScheme.checkedClosedColour;
+                ctx.drawImage(this.docNew, _person.X1 - 10, _person.Y1 + 5);
             }
 
 
@@ -163,116 +124,98 @@ export class TreeUI {
 
     }
 
-    DrawPerson (_person, sourceId, zoomPerc) {
+    DrawPerson (ctx,colourScheme,_person, sourceId, zoomPerc) {
 
-        var xoffset = 0;
+        let xoffset = 0;
 
-        var linkArea = { x1: 0, x2: 0, y1: 0, y2: 0, action: '' };
+        let linkArea = { x1: 0, x2: 0, y1: 0, y2: 0, action: '' };
 
         if (_person.IsDisplayed &&
                     _person.X2 > 0 &&
-                    _person.X1 < this.screen_width &&
+                    _person.X1 < ctx.canvas.width &&
                     _person.Y2 > -100 &&
-                    _person.Y1 < this.screen_height) {
+                    _person.Y1 < ctx.canvas.height) {
 
 
-            this.context.beginPath();
+            ctx.beginPath();
 
-
-            //   this.context.rect(_person.X1, _person.Y1, this.boxWidth, this.boxHeight);
 
             if (_person.zoom >= 1000) {
-                var rectX = _person.X1;
-                var rectY = _person.Y1;
-                var rectWidth = Math.abs(_person.X2 - _person.X1);
-                var rectHeight = Math.abs(_person.Y2 - _person.Y1);
-                var radius = 10;
-                this.context.strokeStyle = "#99003A";
-                this.context.lineWidth = 2;
-                this.RoundedRect(this.context, rectX, rectY, rectWidth, rectHeight, radius);
+                let rectX = _person.X1;
+                let rectY = _person.Y1;
+                let rectWidth = Math.abs(_person.X2 - _person.X1);
+                let rectHeight = Math.abs(_person.Y2 - _person.Y1);
+                let radius = 10;
+                ctx.strokeStyle = colourScheme.strokeStyle;
+                ctx.lineWidth = colourScheme.lineWidth;
+                this.RoundedRect(ctx, rectX, rectY, rectWidth, rectHeight, radius);
             }
             else {
                 if (this.modelCode == 1) {
                     //boxs
                     xoffset = 3;
 
-                    this.context.rect(_person.X1, _person.Y1, Math.abs(_person.X2 - _person.X1), Math.abs(_person.Y2 - _person.Y1));
-
-
-                    this.context.fillStyle = this.backgroundcolour;
-                    this.context.fill();
-                    this.context.lineWidth = 1;
-                    this.context.strokeStyle = this.linecolour;
-                    this.context.stroke();
+                    ctx.rect(_person.X1, _person.Y1, Math.abs(_person.X2 - _person.X1), Math.abs(_person.Y2 - _person.Y1));
+                    ctx.fillStyle = colourScheme.backgroundcolour;
+                    ctx.fill();
+                    ctx.lineWidth = colourScheme.lineWidth;
+                    ctx.strokeStyle = colourScheme.linecolour;
+                    ctx.stroke();
 
                 }
                 else {
                     xoffset = 16;
                     //lines
-                    var halfwidth = Math.abs(_person.X2 - _person.X1) / 2;
-                    var middlebox = _person.X1 + halfwidth;
-
-
+                    let halfwidth = Math.abs(_person.X2 - _person.X1) / 2;
+                    let middlebox = _person.X1 + halfwidth;
 
                     //middle of box
                     if ((_person.ChildCount > 0 || _person.SpouseIdLst.length> 0) && !_person.IsHtmlLink) {
-                    //
-                        // this.context.beginPath();
 
                         if (_person.GenerationIdx == 0) {
-
-                            this.context.moveTo(middlebox, _person.Y2 - 7);
-                            this.context.lineTo(middlebox, _person.Y2);
-                            this.context.closePath();
-                            this.context.fill();
-                            this.context.globalAlpha = 1;
-                            this.context.lineWidth = 7;
+                            ctx.moveTo(middlebox, _person.Y2 - 7);
+                            ctx.lineTo(middlebox, _person.Y2);
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.globalAlpha = colourScheme.globalAlpha;
+                            ctx.lineWidth = colourScheme.heavyLineWidth;
                         }
                         else {
 
-                            this.context.moveTo(middlebox, _person.Y1);
-                            this.context.lineTo(middlebox, _person.Y2);
-                            this.context.closePath();
-                            this.context.fill();
-                            this.context.globalAlpha = 0.5;
-                            this.context.lineWidth = 2;
-
-
+                            ctx.moveTo(middlebox, _person.Y1);
+                            ctx.lineTo(middlebox, _person.Y2);
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.globalAlpha = colourScheme.globalAlpha;
+                            ctx.lineWidth = colourScheme.lineWidth;
                         }
-
-
-
-
                     }
                     else {
 
                         if (!_person.IsHtmlLink) {
-
-                            this.context.moveTo(middlebox, _person.Y1);
-                            this.context.lineTo(middlebox, _person.Y1 + 7);
+                            ctx.moveTo(middlebox, _person.Y1);
+                            ctx.lineTo(middlebox, _person.Y1 + 7);
                         }
                         else {
-                            this.context.moveTo(middlebox, _person.Y2 - 7);
-                            this.context.lineTo(middlebox, _person.Y2);
+                            ctx.moveTo(middlebox, _person.Y2 - 7);
+                            ctx.lineTo(middlebox, _person.Y2);
                         }
 
-                        this.context.closePath();
-                        this.context.fill();
-                        this.context.globalAlpha = 0.9;
-                        this.context.lineWidth = 7;
-
-
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.globalAlpha =  colourScheme.globalAlpha;
+                        ctx.lineWidth = colourScheme.heavyLineWidth;
                     }
 
-                    this.context.strokeStyle = this.linecolour;
-                    this.context.stroke();
+                    ctx.strokeStyle = colourScheme.linecolour;
+                    ctx.stroke();
                 }
 
 
             }
 
 
-            this.context.globalAlpha = 1.0;
+            ctx.globalAlpha = colourScheme.globalAlpha;
 
             var linespacing = 15;
 
@@ -282,7 +225,7 @@ export class TreeUI {
             }
 
 
-            var _y = this.WriteName(_person.X1 + xoffset, _person.Y1 + 19, _person, 0);
+            var _y = this.WriteName(ctx,colourScheme,_person.X1 + xoffset, _person.Y1 + 19, _person, 0);
 
             if (_person.IsHtmlLink) {
                 linkArea.y1 = _person.Y1;
@@ -295,16 +238,16 @@ export class TreeUI {
                 linkArea = null;
             }
 
-            this.context.font = "8pt Calibri";
-            this.context.fillStyle = this.textcolour;
+            ctx.font = colourScheme.defaultFont;
+            ctx.fillStyle = colourScheme.textcolour;
 
             switch (_person.zoom) {
 
                 case 4: //show name
-                    this.context.fillText("DOB: " + _person.RecordLink.DOB, _person.X1 + xoffset, _y);
+                    ctx.fillText("DOB: " + _person.RecordLink.DOB, _person.X1 + xoffset, _y);
                     _y += linespacing;
                     if (_y <= _person.Y2 - 10) {
-                        _y = this.WriteBLocation(_person.X1 + xoffset, _y, _person, 1); //+ linespacing
+                        _y = this.WriteBLocation(ctx,colourScheme,_person.X1 + xoffset, _y, _person, 1); //+ linespacing
                     }
                     break;
                 case 5: //show name
@@ -312,19 +255,19 @@ export class TreeUI {
                 case 7:
                 case 8:
 
-                    this.context.fillText("Dob: " + _person.RecordLink.DOB, _person.X1 + xoffset, _y);
+                    ctx.fillText("Dob: " + _person.RecordLink.DOB, _person.X1 + xoffset, _y);
                     _y += linespacing;
 
                     if (_y <= _person.Y2 - 10) {
-                        _y = this.WriteBLocation(_person.X1 + xoffset, _y, _person, 2); //+ linespacing
+                        _y = this.WriteBLocation(ctx,colourScheme,_person.X1 + xoffset, _y, _person, 2); //+ linespacing
                     }
 
                     if (_y <= _person.Y2 - 10) {
-                        this.context.fillText("Dod: " + _person.RecordLink.DOD, _person.X1 + xoffset, _y);
+                        ctx.fillText("Dod: " + _person.RecordLink.DOD, _person.X1 + xoffset, _y);
 
                         _y += linespacing;
 
-                        this.WriteDLocation(_person.X1 + xoffset, _y, _person, 2);
+                        this.WriteDLocation(ctx, colourScheme, _person.X1 + xoffset, _y, _person, 2);
                     }
                     break;
 
@@ -351,15 +294,15 @@ export class TreeUI {
         ctx.stroke();
     }
 
-    WriteName(xpos, ypos, _person, maxlines) {
-        this.context.font = "bold 8pt Calibri";
+    WriteName(ctx,colourScheme,xpos, ypos, _person, maxlines) {
+        ctx.font = "bold 8pt Calibri";
 
         if (_person.IsHtmlLink) {
             //this.context.fillStyle = "#1600BF";
-            this.context.fillStyle = this.spousecolour;
+            ctx.fillStyle = colourScheme.spousecolour;
         }
         else {
-            this.context.fillStyle = this.textcolour;
+            ctx.fillStyle = colourScheme.textcolour;
         }
 
         var _textToDisplay = this.MakeArray(_person, _person.RecordLink.Name);
@@ -372,19 +315,20 @@ export class TreeUI {
         }
 
         for (var i = 0; i < maxlines; i++) {
-            this.context.fillText(_textToDisplay[i], xpos, _y);
+            ctx.fillText(_textToDisplay[i], xpos, _y);
             _y += linespacing;
         }
 
         //reset to black.
-        this.context.font = "8pt Calibri";
-        this.context.fillStyle = "black";
+        ctx.font = colourScheme.defaultFont;
+        ctx.fillStyle = "black";
         return _y;
     }
 
-    WriteBLocation(xpos, ypos, _person, maxlines) {
-        this.context.font = "8pt Calibri";
-        this.context.fillStyle = this.textcolour;
+    WriteBLocation(ctx,colourScheme,xpos, ypos, _person, maxlines) {
+
+        ctx.font = colourScheme.defaultFont;
+        ctx.fillStyle = colourScheme.textcolour;
 
         _person.RecordLink.BirthLocation = _person.RecordLink.BirthLocation.replace(",", " ");
         _person.RecordLink.BirthLocation = _person.RecordLink.BirthLocation.replace("  ", " ");
@@ -401,15 +345,16 @@ export class TreeUI {
 
 
         for (var i = 0; i < maxlines; i++) {
-            this.context.fillText(_textToDisplay[i], xpos, _y);
+            ctx.fillText(_textToDisplay[i], xpos, _y);
             _y += linespacing;
         }
         return _y;
     }
 
-    WriteDLocation(xpos, ypos, _person, maxlines) {
-        this.context.font = "8pt Calibri";
-        this.context.fillStyle = this.textcolour;
+    WriteDLocation(ctx,colourScheme,xpos, ypos, _person, maxlines) {
+
+        ctx.font = colourScheme.defaultFont;
+        ctx.fillStyle = colourScheme.textcolour;
 
         var _textToDisplay = this.MakeArray(_person, _person.RecordLink.DeathLocation);
 
@@ -423,12 +368,13 @@ export class TreeUI {
 
         for (var i = 0; i < maxlines; i++) {
             if (_y < _person.Y2 - 10) {
-                this.context.fillText(_textToDisplay[i], xpos, _y);
+                ctx.fillText(_textToDisplay[i], xpos, _y);
                 _y += linespacing;
             }
         }
         return _y;
     }
+
     MakeArray(person, parseStr) {
 
         var name = '';
@@ -479,46 +425,4 @@ export class TreeUI {
     }
 
 
-    WireUp(runner){
-      $("#myCanvas").unbind();
-      $(".button_box").unbind();
-
-      $(".button_box").mousedown(function (evt) {
-          var _dir = '';
-
-          if (evt.target.id == "up") _dir = 'UP';
-          if (evt.target.id == "dn") _dir = 'DOWN';
-          if (evt.target.id == "we") _dir = 'WEST';
-          if (evt.target.id == "no") _dir = 'NORTH';
-          if (evt.target.id == "es") _dir = 'EAST';
-          if (evt.target.id == "so") _dir = 'SOUTH';
-          if (evt.target.id == "de") _dir = 'DEBUG';
-
-          runner.movebuttondown(_dir);
-
-      }).mouseup(function () {
-          runner.movebuttonup();
-      });
-
-      $("#myCanvas").mousedown(function (evt) {
-          evt.preventDefault();
-          evt.originalEvent.preventDefault();
-          runner.canvasmousedown();
-      });
-
-      $("#myCanvas").mouseup(function (evt) {
-        evt.preventDefault();
-        runner.canvasmouseup();
-      });
-
-      $("#myCanvas").click(function (evt) {
-        var boundingrec = document.getElementById("myCanvas").getBoundingClientRect();
-        runner.canvasclick(evt.clientX ,boundingrec.left, evt.clientY , boundingrec.top);
-      });
-
-      $("#myCanvas").mousemove(function (evt) {
-         var boundingrec = document.getElementById("myCanvas").getBoundingClientRect();
-         runner.canvasmove(evt.clientX ,boundingrec.left, evt.clientY , boundingrec.top);
-      });
-    }
 }

@@ -33,19 +33,49 @@ export default createStore(
     mapdown: false,
     mapleft :false,
     mapright :false,
-    layoutDefaults :{
-      topSpan :20.0,
-      middleSpan :40.0,
-      lowerSpan :20.0,
-      distancesbetfam :100.0,
-      boxHeight :70.0,
-      boxWidth :70.0,
-      distanceBetweenGens :170.0,
-      distanceBetweenBoxs :30.0,
-      zoomLevel :Number(100),
-      zoomPercentage : 100.0,
-      halfBoxWidth : 35.0,
-      halfBoxHeight :35.0
+
+
+    staticSettings : {
+      layoutDefaults :{
+        topSpan :20.0,
+        middleSpan :40.0,
+        lowerSpan :20.0,
+        distancesbetfam :100.0,
+        boxHeight :70.0,
+        boxWidth :70.0,
+        distanceBetweenGens :170.0,
+        distanceBetweenBoxs :30.0,
+        zoomLevel :Number(100),
+        zoomPercentage : 100.0,
+        halfBoxWidth : 35.0,
+        halfBoxHeight :35.0
+      },
+      colourScheme:{
+        ancestor :{
+          backgroundcolour : 'white',
+          linecolour : 'black',
+          textcolour : 'black',
+          spousecolour : 'slateblue',
+          globalAlpha : 0.5,
+          lineWidth :2,
+          heavyLineWidth :7,
+          strokeStyle : '#99003A',
+          defaultFont :'8pt Calibri'
+        },
+        descendent :{
+          backgroundcolour : 'black',
+          linecolour : '#99CCFF',
+          textcolour : 'black',
+          spousecolour : 'slateblue',
+          globalAlpha : 0.5,
+          lineWidth :2,
+          heavyLineWidth :7,
+          checkedOpenColour: 'red',
+          checkedClosedColour: 'black',
+          strokeStyle : '#99003A',
+          defaultFont :'8pt Calibri'
+        },
+      }
     },
     fdSettings :{
       stiffness :400.0,
