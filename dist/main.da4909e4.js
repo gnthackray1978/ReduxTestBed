@@ -81966,7 +81966,7 @@ class PersonList extends _react.default.Component {
       })));
     }), emptyRows > 0 && _react.default.createElement(_TableRow.default, {
       style: {
-        height: 49 * emptyRows
+        height: 20 * emptyRows
       }
     }, _react.default.createElement(_TableCell.default, {
       colSpan: 6
