@@ -67143,6 +67143,11 @@ class VisualisationHandler extends _react.Component {
 
     if (this.props.graphActive) {
       if (!this.props.graphRunning) {
+        this.props.context.canvas.style.top = 0;
+        this.props.context.canvas.style.left = 0;
+        this.props.context.canvas.width = window.innerWidth;
+        this.props.context.canvas.height = window.innerHeight;
+
         if (this.props.graphActiveLayout == 'ancestors') {
           this.props.toggleGraphRunning(true);
           this.initAncestors(this.props.graphActiveSelection);
@@ -67168,11 +67173,6 @@ class VisualisationHandler extends _react.Component {
   }
 
   initDescendents(selectedId) {
-    let context = this.props.context;
-    context.canvas.style.top = 0;
-    context.canvas.style.left = 0;
-    context.canvas.width = window.innerWidth;
-    context.canvas.height = window.innerHeight;
     var loader = new _DescGraphCreator.DescGraphCreator(this.props.families, this.props.persons);
     loader.GetGenerations(selectedId, data => {
       this._tree = new _DescTree.DescTree();
@@ -67184,11 +67184,6 @@ class VisualisationHandler extends _react.Component {
   }
 
   initAncestors(selectedId) {
-    let context = this.props.context;
-    context.canvas.style.top = 0;
-    context.canvas.style.left = 0;
-    context.canvas.width = window.innerWidth;
-    context.canvas.height = window.innerHeight;
     var loader = new _AncGraphCreator.AncGraphCreator(this.props.families, this.props.persons);
     loader.GetGenerations(selectedId, data => {
       this._tree = new _AncTree.AncTree();
@@ -67200,13 +67195,8 @@ class VisualisationHandler extends _react.Component {
   }
 
   runGraphDirected(selectedId) {
-    let context = this.props.context;
-    context.canvas.style.top = 0;
-    context.canvas.style.left = 0;
-    context.canvas.width = window.innerWidth;
-    context.canvas.height = window.innerHeight;
     let loader = new _DescGraphCreator.DescGraphCreator(this.props.families, this.props.persons);
-    this._forceDirect = new _ForceDirect.ForceDirect(this.props.fdSettings, loader, context, (name, value) => {});
+    this._forceDirect = new _ForceDirect.ForceDirect(this.props.fdSettings, loader, this.props.context, (name, value) => {});
 
     this._forceDirect.init(selectedId);
   }

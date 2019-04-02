@@ -119,6 +119,14 @@ class VisualisationHandler extends Component {
 
       if(this.props.graphActive){
         if(!this.props.graphRunning){
+
+          this.props.context.canvas.style.top=0;
+          this.props.context.canvas.style.left=0;
+
+          this.props.context.canvas.width = window.innerWidth;
+          this.props.context.canvas.height = window.innerHeight;
+
+
           if(this.props.graphActiveLayout== 'ancestors'){
             this.props.toggleGraphRunning(true);
             this.initAncestors(this.props.graphActiveSelection);
@@ -148,13 +156,6 @@ class VisualisationHandler extends Component {
 
 
    initDescendents(selectedId){
-     let context = this.props.context;
-     context.canvas.style.top=0;
-     context.canvas.style.left=0;
-
-     context.canvas.width = window.innerWidth;
-     context.canvas.height = window.innerHeight;
-
      var loader = new DescGraphCreator(this.props.families,this.props.persons);
      loader.GetGenerations(selectedId,(data)=>{
        this._tree = new DescTree();
@@ -166,46 +167,22 @@ class VisualisationHandler extends Component {
    }
 
    initAncestors(selectedId){
-
-     let context = this.props.context;
-     context.canvas.style.top=0;
-     context.canvas.style.left=0;
-
-     context.canvas.width = window.innerWidth;
-     context.canvas.height = window.innerHeight;
-
      var loader = new AncGraphCreator(this.props.families,this.props.persons);
-
      loader.GetGenerations(selectedId,(data)=>{
        this._tree = new AncTree();
        this._tree.SetInitialValues(data.Generations,selectedId, this.props.context, this.props.staticSettings, ()=>{
          this.rAF = requestAnimationFrame(this.updateAnimationState);
        });
      });
-
-
    }
 
 
    runGraphDirected(selectedId) {
-
-     let context = this.props.context;
-
-     context.canvas.style.top=0;
-     context.canvas.style.left=0;
-
-     context.canvas.width = window.innerWidth;
-     context.canvas.height = window.innerHeight;
-
      let loader = new DescGraphCreator(this.props.families,this.props.persons);
-
-     this._forceDirect = new ForceDirect(this.props.fdSettings,loader,context,(name,value)=>{
+     this._forceDirect = new ForceDirect(this.props.fdSettings,loader,this.props.context,(name,value)=>{
 
       });
-
-      this._forceDirect.init(selectedId);
-
-
+     this._forceDirect.init(selectedId);
    }
 
    stopAll(){
