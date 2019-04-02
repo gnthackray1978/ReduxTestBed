@@ -1,36 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-
-
-
 import { connect } from "react-redux";
 import {setLayout,setContext,toggleGraphRunning} from "../actions/creators.jsx";
-
 import {AncGraphCreator} from "../DataLoader/AncGraphCreator.js";
 import {DescGraphCreator} from "../DataLoader/DescGraphCreator.js";
-import {TreeUI} from "../DataLoader/TreeUI.js";
 import {AncTree} from "../DataLoader/AncTree.js";
 import {DescTree} from "../DataLoader/DescTree.js";
+import {GraphEventConnector} from "../DataLoader/GraphEventConnector.js";
 import {ForceDirect} from "../ForceDirected/ForceDirect.js";
 import GraphContainer from "./Canvas/GraphContainer.jsx";
 
 
 const styles = {
-
-  formControl: {
-    marginTop: 15,
-    marginLeft:10
-  },
-
-
 
   label: {
 
@@ -38,107 +21,7 @@ const styles = {
 
   },
 
-
-
 };
-
-
-
-
-class GraphEventConnector{
-
-  constructor(){
-    this._connected=false;
-    this._mouseDown =false;
-  }
-
-  Connect(ctx,props, callback){
-
-  //  let mouseDown =false;
-  //  this.callback = callback;
-
-    this.parseMapButtonState(props,callback);
-
-    // dont subscribe to the events over and over
-    if(!this._connected)
-    {
-        ctx.canvas.addEventListener('mousedown', (evt) => {
-          evt.preventDefault();
-          this._mouseDown =true;
-          callback('canvas_mousedown',evt);
-        });
-
-        ctx.canvas.addEventListener('mouseup', (evt) => {
-          evt.preventDefault();
-          this._mouseDown = false;
-          callback('canvas_mouseup',evt);
-        });
-
-        ctx.canvas.addEventListener('dblclick', (evt) => {
-          evt.preventDefault();
-          callback('canvas_dblclick',evt);
-        });
-
-        ctx.canvas.addEventListener('click', (evt) => {
-          var boundingrec =  ctx.canvas.getBoundingClientRect();
-          //  this._tree.PerformClick(clientX- boundingrecleft, clientY - boundingrectop);
-
-          let point ={
-            x: (evt.clientX - boundingrec.left),
-            y: ( evt.clientY  - boundingrec.top),
-            evt : evt
-          };
-
-          callback('canvas_click', point);
-
-        });
-
-        ctx.canvas.addEventListener('mousemove', (evt) => {
-          var boundingrec =  ctx.canvas.getBoundingClientRect();
-        //  this.canvasmove(evt.clientX ,boundingrec.left, evt.clientY , boundingrec.top);
-
-          let point ={
-            x: (evt.clientX - boundingrec.left),
-            y: ( evt.clientY  - boundingrec.top),
-            mouseDown: this._mouseDown,
-            evt: evt
-          };
-
-          callback('canvas_mousemove', point);
-        });
-
-        this._connected =true;
-    }
-
-  }
-
-  parseMapButtonState(buttonState,callback){
-    let dir ='';
-
-    if(!buttonState.zoomin &&
-      !buttonState.zoomout &&
-      !buttonState.mapleft &&
-      !buttonState.mapright &&
-      !buttonState.mapup &&
-      !buttonState.mapdown)
-      {
-        clearInterval(this._moveTimer);
-        return;
-      }
-
-
-    if(buttonState.zoomin) dir ='DOWN';
-    if(buttonState.zoomout) dir ='UP';
-    if(buttonState.mapleft) dir ='EAST';
-    if(buttonState.mapright) dir ='RIGHT';
-    if(buttonState.mapup) dir ='NORTH';
-    if(buttonState.mapdown) dir ='SOUTH';
-
-    this._moveTimer = setInterval( () =>{ callback('control_down',dir); }, 100);
-  }
-
-
-}
 
 class VisualisationHandler extends Component {
 
@@ -234,24 +117,15 @@ class VisualisationHandler extends Component {
         }
       });
 
-
-
-
       if(this.props.graphActive){
         if(!this.props.graphRunning){
           if(this.props.graphActiveLayout== 'ancestors'){
             this.props.toggleGraphRunning(true);
-            this.initAncestors(this.props.graphActiveSelection, (selectedId, data, treeUI)=>{
-              this.runAncestors(selectedId, data, treeUI);
-            });
+            this.initAncestors(this.props.graphActiveSelection);
           }
           if(this.props.graphActiveLayout== 'descendents'){
             this.props.toggleGraphRunning(true);
-            this.initDescendents(this.props.graphActiveSelection, (selectedId, data, treeUI)=>{
-              this.runDescendants(selectedId, data, treeUI);
-            });
-
-
+            this.initDescendents(this.props.graphActiveSelection);
           }
           if(this.props.graphActiveLayout== 'forceDirect'){
             this.props.toggleGraphRunning(true);
@@ -273,107 +147,45 @@ class VisualisationHandler extends Component {
 
 
 
-   initDescendents(selectedId, complete){
+   initDescendents(selectedId){
      let context = this.props.context;
+     context.canvas.style.top=0;
+     context.canvas.style.left=0;
+
+     context.canvas.width = window.innerWidth;
+     context.canvas.height = window.innerHeight;
+
      var loader = new DescGraphCreator(this.props.families,this.props.persons);
-     loader.GetGenerations(selectedId,function(data){
-
-       console.log(data.Generations.length);
-
-       let treeUI = new TreeUI();
-       context.canvas.style.top=0;
-       context.canvas.style.left=0;
-
-       context.canvas.width = window.innerWidth;
-       context.canvas.height = window.innerHeight;
-
-
-       treeUI.Init(1,context, (instance)=>{
-      //   console.log('tree ui loaded');
-         complete(selectedId, data, treeUI);
+     loader.GetGenerations(selectedId,(data)=>{
+       this._tree = new DescTree();
+       this._tree.SetInitialValues(data.Generations,selectedId, this.props.context, this.props.staticSettings, ()=>{
+         this.rAF = requestAnimationFrame(this.updateAnimationState);
        });
-
      });
+
    }
 
-   initAncestors(selectedId, complete){
+   initAncestors(selectedId){
 
      let context = this.props.context;
+     context.canvas.style.top=0;
+     context.canvas.style.left=0;
+
+     context.canvas.width = window.innerWidth;
+     context.canvas.height = window.innerHeight;
 
      var loader = new AncGraphCreator(this.props.families,this.props.persons);
 
-     loader.GetGenerations(selectedId,function(data){
-
-       //console.log(data.Generations.length);
-
-       let treeUI = new TreeUI();
-       context.canvas.style.top=0;
-       context.canvas.style.left=0;
-
-       context.canvas.width = window.innerWidth;
-       context.canvas.height = window.innerHeight;
-
-
-       treeUI.Init(1,context, (instance)=>{
-      //   console.log('tree ui loaded');
-         complete(selectedId, data, treeUI);
+     loader.GetGenerations(selectedId,(data)=>{
+       this._tree = new AncTree();
+       this._tree.SetInitialValues(data.Generations,selectedId, this.props.context, this.props.staticSettings, ()=>{
+         this.rAF = requestAnimationFrame(this.updateAnimationState);
        });
-
      });
-   }
 
-   runAncestors(selectedId, data, treeUI) {
-     //   TreeUI.WireUp(_treeRunner);
-     //   _treeRunner.run(selectedId,data, new AncTree(),treeUI);
-     console.log('running ancs: '+selectedId );
-
-     var _zoomLevel = 100;
-
-     this._tree = new AncTree();
-
-     this._tree.selectedPersonId = selectedId;
-     this._tree.selectedPersonX = 0;
-     this._tree.selectedPersonY = 0;
-
-     this._tree.SetInitialValues(this.props.context, this.props.staticSettings);
-
-     this._tree.treeUI = treeUI;
-
-     this._tree.generations = data.Generations;
-
-     this._tree.UpdateGenerationState();
-
-     this._tree.RelocateToSelectedPerson();
-
-     this._tree.bt_refreshData = false;
-
-     this.rAF = requestAnimationFrame(this.updateAnimationState);
 
    }
 
-   runDescendants(selectedId, data, treeUI) {
-
-     this._tree = new DescTree();
-
-     this._tree.selectedPersonId = selectedId;
-     this._tree.selectedPersonX = 0;
-     this._tree.selectedPersonY = 0;
-
-
-     this._tree.SetInitialValues(this.props.context, this.props.staticSettings);
-
-     this._tree.treeUI = treeUI;
-
-     this._tree.generations = data.Generations;
-
-     this._tree.UpdateGenerationState();
-
-     this._tree.RelocateToSelectedPerson();
-
-     this._tree.bt_refreshData = false;
-
-     this.rAF = requestAnimationFrame(this.updateAnimationState);
-   }
 
    runGraphDirected(selectedId) {
 

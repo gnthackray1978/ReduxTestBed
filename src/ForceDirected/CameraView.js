@@ -103,10 +103,6 @@ CameraView.prototype = {
 
 
 
-        //   this.drawingWidth = this.drawingX2 - this.drawingX1;
-        //  this.drawingHeight = this.drawingY2 - this.drawingY1;
-
-
 
         if (this.graph_width !== 0 && this.graph_height !== 0) {
             if (this.centrePoint > 0) {
