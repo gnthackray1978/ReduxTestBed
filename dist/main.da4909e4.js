@@ -62944,6 +62944,27 @@ class PureFunctions {
     return _returnVal;
   }
 
+  static GetTreePerson(graph, personId) {
+    var _genidx = 0;
+    var _personIdx = 0;
+
+    while (_genidx < graph.length) {
+      _personIdx = 0;
+
+      while (_personIdx < graph[_genidx].length) {
+        if (graph[_genidx][_personIdx].PersonId == personId) {
+          return graph[_genidx][_personIdx];
+        }
+
+        _personIdx++;
+      }
+
+      _genidx++;
+    }
+
+    return null;
+  }
+
 }
 
 exports.PureFunctions = PureFunctions;
@@ -63536,26 +63557,6 @@ AncTree.prototype = {
       callback();
     });
   },
-  _GetTreePerson: function _GetTreePerson(graph, personId) {
-    var _genidx = 0;
-    var _personIdx = 0;
-
-    while (_genidx < graph.length) {
-      _personIdx = 0;
-
-      while (_personIdx < graph[_genidx].length) {
-        if (graph[_genidx][_personIdx].PersonId == personId) {
-          return graph[_genidx][_personIdx];
-        }
-
-        _personIdx++;
-      }
-
-      _genidx++;
-    }
-
-    return null;
-  },
   SetVisibility: function SetVisibility(parent, isDisplay) {
     var personStack = [];
     parent.Children.forEach(child => {
@@ -63675,7 +63676,7 @@ AncTree.prototype = {
     var mouseLink = _StaticGraphLib.PureFunctions.LinkContainingPoint(this.bt_links, x, y);
 
     if (mouseLink !== null) {
-      var selectedPerson = this._GetTreePerson(this.generations, mouseLink.action); //     var zoomReq = this.zoomPercentage; //-100
+      var selectedPerson = _StaticGraphLib.PureFunctions.GetTreePerson(this.generations, mouseLink.action); //     var zoomReq = this.zoomPercentage; //-100
       //   var xpos = selectedPerson.X1;
       //   var ypos = selectedPerson.Y1;
 
@@ -63694,7 +63695,7 @@ AncTree.prototype = {
       if (buttonLink !== null) {
         var parts = buttonLink.action.split(',');
 
-        var clickedPerson = this._GetTreePerson(this.generations, parts[0]);
+        var clickedPerson = _StaticGraphLib.PureFunctions.GetTreePerson(this.generations, parts[0]);
 
         var isVis = true;
 
@@ -63758,7 +63759,7 @@ AncTree.prototype = {
     var distanceToMove = 0.0;
     var currentPersonLocation = 0;
 
-    var _temp = this._GetTreePerson(this.generations, personId);
+    var _temp = _StaticGraphLib.PureFunctions.GetTreePerson(this.generations, personId);
 
     var x = 0.0;
     var y = 0.0;
@@ -64586,26 +64587,6 @@ DescTree.prototype = {
       callback();
     });
   },
-  _GetTreePerson: function _GetTreePerson(graph, personId) {
-    var _genidx = 0;
-    var _personIdx = 0;
-
-    while (_genidx < graph.length) {
-      _personIdx = 0;
-
-      while (_personIdx < graph[_genidx].length) {
-        if (graph[_genidx][_personIdx].PersonId == personId) {
-          return graph[_genidx][_personIdx];
-        }
-
-        _personIdx++;
-      }
-
-      _genidx++;
-    }
-
-    return null;
-  },
   SetVisibility: function SetVisibility(parent, isDisplay) {
     var personStack = [];
     parent.Children.forEach(child => {
@@ -64691,7 +64672,7 @@ DescTree.prototype = {
     var mouseLink = _StaticGraphLib.PureFunctions.LinkContainingPoint(this.bt_links, x, y);
 
     if (mouseLink !== null) {
-      var selectedPerson = this._GetTreePerson(this.generations, mouseLink.action);
+      var selectedPerson = _StaticGraphLib.PureFunctions.GetTreePerson(this.generations, mouseLink.action);
 
       this.selectedPersonId = selectedPerson.PersonId;
       this.selectedPersonX = selectedPerson.X1;
@@ -64703,7 +64684,7 @@ DescTree.prototype = {
       if (buttonLink !== null) {
         var parts = buttonLink.action.split(',');
 
-        var clickedPerson = this._GetTreePerson(this.generations, parts[0]);
+        var clickedPerson = _StaticGraphLib.PureFunctions.GetTreePerson(this.generations, parts[0]);
 
         var isVis = true;
 
@@ -64765,7 +64746,7 @@ DescTree.prototype = {
     var distanceToMove = 0.0;
     var currentPersonLocation = 0;
 
-    var _temp = this._GetTreePerson(this.generations, personId);
+    var _temp = _StaticGraphLib.PureFunctions.GetTreePerson(this.generations, personId);
 
     var x = 0.0;
     var y = 0.0;

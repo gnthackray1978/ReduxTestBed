@@ -61,7 +61,7 @@ export function AncTree() {
 AncTree.prototype = {
 
 
- 
+
 
 
    ContainsPerson : function (value) {
@@ -746,28 +746,6 @@ AncTree.prototype = {
        });
     },
 
-    _GetTreePerson: function (graph, personId) {
-
-
-        var _genidx = 0;
-        var _personIdx = 0;
-
-        while (_genidx < graph.length) {
-            _personIdx = 0;
-
-            while (_personIdx < graph[_genidx].length) {
-
-                if (graph[_genidx][_personIdx].PersonId == personId) {
-                    return graph[_genidx][_personIdx];
-                }
-                _personIdx++;
-            }
-            _genidx++;
-        }
-
-        return null;
-    },
-
     SetVisibility: function (parent, isDisplay) {
 
         var personStack = [];
@@ -904,6 +882,7 @@ AncTree.prototype = {
         }
 
     },
+
     GetChildDisplayStatus: function (person) {
 
         var isDisplayed = true;
@@ -936,7 +915,7 @@ AncTree.prototype = {
 
         if (mouseLink !== null) {
 
-            var selectedPerson = this._GetTreePerson(this.generations,mouseLink.action);
+            var selectedPerson = PureFunctions.GetTreePerson(this.generations,mouseLink.action);
 
        //     var zoomReq = this.zoomPercentage; //-100
          //   var xpos = selectedPerson.X1;
@@ -964,7 +943,7 @@ AncTree.prototype = {
 
                 var parts = buttonLink.action.split(',');
 
-                var clickedPerson = this._GetTreePerson(this.generations, parts[0]);
+                var clickedPerson = PureFunctions.GetTreePerson(this.generations, parts[0]);
 
                 var isVis = true;
 
@@ -1057,7 +1036,7 @@ AncTree.prototype = {
 
         var distanceToMove = 0.0;
         var currentPersonLocation = 0;
-        var _temp = this._GetTreePerson(this.generations, personId);
+        var _temp = PureFunctions.GetTreePerson(this.generations, personId);
 
         var x = 0.0;
         var y = 0.0;

@@ -127,7 +127,7 @@ export class PureFunctions{
 
       return _retVal;
   }
-  
+
   static CalcAreaLevel(area) {
       var _returnVal = 0;
 
@@ -154,6 +154,28 @@ export class PureFunctions{
       }
 
       return _returnVal;
+  }
+
+  static GetTreePerson (graph, personId) {
+
+
+      var _genidx = 0;
+      var _personIdx = 0;
+
+      while (_genidx < graph.length) {
+          _personIdx = 0;
+
+          while (_personIdx < graph[_genidx].length) {
+
+              if (graph[_genidx][_personIdx].PersonId == personId) {
+                  return graph[_genidx][_personIdx];
+              }
+              _personIdx++;
+          }
+          _genidx++;
+      }
+
+      return null;
   }
 
 }
