@@ -93,7 +93,7 @@ ForceDirect.prototype = {
         });
     },
 
-    kill: function() {
+    stop: function() {
 
         if(this.gedPreLoader){
             this.gedPreLoader.generations =[];

@@ -20,7 +20,7 @@ class Graph extends Component {
    }
 
   topButtonClicked = (e) => {
-    console.log('Graph mode changed ' + e);
+//    console.log('Graph mode changed ' + e);
 
     if(e == "controls"){
       if(this.props.controlVisible)
@@ -34,7 +34,7 @@ class Graph extends Component {
 
   componentWillReceiveProps(nextProps) {
 
-    console.log('Graph componentWillReceiveProps' );
+  //  console.log('Graph componentWillReceiveProps' );
 
     if (nextProps.loading !== this.props.loading &&
         nextProps.success !== this.props.success &&
@@ -44,13 +44,13 @@ class Graph extends Component {
   }
 
   render() {
-    console.log('Graph render');
+//    console.log('Graph render');
 
 
     return (
       <div>
         <VisualisationHandler></VisualisationHandler>
-        
+
         <TopButtons isData = {false} modeChanged = { this.topButtonClicked }/>
 
         <Container className="cont-width">

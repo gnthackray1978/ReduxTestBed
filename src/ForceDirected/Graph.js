@@ -173,7 +173,7 @@ Graph.prototype = {
 
     */
     Save: function(recordLink) {
-        console.log('Saved ' + recordLink.PersonId);
+      //  console.log('Saved ' + recordLink.PersonId);
 
         //this.layout.selected.
 
@@ -200,7 +200,7 @@ Graph.prototype = {
 
         recordLink.PersonId = 1234;
 
-        console.log('Add ' + recordLink.PersonId);
+    //    console.log('Add ' + recordLink.PersonId);
 
 
         var nodeLink = this.graph.newNode({ label: 'new one', RecordLink: recordLink, type: 'normal' });
@@ -209,7 +209,7 @@ Graph.prototype = {
     },
 
     Delete: function() {
-        console.log('Delete ' );
+    //    console.log('Delete ' );
     }
 
 

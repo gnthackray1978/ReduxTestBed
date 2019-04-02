@@ -28,8 +28,8 @@ class VisualisationHandler extends Component {
   constructor(props) {
      super(props);
 
-     this._tree =null;
-     this._forceDirect =null;
+     this._tree =undefined;
+     this._forceDirect = undefined;
 
      this.updateAnimationState = this.updateAnimationState.bind(this);
 
@@ -55,7 +55,7 @@ class VisualisationHandler extends Component {
    }
 
    componentDidUpdate(){
-      console.log('VisualisationHandler componentDidUpdate' );
+
 
       this._graphEventConnnector.Connect(this.props.context,this.props,  (actionName, data)=>{
         switch (actionName) {
@@ -119,24 +119,22 @@ class VisualisationHandler extends Component {
 
       if(this.props.graphActive){
         if(!this.props.graphRunning){
-
+          this.props.toggleGraphRunning(true);
           this.props.context.canvas.style.top=0;
           this.props.context.canvas.style.left=0;
 
           this.props.context.canvas.width = window.innerWidth;
           this.props.context.canvas.height = window.innerHeight;
 
+          console.log('VisualisationHandler this.props.graphActiveLayout' );
 
           if(this.props.graphActiveLayout== 'ancestors'){
-            this.props.toggleGraphRunning(true);
             this.initAncestors(this.props.graphActiveSelection);
           }
           if(this.props.graphActiveLayout== 'descendents'){
-            this.props.toggleGraphRunning(true);
             this.initDescendents(this.props.graphActiveSelection);
           }
           if(this.props.graphActiveLayout== 'forceDirect'){
-            this.props.toggleGraphRunning(true);
             this.runGraphDirected(this.props.graphActiveSelection);
           }
         }
@@ -156,6 +154,10 @@ class VisualisationHandler extends Component {
 
 
    initDescendents(selectedId){
+     if(this._forceDirect !=undefined){
+        this._forceDirect.stop();
+        this._forceDirect = undefined;
+     }
      var loader = new DescGraphCreator(this.props.families,this.props.persons);
      loader.GetGenerations(selectedId,(data)=>{
        this._tree = new DescTree();
@@ -167,6 +169,10 @@ class VisualisationHandler extends Component {
    }
 
    initAncestors(selectedId){
+     if(this._forceDirect !=undefined){
+        this._forceDirect.stop();
+        this._forceDirect = undefined;
+     }
      var loader = new AncGraphCreator(this.props.families,this.props.persons);
      loader.GetGenerations(selectedId,(data)=>{
        this._tree = new AncTree();
@@ -178,6 +184,8 @@ class VisualisationHandler extends Component {
 
 
    runGraphDirected(selectedId) {
+     this._tree = undefined;
+
      let loader = new DescGraphCreator(this.props.families,this.props.persons);
      this._forceDirect = new ForceDirect(this.props.fdSettings,loader,this.props.context,(name,value)=>{
 
@@ -185,9 +193,6 @@ class VisualisationHandler extends Component {
      this._forceDirect.init(selectedId);
    }
 
-   stopAll(){
-     console.log('clear all ');
-   }
 
     render() {
       return <GraphContainer drawFrame = {(ctx)=>{}}  contextCreated = {this.contextCreated.bind(this)}/>

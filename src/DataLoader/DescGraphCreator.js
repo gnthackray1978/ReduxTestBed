@@ -65,7 +65,7 @@ export class DescGraphCreator {
     }
 
     addNodeChildLinks(graph){
-      console.log('addNodeChildLinks');
+    //  console.log('addNodeChildLinks');
       let genIdx =0;
 
       const addChild= (person, childId, currentGeneration)=>{
@@ -309,7 +309,7 @@ export class DescGraphCreator {
                     tpFamily[lastPersonAdded].IsParentalLink = true;
                 }
                 else {
-                    console.log('zero length family: ' + rawPerson.id);
+                    //console.log('zero length family: ' + rawPerson.id);
                 }
 
 

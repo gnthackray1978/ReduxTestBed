@@ -60563,8 +60563,8 @@ class GraphControl extends _react.Component {
     }
   }
 
-  componentDidMount() {
-    console.log('-componentDidMount:'); // this.props.setClick(this.displayControls, this);
+  componentDidMount() {//   console.log('-componentDidMount:');
+    // this.props.setClick(this.displayControls, this);
     // this.setState({ modalShow: false });
   }
 
@@ -62155,7 +62155,7 @@ class DescGraphCreator {
   }
 
   addNodeChildLinks(graph) {
-    console.log('addNodeChildLinks');
+    //  console.log('addNodeChildLinks');
     let genIdx = 0;
 
     const addChild = (person, childId, currentGeneration) => {
@@ -62340,8 +62340,7 @@ class DescGraphCreator {
       if (tpFamily.length > 0) {
         lastPersonAdded = Math.floor(tpFamily.length / 2);
         tpFamily[lastPersonAdded].IsParentalLink = true;
-      } else {
-        console.log('zero length family: ' + rawPerson.id);
+      } else {//console.log('zero length family: ' + rawPerson.id);
       }
     }
 
@@ -63710,8 +63709,7 @@ AncTree.prototype = {
     }
   },
   SetCentrePoint: function SetCentrePoint(param_x, param_y) {
-    console.log(param_x + ' - ' + param_y);
-
+    //    console.log(param_x + ' - '+ param_y);
     if (param_x == undefined && param_y == undefined) {
       this.centrePointXOffset = 0;
       this.centrePointYOffset = 0;
@@ -66182,8 +66180,8 @@ Graph.prototype = {
   /*save add delete is work in progress and needs fixing
     */
   Save: function Save(recordLink) {
-    console.log('Saved ' + recordLink.PersonId); //this.layout.selected.
-
+    //  console.log('Saved ' + recordLink.PersonId);
+    //this.layout.selected.
     if (this.layout.selected.node.data.RecordLink.PersonId == recordLink.PersonId) {
       this.layout.selected.node.data.RecordLink.BaptismDate = recordLink.BaptismDate;
       this.layout.selected.node.data.RecordLink.BirthDate = recordLink.BirthDate;
@@ -66201,8 +66199,8 @@ Graph.prototype = {
     }
   },
   Add: function Add(recordLink) {
-    recordLink.PersonId = 1234;
-    console.log('Add ' + recordLink.PersonId);
+    recordLink.PersonId = 1234; //    console.log('Add ' + recordLink.PersonId);
+
     var nodeLink = this.graph.newNode({
       label: 'new one',
       RecordLink: recordLink,
@@ -66212,8 +66210,7 @@ Graph.prototype = {
       type: 'person'
     });
   },
-  Delete: function Delete() {
-    console.log('Delete ');
+  Delete: function Delete() {//    console.log('Delete ' );
   }
 };
 },{"./Node.js":"../src/ForceDirected/Node.js","./Edge.js":"../src/ForceDirected/Edge.js"}],"../src/ForceDirected/LayoutList.js":[function(require,module,exports) {
@@ -66866,7 +66863,7 @@ ForceDirect.prototype = {
       that.run(data);
     });
   },
-  kill: function kill() {
+  stop: function stop() {
     if (this.gedPreLoader) {
       this.gedPreLoader.generations = [];
       this.gedPreLoader.searchDepth = 0;
@@ -67069,8 +67066,8 @@ const styles = {
 class VisualisationHandler extends _react.Component {
   constructor(props) {
     super(props);
-    this._tree = null;
-    this._forceDirect = null;
+    this._tree = undefined;
+    this._forceDirect = undefined;
     this.updateAnimationState = this.updateAnimationState.bind(this);
     this._graphEventConnnector = new _GraphEventConnector.GraphEventConnector();
   }
@@ -67087,8 +67084,6 @@ class VisualisationHandler extends _react.Component {
   }
 
   componentDidUpdate() {
-    console.log('VisualisationHandler componentDidUpdate');
-
     this._graphEventConnnector.Connect(this.props.context, this.props, (actionName, data) => {
       switch (actionName) {
         case 'canvas_mousedown':
@@ -67143,23 +67138,22 @@ class VisualisationHandler extends _react.Component {
 
     if (this.props.graphActive) {
       if (!this.props.graphRunning) {
+        this.props.toggleGraphRunning(true);
         this.props.context.canvas.style.top = 0;
         this.props.context.canvas.style.left = 0;
         this.props.context.canvas.width = window.innerWidth;
         this.props.context.canvas.height = window.innerHeight;
+        console.log('VisualisationHandler this.props.graphActiveLayout');
 
         if (this.props.graphActiveLayout == 'ancestors') {
-          this.props.toggleGraphRunning(true);
           this.initAncestors(this.props.graphActiveSelection);
         }
 
         if (this.props.graphActiveLayout == 'descendents') {
-          this.props.toggleGraphRunning(true);
           this.initDescendents(this.props.graphActiveSelection);
         }
 
         if (this.props.graphActiveLayout == 'forceDirect') {
-          this.props.toggleGraphRunning(true);
           this.runGraphDirected(this.props.graphActiveSelection);
         }
       } //  this.processButtonClicks();
@@ -67173,6 +67167,12 @@ class VisualisationHandler extends _react.Component {
   }
 
   initDescendents(selectedId) {
+    if (this._forceDirect != undefined) {
+      this._forceDirect.stop();
+
+      this._forceDirect = undefined;
+    }
+
     var loader = new _DescGraphCreator.DescGraphCreator(this.props.families, this.props.persons);
     loader.GetGenerations(selectedId, data => {
       this._tree = new _DescTree.DescTree();
@@ -67184,6 +67184,12 @@ class VisualisationHandler extends _react.Component {
   }
 
   initAncestors(selectedId) {
+    if (this._forceDirect != undefined) {
+      this._forceDirect.stop();
+
+      this._forceDirect = undefined;
+    }
+
     var loader = new _AncGraphCreator.AncGraphCreator(this.props.families, this.props.persons);
     loader.GetGenerations(selectedId, data => {
       this._tree = new _AncTree.AncTree();
@@ -67195,14 +67201,11 @@ class VisualisationHandler extends _react.Component {
   }
 
   runGraphDirected(selectedId) {
+    this._tree = undefined;
     let loader = new _DescGraphCreator.DescGraphCreator(this.props.families, this.props.persons);
     this._forceDirect = new _ForceDirect.ForceDirect(this.props.fdSettings, loader, this.props.context, (name, value) => {});
 
     this._forceDirect.init(selectedId);
-  }
-
-  stopAll() {
-    console.log('clear all ');
   }
 
   render() {
@@ -67297,8 +67300,7 @@ class Graph extends _react.Component {
     super(props);
 
     _defineProperty(this, "topButtonClicked", e => {
-      console.log('Graph mode changed ' + e);
-
+      //    console.log('Graph mode changed ' + e);
       if (e == "controls") {
         if (this.props.controlVisible) this.props.switchControlVisbility(false);else this.props.switchControlVisbility(true);
       }
@@ -67306,13 +67308,12 @@ class Graph extends _react.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('Graph componentWillReceiveProps');
-
+    //  console.log('Graph componentWillReceiveProps' );
     if (nextProps.loading !== this.props.loading && nextProps.success !== this.props.success && !nextProps.loading && nextprops.success) {}
   }
 
   render() {
-    console.log('Graph render');
+    //    console.log('Graph render');
     return _react.default.createElement("div", null, _react.default.createElement(_VisualisationHandler.default, null), _react.default.createElement(_TopButtons.default, {
       isData: false,
       modeChanged: this.topButtonClicked
@@ -83156,7 +83157,6 @@ class SideDrawer extends _react.Component {
   }
 
   componentDidMount() {
-    console.log('-componentDidMount:');
     this.props.onOpenClick(() => {
       this.setState({
         modalShow: true
@@ -83172,7 +83172,8 @@ class SideDrawer extends _react.Component {
   }
 
   drawLayout(event) {
-    //nothing has changed
+    this.props.toggleGraphRunning(false); //nothing has changed
+
     if (this.props.graphActiveLayout == this.props.layout && this.props.graphActiveSelection == this.props.selection) {
       return;
     }
@@ -83278,6 +83279,9 @@ const mapDispatchToProps = dispatch => {
     },
     activateLayout: (isActive, graphActiveLayout, graphActiveSelection) => {
       dispatch((0, _creators.activateLayout)(isActive, graphActiveLayout, graphActiveSelection));
+    },
+    toggleGraphRunning: isSet => {
+      dispatch((0, _creators.toggleGraphRunning)(isSet));
     }
   };
 };
@@ -83323,14 +83327,11 @@ class Data extends _react.Component {
     super(props);
 
     _defineProperty(this, "handleInput", e => {
-      console.log('Data mode changed ' + e);
       this.dataClick();
     });
   }
 
-  componentDidMount() {
-    console.log('-componentDidMount:');
-  }
+  componentDidMount() {}
 
   render() {
     return _react.default.createElement("div", null, _react.default.createElement(_TopButtons.default, {
@@ -83376,12 +83377,10 @@ class App extends _react.Component {
   }
 
   componentDidMount() {
-    console.log('APP -componentDidMount:');
     this.props.switchControlVisbility(false);
   }
 
   render() {
-    console.log('APP -render:');
     const _this$props = this.props,
           term = _this$props.term,
           status = _this$props.status,

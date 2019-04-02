@@ -77,7 +77,7 @@ class GraphControl extends Component {
    }
 
    componentDidMount() {
-     console.log('-componentDidMount:');
+  //   console.log('-componentDidMount:');
     // this.props.setClick(this.displayControls, this);
     // this.setState({ modalShow: false });
    }

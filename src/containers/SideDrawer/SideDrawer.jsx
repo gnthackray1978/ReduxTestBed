@@ -20,7 +20,7 @@ import GedLoader from "./GedLoader.jsx";
 
 import LayoutSelect from "./LayoutSelect.jsx";
 import { connect } from "react-redux";
-import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,setGedData ,gedLoadFailed,activateLayout} from "../../actions/creators.jsx";
+import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,setGedData ,gedLoadFailed,activateLayout,toggleGraphRunning} from "../../actions/creators.jsx";
 
 
 
@@ -53,7 +53,7 @@ const styles = {
    }
 
    componentDidMount() {
-     console.log('-componentDidMount:');
+
      this.props.onOpenClick(()=>{
        this.setState({ modalShow: true });
      });
@@ -68,8 +68,9 @@ const styles = {
    }
 
    drawLayout(event){
-
+     this.props.toggleGraphRunning(false);
      //nothing has changed
+
      if(this.props.graphActiveLayout == this.props.layout &&
        this.props.graphActiveSelection == this.props.selection){
 
@@ -174,6 +175,10 @@ const mapDispatchToProps = dispatch => {
     activateLayout: (isActive, graphActiveLayout,graphActiveSelection) => {
       dispatch(activateLayout(isActive, graphActiveLayout,graphActiveSelection));
     },
+
+    toggleGraphRunning : isSet =>{
+      dispatch(toggleGraphRunning(isSet))
+    }
   };
 };
 

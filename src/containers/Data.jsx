@@ -13,11 +13,11 @@ export default class Data extends Component {
    }
 
  componentDidMount() {
-   console.log('-componentDidMount:');
+
  }
 
  handleInput = (e) => {
-   console.log('Data mode changed ' + e);
+
    this.dataClick();
  }
 

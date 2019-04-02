@@ -967,7 +967,7 @@ AncTree.prototype = {
 
     SetCentrePoint: function (param_x, param_y) {
 
-        console.log(param_x + ' - '+ param_y);
+    //    console.log(param_x + ' - '+ param_y);
         if (param_x == undefined && param_y == undefined) {
             this.centrePointXOffset = 0;
             this.centrePointYOffset = 0;

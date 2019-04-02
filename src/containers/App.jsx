@@ -19,12 +19,12 @@ class App extends Component {
    }
 
    componentDidMount() {
-     console.log('APP -componentDidMount:');
+
      this.props.switchControlVisbility(false);
    }
 
    render() {
-     console.log('APP -render:');
+
      const { term, status, images } = this.props;
 
     return (
