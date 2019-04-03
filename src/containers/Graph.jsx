@@ -6,7 +6,7 @@ import { Jumbotron, Grid, Row, Col, Image, Button ,Container} from 'react-bootst
 import GraphControl from './MapControls/GraphControl.jsx';
 import TopButtons from './ButtonBar/TopButtons.jsx';
 import { connect } from "react-redux";
-import { switchControlVisbility,beginSearch,reset } from "../actions/creators.jsx";
+import { switchControlVisbility,beginSearch,reset,setRowsPerPage  } from "../actions/creators.jsx";
 import VisualisationHandler from "./VisualisationHandler.jsx";
 
 import './graph.css';
@@ -20,7 +20,7 @@ class Graph extends Component {
    }
 
   topButtonClicked = (e) => {
-//    console.log('Graph mode changed ' + e);
+ 
 
     if(e == "controls"){
       if(this.props.controlVisible)
@@ -93,6 +93,9 @@ const mapDispatchToProps = dispatch => {
     switchControlVisbility: controlVisible => {
       dispatch(switchControlVisbility(controlVisible));
     },
+    setRowsPerPage: rowsPerPage => {
+      dispatch(setRowsPerPage(rowsPerPage));
+    }
   };
 };
 

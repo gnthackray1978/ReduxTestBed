@@ -59,19 +59,19 @@ class LayoutSelect extends Component {
               value="forceDirect"
               control={<Radio color="primary"  className={classes.radio}  />}
               label="Force Direct"
-              labelPlacement="right"
+              labelPlacement="end"
             />
             <FormControlLabel
               value="ancestors"
               control={<Radio color="primary"  className={classes.radio} />}
               label="Ancestors"
-              labelPlacement="rightv"
+              labelPlacement="end"
             />
             <FormControlLabel
               value="descendents"
               control={<Radio color="primary" className={classes.radio}  />}
               label="Descendents"
-              labelPlacement="right"
+              labelPlacement="end"
             />
 
           </RadioGroup>

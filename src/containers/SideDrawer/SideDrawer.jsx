@@ -22,7 +22,8 @@ import GedLoader from "./GedLoader.jsx";
 import LayoutSelect from "./LayoutSelect.jsx";
 
 import { connect } from "react-redux";
-import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,setGedData ,gedLoadFailed,activateLayout,toggleGraphRunning} from "../../actions/creators.jsx";
+import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,setGedData ,
+  gedLoadFailed,activateLayout,toggleGraphRunning,setRowsPerPage} from "../../actions/creators.jsx";
 
 
 
@@ -79,8 +80,11 @@ const styles = theme => ({
    }
 
    toggleDrawer(state){
-     if(this.state.modalShow != state)
+     if(this.state.modalShow != state){
       this.setState({ modalShow: state });
+
+    }
+      this.props.setRowsPerPage();
    }
 
    drawLayout(event){
@@ -120,7 +124,7 @@ const styles = theme => ({
               </Toolbar>
 
               <Toolbar className={classes.toolBar}>
-                <LayoutSelect></LayoutSelect>                
+                <LayoutSelect></LayoutSelect>
               </Toolbar>
 
 
@@ -187,6 +191,9 @@ const mapDispatchToProps = dispatch => {
 
     toggleGraphRunning : isSet =>{
       dispatch(toggleGraphRunning(isSet))
+    },
+    setRowsPerPage : () =>{
+      dispatch(setRowsPerPage())
     }
   };
 };

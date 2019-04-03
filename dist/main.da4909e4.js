@@ -28502,10 +28502,17 @@ exports.gedLoadFailed = gedLoadFailed;
 
 const setRowsPerPage = rowsPerPage => {
   return async dispatch => {
-    dispatch({
-      type: "SET_ROWSPERPAGE",
-      rowsPerPage: rowsPerPage
-    });
+    if (rowsPerPage) {
+      dispatch({
+        type: "SET_ROWSPERPAGE",
+        rowsPerPage: rowsPerPage
+      });
+    } else {
+      dispatch({
+        type: "SET_ROWSPERPAGE",
+        rowsPerPage: Math.round(window.innerHeight / 82)
+      });
+    }
   };
 };
 
@@ -61260,6 +61267,10 @@ var _OpenWith = _interopRequireDefault(require("@material-ui/icons/OpenWith"));
 
 var _FeedBack = _interopRequireDefault(require("@material-ui/icons/FeedBack"));
 
+var _reactRedux = require("react-redux");
+
+var _creators = require("../../actions/creators.jsx");
+
 require("./TopButtons.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -61286,6 +61297,7 @@ class TopButtons extends _react.Component {
     if (this.props.isData) {
       buttons = _react.default.createElement(_Nav.default.Link, null, _react.default.createElement("div", {
         onClick: () => {
+          this.props.setRowsPerPage();
           this.props.modeChanged('data');
         }
       }, "Data"));
@@ -61320,9 +61332,22 @@ _defineProperty(TopButtons, "defaultProps", {
   isData: true
 });
 
-var _default = TopButtons;
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setRowsPerPage: rowsPerPage => {
+      dispatch((0, _creators.setRowsPerPage)(rowsPerPage));
+    }
+  };
+};
+
+var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(TopButtons);
+
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/NavItem":"../node_modules/react-bootstrap/NavItem.js","react-bootstrap/ButtonToolbar":"../node_modules/react-bootstrap/ButtonToolbar.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/icons/OpenWith":"../node_modules/@material-ui/icons/OpenWith.js","@material-ui/icons/FeedBack":"../node_modules/@material-ui/icons/FeedBack.js","./TopButtons.css":"../src/containers/ButtonBar/TopButtons.css"}],"../src/DateFunctions.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-bootstrap/Nav":"../node_modules/react-bootstrap/Nav.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/Navbar.js","react-bootstrap/NavItem":"../node_modules/react-bootstrap/NavItem.js","react-bootstrap/ButtonToolbar":"../node_modules/react-bootstrap/ButtonToolbar.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/icons/OpenWith":"../node_modules/@material-ui/icons/OpenWith.js","@material-ui/icons/FeedBack":"../node_modules/@material-ui/icons/FeedBack.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx","./TopButtons.css":"../src/containers/ButtonBar/TopButtons.css"}],"../src/DateFunctions.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -67300,7 +67325,6 @@ class Graph extends _react.Component {
     super(props);
 
     _defineProperty(this, "topButtonClicked", e => {
-      //    console.log('Graph mode changed ' + e);
       if (e == "controls") {
         if (this.props.controlVisible) this.props.switchControlVisbility(false);else this.props.switchControlVisbility(true);
       }
@@ -67348,6 +67372,9 @@ const mapDispatchToProps = dispatch => {
     },
     switchControlVisbility: controlVisible => {
       dispatch((0, _creators.switchControlVisbility)(controlVisible));
+    },
+    setRowsPerPage: rowsPerPage => {
+      dispatch((0, _creators.setRowsPerPage)(rowsPerPage));
     }
   };
 };
@@ -82219,7 +82246,7 @@ class GedLoader extends _react.Component {
     }, "Default Data"), _react.default.createElement(_Button.default, {
       onClick: () => {},
       className: classes.label
-    }, "Select Data"));
+    }, "Load Data"));
   }
 
 }
@@ -83099,7 +83126,7 @@ class LayoutSelect extends _react.Component {
         className: classes.radio
       }),
       label: "Force Direct",
-      labelPlacement: "right"
+      labelPlacement: "end"
     }), _react.default.createElement(_FormControlLabel.default, {
       value: "ancestors",
       control: _react.default.createElement(_Radio.default, {
@@ -83107,7 +83134,7 @@ class LayoutSelect extends _react.Component {
         className: classes.radio
       }),
       label: "Ancestors",
-      labelPlacement: "rightv"
+      labelPlacement: "end"
     }), _react.default.createElement(_FormControlLabel.default, {
       value: "descendents",
       control: _react.default.createElement(_Radio.default, {
@@ -83115,7 +83142,7 @@ class LayoutSelect extends _react.Component {
         className: classes.radio
       }),
       label: "Descendents",
-      labelPlacement: "right"
+      labelPlacement: "end"
     })));
   }
 
@@ -83236,9 +83263,13 @@ class SideDrawer extends _react.Component {
   }
 
   toggleDrawer(state) {
-    if (this.state.modalShow != state) this.setState({
-      modalShow: state
-    });
+    if (this.state.modalShow != state) {
+      this.setState({
+        modalShow: state
+      });
+    }
+
+    this.props.setRowsPerPage();
   }
 
   drawLayout(event) {
@@ -83322,6 +83353,9 @@ const mapDispatchToProps = dispatch => {
     },
     toggleGraphRunning: isSet => {
       dispatch((0, _creators.toggleGraphRunning)(isSet));
+    },
+    setRowsPerPage: () => {
+      dispatch((0, _creators.setRowsPerPage)());
     }
   };
 };

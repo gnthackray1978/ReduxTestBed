@@ -77,11 +77,21 @@ export const gedLoadFailed = (message) => {
 
 export const setRowsPerPage = rowsPerPage =>{
   return async dispatch  => {
-    dispatch({
-      type: "SET_ROWSPERPAGE",
-      rowsPerPage : rowsPerPage,
 
-    });
+    if(rowsPerPage){
+      dispatch({
+        type: "SET_ROWSPERPAGE",
+        rowsPerPage : rowsPerPage,
+
+      });
+    }
+    else{
+      dispatch({
+        type: "SET_ROWSPERPAGE",
+        rowsPerPage : Math.round(window.innerHeight /82),
+
+      });
+    }
   };
 }
 

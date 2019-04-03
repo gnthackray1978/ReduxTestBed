@@ -111,7 +111,7 @@ class GedLoader extends Component {
    return (
      <div>
        <Button onClick={()=>{ this.loadGedDefault();}}  className ={classes.label}>Default Data</Button>
-       <Button onClick={()=>{ }} className ={classes.label}>Select Data</Button>
+       <Button onClick={()=>{ }} className ={classes.label}>Load Data</Button>
      </div>
 
    );

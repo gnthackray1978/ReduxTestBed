@@ -8,6 +8,9 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import ControlIcon from '@material-ui/icons/OpenWith';
 import InfoIcon from '@material-ui/icons/FeedBack';
+import { connect } from "react-redux";
+import {setData ,setOrder,setSelected,setPage,setRowsPerPage } from "../../actions/creators.jsx";
+
 import './TopButtons.css';
 
 class TopButtons extends Component {
@@ -38,7 +41,9 @@ class TopButtons extends Component {
 
     if(this.props.isData){
       buttons = <Nav.Link><div onClick={()=>{
-           this.props.modeChanged('data');
+this.props.setRowsPerPage();
+             this.props.modeChanged('data');
+
          }}>Data</div></Nav.Link>;
     }
     else{
@@ -65,4 +70,24 @@ class TopButtons extends Component {
 
 }
 
-export default TopButtons;
+
+
+const mapStateToProps = state => {
+
+  return {
+
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+
+  return {
+
+    setRowsPerPage: rowsPerPage => {
+      dispatch(setRowsPerPage(rowsPerPage));
+    }
+
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TopButtons);
