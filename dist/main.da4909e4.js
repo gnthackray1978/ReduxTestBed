@@ -72522,7 +72522,121 @@ Object.defineProperty(exports, "default", {
 });
 
 var _Grid = _interopRequireDefault(require("./Grid"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Grid":"../node_modules/@material-ui/core/Grid/Grid.js"}],"../src/containers/SideDrawer/SideDrawer.css":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Grid":"../node_modules/@material-ui/core/Grid/Grid.js"}],"../node_modules/@material-ui/core/Toolbar/Toolbar.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.styles = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
+
+var styles = function styles(theme) {
+  return {
+    /* Styles applied to the root element. */
+    root: {
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center'
+    },
+
+    /* Styles applied to the root element if `disableGutters={false}`. */
+    gutters: theme.mixins.gutters(),
+
+    /* Styles applied to the root element if `variant="regular"`. */
+    regular: theme.mixins.toolbar,
+
+    /* Styles applied to the root element if `variant="dense"`. */
+    dense: {
+      minHeight: 48
+    }
+  };
+};
+
+exports.styles = styles;
+
+function Toolbar(props) {
+  var children = props.children,
+      classes = props.classes,
+      classNameProp = props.className,
+      disableGutters = props.disableGutters,
+      variant = props.variant,
+      other = (0, _objectWithoutProperties2.default)(props, ["children", "classes", "className", "disableGutters", "variant"]);
+  var className = (0, _classnames.default)(classes.root, classes[variant], (0, _defineProperty2.default)({}, classes.gutters, !disableGutters), classNameProp);
+  return _react.default.createElement("div", (0, _extends2.default)({
+    className: className
+  }, other), children);
+}
+
+"development" !== "production" ? Toolbar.propTypes = {
+  /**
+   * Toolbar children, usually a mixture of `IconButton`, `Button` and `Typography`.
+   */
+  children: _propTypes.default.node,
+
+  /**
+   * Override or extend the styles applied to the component.
+   * See [CSS API](#css-api) below for more details.
+   */
+  classes: _propTypes.default.object.isRequired,
+
+  /**
+   * @ignore
+   */
+  className: _propTypes.default.string,
+
+  /**
+   * If `true`, disables gutter padding.
+   */
+  disableGutters: _propTypes.default.bool,
+
+  /**
+   * The variant to use.
+   */
+  variant: _propTypes.default.oneOf(['regular', 'dense'])
+} : void 0;
+Toolbar.defaultProps = {
+  disableGutters: false,
+  variant: 'regular'
+};
+
+var _default = (0, _withStyles.default)(styles, {
+  name: 'MuiToolbar'
+})(Toolbar);
+
+exports.default = _default;
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js"}],"../node_modules/@material-ui/core/Toolbar/index.js":[function(require,module,exports) {
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function get() {
+    return _Toolbar.default;
+  }
+});
+
+var _Toolbar = _interopRequireDefault(require("./Toolbar"));
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Toolbar":"../node_modules/@material-ui/core/Toolbar/Toolbar.js"}],"../src/containers/SideDrawer/SideDrawer.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -77302,121 +77416,7 @@ Object.defineProperty(exports, "default", {
 });
 
 var _Select = _interopRequireDefault(require("./Select"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Select":"../node_modules/@material-ui/core/Select/Select.js"}],"../node_modules/@material-ui/core/Toolbar/Toolbar.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = exports.styles = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
-var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutProperties"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _withStyles = _interopRequireDefault(require("../styles/withStyles"));
-
-var styles = function styles(theme) {
-  return {
-    /* Styles applied to the root element. */
-    root: {
-      position: 'relative',
-      display: 'flex',
-      alignItems: 'center'
-    },
-
-    /* Styles applied to the root element if `disableGutters={false}`. */
-    gutters: theme.mixins.gutters(),
-
-    /* Styles applied to the root element if `variant="regular"`. */
-    regular: theme.mixins.toolbar,
-
-    /* Styles applied to the root element if `variant="dense"`. */
-    dense: {
-      minHeight: 48
-    }
-  };
-};
-
-exports.styles = styles;
-
-function Toolbar(props) {
-  var children = props.children,
-      classes = props.classes,
-      classNameProp = props.className,
-      disableGutters = props.disableGutters,
-      variant = props.variant,
-      other = (0, _objectWithoutProperties2.default)(props, ["children", "classes", "className", "disableGutters", "variant"]);
-  var className = (0, _classnames.default)(classes.root, classes[variant], (0, _defineProperty2.default)({}, classes.gutters, !disableGutters), classNameProp);
-  return _react.default.createElement("div", (0, _extends2.default)({
-    className: className
-  }, other), children);
-}
-
-"development" !== "production" ? Toolbar.propTypes = {
-  /**
-   * Toolbar children, usually a mixture of `IconButton`, `Button` and `Typography`.
-   */
-  children: _propTypes.default.node,
-
-  /**
-   * Override or extend the styles applied to the component.
-   * See [CSS API](#css-api) below for more details.
-   */
-  classes: _propTypes.default.object.isRequired,
-
-  /**
-   * @ignore
-   */
-  className: _propTypes.default.string,
-
-  /**
-   * If `true`, disables gutter padding.
-   */
-  disableGutters: _propTypes.default.bool,
-
-  /**
-   * The variant to use.
-   */
-  variant: _propTypes.default.oneOf(['regular', 'dense'])
-} : void 0;
-Toolbar.defaultProps = {
-  disableGutters: false,
-  variant: 'regular'
-};
-
-var _default = (0, _withStyles.default)(styles, {
-  name: 'MuiToolbar'
-})(Toolbar);
-
-exports.default = _default;
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","@babel/runtime/helpers/extends":"../node_modules/@babel/runtime/helpers/extends.js","@babel/runtime/helpers/defineProperty":"../node_modules/@babel/runtime/helpers/defineProperty.js","@babel/runtime/helpers/objectWithoutProperties":"../node_modules/@babel/runtime/helpers/objectWithoutProperties.js","react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","classnames":"../node_modules/classnames/index.js","../styles/withStyles":"../node_modules/@material-ui/core/styles/withStyles.js"}],"../node_modules/@material-ui/core/Toolbar/index.js":[function(require,module,exports) {
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "default", {
-  enumerable: true,
-  get: function get() {
-    return _Toolbar.default;
-  }
-});
-
-var _Toolbar = _interopRequireDefault(require("./Toolbar"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Toolbar":"../node_modules/@material-ui/core/Toolbar/Toolbar.js"}],"../node_modules/@material-ui/core/internal/svg-icons/KeyboardArrowLeft.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./Select":"../node_modules/@material-ui/core/Select/Select.js"}],"../node_modules/@material-ui/core/internal/svg-icons/KeyboardArrowLeft.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -81654,7 +81654,7 @@ Object.defineProperty(exports, "default", {
 });
 
 var _TextField = _interopRequireDefault(require("./TextField"));
-},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./TextField":"../node_modules/@material-ui/core/TextField/TextField.js"}],"../src/containers/SideDrawer/PersonList.jsx":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"../node_modules/@babel/runtime/helpers/interopRequireDefault.js","./TextField":"../node_modules/@material-ui/core/TextField/TextField.js"}],"../src/containers/SideDrawer/PersonListToolbar.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -81688,7 +81688,147 @@ var _Toolbar = _interopRequireDefault(require("@material-ui/core/Toolbar"));
 
 var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
 
-var _Paper = _interopRequireDefault(require("@material-ui/core/Paper"));
+var _Checkbox = _interopRequireDefault(require("@material-ui/core/Checkbox"));
+
+var _IconButton = _interopRequireDefault(require("@material-ui/core/IconButton"));
+
+var _Tooltip = _interopRequireDefault(require("@material-ui/core/Tooltip"));
+
+var _Delete = _interopRequireDefault(require("@material-ui/icons/Delete"));
+
+var _FilterList = _interopRequireDefault(require("@material-ui/icons/FilterList"));
+
+var _colorManipulator = require("@material-ui/core/styles/colorManipulator");
+
+var _TextField = _interopRequireDefault(require("@material-ui/core/TextField"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const toolbarStyles = theme => ({
+  root: {
+    paddingRight: theme.spacing.unit
+  },
+  highlight: theme.palette.type === 'light' ? {
+    color: theme.palette.secondary.main,
+    backgroundColor: (0, _colorManipulator.lighten)(theme.palette.secondary.light, 0.85)
+  } : {
+    color: theme.palette.text.primary,
+    backgroundColor: theme.palette.secondary.dark
+  },
+  spacer: {
+    flex: '1 1 100%'
+  },
+  actions: {
+    color: theme.palette.text.secondary,
+    width: '700px'
+  },
+  title: {
+    flex: '0 0 auto'
+  }
+});
+
+let PersonListToolbar = props => {
+  const numSelected = props.numSelected,
+        classes = props.classes;
+  return _react.default.createElement(_Toolbar.default, {
+    className: (0, _classnames.default)(classes.root, {
+      [classes.highlight]: numSelected > 0
+    })
+  }, _react.default.createElement("div", {
+    className: classes.title
+  }, numSelected > 0 ? _react.default.createElement(_Typography.default, {
+    color: "inherit",
+    variant: "subtitle1"
+  }, numSelected, " selected") : _react.default.createElement(_Typography.default, {
+    variant: "h6",
+    id: "tableTitle"
+  }, "Select From Available People")), _react.default.createElement("div", {
+    className: classes.spacer
+  }), _react.default.createElement("div", {
+    className: classes.actions
+  }));
+};
+
+PersonListToolbar.propTypes = {
+  classes: _propTypes.default.object.isRequired,
+  numSelected: _propTypes.default.number.isRequired
+};
+
+var _default = (0, _styles.withStyles)(toolbarStyles)(PersonListToolbar);
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Table":"../node_modules/@material-ui/core/Table/index.js","@material-ui/core/TableBody":"../node_modules/@material-ui/core/TableBody/index.js","@material-ui/core/TableCell":"../node_modules/@material-ui/core/TableCell/index.js","@material-ui/core/TableHead":"../node_modules/@material-ui/core/TableHead/index.js","@material-ui/core/TablePagination":"../node_modules/@material-ui/core/TablePagination/index.js","@material-ui/core/TableRow":"../node_modules/@material-ui/core/TableRow/index.js","@material-ui/core/TableSortLabel":"../node_modules/@material-ui/core/TableSortLabel/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","@material-ui/core/Typography":"../node_modules/@material-ui/core/Typography/index.js","@material-ui/core/Checkbox":"../node_modules/@material-ui/core/Checkbox/index.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/core/Tooltip":"../node_modules/@material-ui/core/Tooltip/index.js","@material-ui/icons/Delete":"../node_modules/@material-ui/icons/Delete.js","@material-ui/icons/FilterList":"../node_modules/@material-ui/icons/FilterList.js","@material-ui/core/styles/colorManipulator":"../node_modules/@material-ui/core/styles/colorManipulator.js","@material-ui/core/TextField":"../node_modules/@material-ui/core/TextField/index.js"}],"../src/containers/SideDrawer/personListUtils.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getSorting = exports.stableSort = exports.desc = void 0;
+
+const desc = (a, b, orderBy) => {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+
+  return 0;
+};
+
+exports.desc = desc;
+
+const stableSort = (array, cmp) => {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = cmp(a[0], b[0]);
+    if (order !== 0) return order;
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map(el => el[0]);
+};
+
+exports.stableSort = stableSort;
+
+const getSorting = (order, orderBy) => {
+  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
+};
+
+exports.getSorting = getSorting;
+},{}],"../src/containers/SideDrawer/PersonList.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _styles = require("@material-ui/core/styles");
+
+var _Table = _interopRequireDefault(require("@material-ui/core/Table"));
+
+var _TableBody = _interopRequireDefault(require("@material-ui/core/TableBody"));
+
+var _TableCell = _interopRequireDefault(require("@material-ui/core/TableCell"));
+
+var _TableHead = _interopRequireDefault(require("@material-ui/core/TableHead"));
+
+var _TablePagination = _interopRequireDefault(require("@material-ui/core/TablePagination"));
+
+var _TableRow = _interopRequireDefault(require("@material-ui/core/TableRow"));
+
+var _TableSortLabel = _interopRequireDefault(require("@material-ui/core/TableSortLabel"));
+
+var _Toolbar = _interopRequireDefault(require("@material-ui/core/Toolbar"));
+
+var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
 
 var _Checkbox = _interopRequireDefault(require("@material-ui/core/Checkbox"));
 
@@ -81704,39 +81844,17 @@ var _colorManipulator = require("@material-ui/core/styles/colorManipulator");
 
 var _TextField = _interopRequireDefault(require("@material-ui/core/TextField"));
 
+var _PersonListToolbar = _interopRequireDefault(require("./PersonListToolbar.jsx"));
+
 var _reactRedux = require("react-redux");
+
+var _personListUtils = require("./personListUtils.js");
 
 var _creators = require("../../actions/creators.jsx");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-
-  return 0;
-}
-
-function stableSort(array, cmp) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = cmp(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map(el => el[0]);
-}
-
-function getSorting(order, orderBy) {
-  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
 
 const rows = [{
   id: 'date',
@@ -81794,57 +81912,6 @@ PersonListHead.propTypes = {
   orderBy: _propTypes.default.string.isRequired,
   rowCount: _propTypes.default.number.isRequired
 };
-
-const toolbarStyles = theme => ({
-  root: {
-    paddingRight: theme.spacing.unit
-  },
-  highlight: theme.palette.type === 'light' ? {
-    color: theme.palette.secondary.main,
-    backgroundColor: (0, _colorManipulator.lighten)(theme.palette.secondary.light, 0.85)
-  } : {
-    color: theme.palette.text.primary,
-    backgroundColor: theme.palette.secondary.dark
-  },
-  spacer: {
-    flex: '1 1 100%'
-  },
-  actions: {
-    color: theme.palette.text.secondary,
-    width: '700px'
-  },
-  title: {
-    flex: '0 0 auto'
-  }
-});
-
-let PersonListToolbar = props => {
-  const numSelected = props.numSelected,
-        classes = props.classes;
-  return _react.default.createElement(_Toolbar.default, {
-    className: (0, _classnames.default)(classes.root, {
-      [classes.highlight]: numSelected > 0
-    })
-  }, _react.default.createElement("div", {
-    className: classes.title
-  }, numSelected > 0 ? _react.default.createElement(_Typography.default, {
-    color: "inherit",
-    variant: "subtitle1"
-  }, numSelected, " selected") : _react.default.createElement(_Typography.default, {
-    variant: "h6",
-    id: "tableTitle"
-  }, "Select From Available People")), _react.default.createElement("div", {
-    className: classes.spacer
-  }), _react.default.createElement("div", {
-    className: classes.actions
-  }));
-};
-
-PersonListToolbar.propTypes = {
-  classes: _propTypes.default.object.isRequired,
-  numSelected: _propTypes.default.number.isRequired
-};
-PersonListToolbar = (0, _styles.withStyles)(toolbarStyles)(PersonListToolbar);
 
 const styles = theme => ({
   root: {
@@ -81925,13 +81992,11 @@ class PersonList extends _react.default.Component {
           selected = _this$props2.selected,
           rowsPerPage = _this$props2.rowsPerPage,
           page = _this$props2.page; //  console.log('render :' + order +' -'+ orderBy +' -'+ selected +' -'+ rowsPerPage +' -'+ page);
+    //
+    //<PersonListToolbar numSelected={selected.length} />
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, persons.length - page * rowsPerPage);
-    return _react.default.createElement(_Paper.default, {
-      className: classes.root
-    }, _react.default.createElement(PersonListToolbar, {
-      numSelected: selected.length
-    }), _react.default.createElement("div", {
+    return _react.default.createElement("div", null, _react.default.createElement("div", {
       className: classes.tableWrapper
     }, _react.default.createElement(_Table.default, {
       className: classes.table,
@@ -81942,7 +82007,7 @@ class PersonList extends _react.default.Component {
       orderBy: orderBy,
       onRequestSort: this.handleRequestSort,
       rowCount: persons.length
-    }), _react.default.createElement(_TableBody.default, null, stableSort(persons, getSorting(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
+    }), _react.default.createElement(_TableBody.default, null, (0, _personListUtils.stableSort)(persons, (0, _personListUtils.getSorting)(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
       const isSelected = this.isSelected(n.id);
       return _react.default.createElement(_TableRow.default, {
         hover: true,
@@ -81966,7 +82031,7 @@ class PersonList extends _react.default.Component {
       })));
     }), emptyRows > 0 && _react.default.createElement(_TableRow.default, {
       style: {
-        height: 20 * emptyRows
+        height: 49 * emptyRows
       }
     }, _react.default.createElement(_TableCell.default, {
       colSpan: 6
@@ -82041,7 +82106,7 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _styles.withStyles)(styles)((0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(PersonList));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Table":"../node_modules/@material-ui/core/Table/index.js","@material-ui/core/TableBody":"../node_modules/@material-ui/core/TableBody/index.js","@material-ui/core/TableCell":"../node_modules/@material-ui/core/TableCell/index.js","@material-ui/core/TableHead":"../node_modules/@material-ui/core/TableHead/index.js","@material-ui/core/TablePagination":"../node_modules/@material-ui/core/TablePagination/index.js","@material-ui/core/TableRow":"../node_modules/@material-ui/core/TableRow/index.js","@material-ui/core/TableSortLabel":"../node_modules/@material-ui/core/TableSortLabel/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","@material-ui/core/Typography":"../node_modules/@material-ui/core/Typography/index.js","@material-ui/core/Paper":"../node_modules/@material-ui/core/Paper/index.js","@material-ui/core/Checkbox":"../node_modules/@material-ui/core/Checkbox/index.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/core/Tooltip":"../node_modules/@material-ui/core/Tooltip/index.js","@material-ui/icons/Delete":"../node_modules/@material-ui/icons/Delete.js","@material-ui/icons/FilterList":"../node_modules/@material-ui/icons/FilterList.js","@material-ui/core/styles/colorManipulator":"../node_modules/@material-ui/core/styles/colorManipulator.js","@material-ui/core/TextField":"../node_modules/@material-ui/core/TextField/index.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/GedLoader.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Table":"../node_modules/@material-ui/core/Table/index.js","@material-ui/core/TableBody":"../node_modules/@material-ui/core/TableBody/index.js","@material-ui/core/TableCell":"../node_modules/@material-ui/core/TableCell/index.js","@material-ui/core/TableHead":"../node_modules/@material-ui/core/TableHead/index.js","@material-ui/core/TablePagination":"../node_modules/@material-ui/core/TablePagination/index.js","@material-ui/core/TableRow":"../node_modules/@material-ui/core/TableRow/index.js","@material-ui/core/TableSortLabel":"../node_modules/@material-ui/core/TableSortLabel/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","@material-ui/core/Typography":"../node_modules/@material-ui/core/Typography/index.js","@material-ui/core/Checkbox":"../node_modules/@material-ui/core/Checkbox/index.js","@material-ui/core/IconButton":"../node_modules/@material-ui/core/IconButton/index.js","@material-ui/core/Tooltip":"../node_modules/@material-ui/core/Tooltip/index.js","@material-ui/icons/Delete":"../node_modules/@material-ui/icons/Delete.js","@material-ui/icons/FilterList":"../node_modules/@material-ui/icons/FilterList.js","@material-ui/core/styles/colorManipulator":"../node_modules/@material-ui/core/styles/colorManipulator.js","@material-ui/core/TextField":"../node_modules/@material-ui/core/TextField/index.js","./PersonListToolbar.jsx":"../src/containers/SideDrawer/PersonListToolbar.jsx","react-redux":"../node_modules/react-redux/es/index.js","./personListUtils.js":"../src/containers/SideDrawer/personListUtils.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/GedLoader.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -82056,6 +82121,8 @@ var _propTypes = _interopRequireDefault(require("prop-types"));
 var _styles = require("@material-ui/core/styles");
 
 var _Grid = _interopRequireDefault(require("@material-ui/core/Grid"));
+
+var _Toolbar = _interopRequireDefault(require("@material-ui/core/Toolbar"));
 
 var _Button = _interopRequireDefault(require("@material-ui/core/Button"));
 
@@ -82144,28 +82211,15 @@ class GedLoader extends _react.Component {
 
   render() {
     const classes = this.props.classes;
-    return _react.default.createElement(_Grid.default, {
-      container: true,
-      spacing: 24,
-      className: classes.mygrid
-    }, _react.default.createElement(_Grid.default, {
-      item: true,
-      xs: 4
-    }, _react.default.createElement(_Button.default, {
+    return _react.default.createElement("div", null, _react.default.createElement(_Button.default, {
       onClick: () => {
         this.loadGedDefault();
       },
       className: classes.label
-    }, "Default")), _react.default.createElement(_Grid.default, {
-      item: true,
-      xs: 4
-    }, _react.default.createElement(_Button.default, {
+    }, "Default Data"), _react.default.createElement(_Button.default, {
       onClick: () => {},
       className: classes.label
-    }, "Select")), _react.default.createElement(_Grid.default, {
-      item: true,
-      xs: 4
-    }));
+    }, "Select Data"));
   }
 
 }
@@ -82205,7 +82259,7 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(GedLoader));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","../../DataLoader/GedLib.js":"../src/DataLoader/GedLib.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../node_modules/@material-ui/core/internal/svg-icons/RadioButtonUnchecked.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","../../DataLoader/GedLib.js":"../src/DataLoader/GedLib.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../node_modules/@material-ui/core/internal/svg-icons/RadioButtonUnchecked.js":[function(require,module,exports) {
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -83006,8 +83060,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 const styles = {
   formControl: {
-    marginTop: 15,
+    marginTop: 0,
     marginLeft: 10
+  },
+  radio: {
+    paddingLeft: 9,
+    paddingRight: 9
   },
   label: {
     textAlign: 'center'
@@ -83028,9 +83086,7 @@ class LayoutSelect extends _react.Component {
     return _react.default.createElement(_FormControl.default, {
       className: classes.formControl,
       component: "fieldset"
-    }, _react.default.createElement(_FormLabel.default, {
-      component: "legend"
-    }, "Select Layout"), _react.default.createElement(_RadioGroup.default, {
+    }, _react.default.createElement(_RadioGroup.default, {
       "aria-label": "position",
       name: "position",
       value: this.props.layout,
@@ -83039,24 +83095,27 @@ class LayoutSelect extends _react.Component {
     }, _react.default.createElement(_FormControlLabel.default, {
       value: "forceDirect",
       control: _react.default.createElement(_Radio.default, {
-        color: "primary"
+        color: "primary",
+        className: classes.radio
       }),
       label: "Force Direct",
-      labelPlacement: "top"
+      labelPlacement: "right"
     }), _react.default.createElement(_FormControlLabel.default, {
       value: "ancestors",
       control: _react.default.createElement(_Radio.default, {
-        color: "primary"
+        color: "primary",
+        className: classes.radio
       }),
       label: "Ancestors",
-      labelPlacement: "top"
+      labelPlacement: "rightv"
     }), _react.default.createElement(_FormControlLabel.default, {
       value: "descendents",
       control: _react.default.createElement(_Radio.default, {
-        color: "primary"
+        color: "primary",
+        className: classes.radio
       }),
       label: "Descendents",
-      labelPlacement: "top"
+      labelPlacement: "right"
     })));
   }
 
@@ -83115,6 +83174,10 @@ var _Switch = _interopRequireDefault(require("@material-ui/core/Switch"));
 
 var _Grid = _interopRequireDefault(require("@material-ui/core/Grid"));
 
+var _Paper = _interopRequireDefault(require("@material-ui/core/Paper"));
+
+var _Toolbar = _interopRequireDefault(require("@material-ui/core/Toolbar"));
+
 require("./SideDrawer.css");
 
 var _GedLib = require("../../DataLoader/GedLib.js");
@@ -83133,7 +83196,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
-const styles = {
+const styles = theme => ({
+  root: {
+    paddingRight: theme.spacing.unit
+  },
   list: {
     width: 420
   },
@@ -83145,8 +83211,12 @@ const styles = {
   },
   label: {
     textAlign: 'center'
+  },
+  toolBar: {
+    paddingLeft: '12px',
+    minHeight: '0px'
   }
-};
+});
 
 class SideDrawer extends _react.Component {
   constructor(props) {
@@ -83189,55 +83259,25 @@ class SideDrawer extends _react.Component {
     const classes = this.props.classes;
     return _react.default.createElement("div", null, _react.default.createElement(_Drawer.default, {
       open: this.state.modalShow
-    }, _react.default.createElement("div", {
-      className: classes.list
+    }, _react.default.createElement(_Paper.default, {
+      className: classes.root
     }, _react.default.createElement("div", {
       className: "inner"
-    }, _react.default.createElement(_Grid.default, {
-      container: true,
-      spacing: 24,
-      className: classes.mygrid
-    }, _react.default.createElement(_Grid.default, {
-      item: true,
-      xs: 9
-    }, _react.default.createElement("b", {
-      className: classes.label
-    }, "Data Selection")), _react.default.createElement(_Grid.default, {
-      item: true,
-      xs: 3
+    }, _react.default.createElement(_Toolbar.default, {
+      className: classes.toolBar
     }, _react.default.createElement(_Button.default, {
       onClick: () => {
         this.toggleDrawer(false);
       },
       className: classes.label
-    }, "Close"))), _react.default.createElement(_GedLoader.default, null), _react.default.createElement(_PersonList.default, null), _react.default.createElement(_LayoutSelect.default, null), _react.default.createElement(_Grid.default, {
-      container: true,
-      spacing: 24,
-      className: classes.mygrid
-    }, _react.default.createElement(_Grid.default, {
-      item: true,
-      xs: 3
-    }, _react.default.createElement(_Button.default, {
+    }, "Close"), _react.default.createElement(_GedLoader.default, null), _react.default.createElement(_Button.default, {
       onClick: () => {
         this.drawLayout();
       },
       className: classes.label
-    }, "Draw")), _react.default.createElement(_Grid.default, {
-      item: true,
-      xs: 3
-    }, _react.default.createElement(_Button.default, {
-      onClick: () => {
-        this.clearLayout();
-      },
-      className: classes.label
-    }, "Clear")), _react.default.createElement(_Grid.default, {
-      item: true,
-      xs: 3
-    }, _react.default.createElement(_Switch.default, {
-      checked: this.props.graphActive,
-      value: "checkedB",
-      color: "primary"
-    })))))));
+    }, "Draw")), _react.default.createElement(_Toolbar.default, {
+      className: classes.toolBar
+    }, _react.default.createElement(_LayoutSelect.default, null)), _react.default.createElement(_PersonList.default, null)))));
   }
 
 }
@@ -83289,7 +83329,7 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(SideDrawer));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Switch":"../node_modules/@material-ui/core/Switch/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","./SideDrawer.css":"../src/containers/SideDrawer/SideDrawer.css","../../DataLoader/GedLib.js":"../src/DataLoader/GedLib.js","./PersonList.jsx":"../src/containers/SideDrawer/PersonList.jsx","./GedLoader.jsx":"../src/containers/SideDrawer/GedLoader.jsx","./LayoutSelect.jsx":"../src/containers/SideDrawer/LayoutSelect.jsx","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/data.css":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Switch":"../node_modules/@material-ui/core/Switch/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Paper":"../node_modules/@material-ui/core/Paper/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","./SideDrawer.css":"../src/containers/SideDrawer/SideDrawer.css","../../DataLoader/GedLib.js":"../src/DataLoader/GedLib.js","./PersonList.jsx":"../src/containers/SideDrawer/PersonList.jsx","./GedLoader.jsx":"../src/containers/SideDrawer/GedLoader.jsx","./LayoutSelect.jsx":"../src/containers/SideDrawer/LayoutSelect.jsx","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/data.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);

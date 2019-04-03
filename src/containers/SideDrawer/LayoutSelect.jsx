@@ -15,11 +15,14 @@ import {setLayout} from "../../actions/creators.jsx";
 const styles = {
 
   formControl: {
-    marginTop: 15,
+    marginTop: 0,
     marginLeft:10
   },
 
-
+  radio:{
+    paddingLeft :9,
+    paddingRight :9
+  },
 
   label: {
 
@@ -45,8 +48,7 @@ class LayoutSelect extends Component {
 
    return (
      <FormControl  className={classes.formControl} component="fieldset">
-        <FormLabel component="legend">Select Layout</FormLabel>
-         <RadioGroup
+        <RadioGroup
             aria-label="position"
             name="position"
             value={this.props.layout}
@@ -55,25 +57,25 @@ class LayoutSelect extends Component {
           >
             <FormControlLabel
               value="forceDirect"
-              control={<Radio color="primary" />}
+              control={<Radio color="primary"  className={classes.radio}  />}
               label="Force Direct"
-              labelPlacement="top"
+              labelPlacement="right"
             />
             <FormControlLabel
               value="ancestors"
-              control={<Radio color="primary" />}
+              control={<Radio color="primary"  className={classes.radio} />}
               label="Ancestors"
-              labelPlacement="top"
+              labelPlacement="rightv"
             />
             <FormControlLabel
               value="descendents"
-              control={<Radio color="primary" />}
+              control={<Radio color="primary" className={classes.radio}  />}
               label="Descendents"
-              labelPlacement="top"
+              labelPlacement="right"
             />
 
           </RadioGroup>
-    </FormControl>
+     </FormControl>
    );
  }
 

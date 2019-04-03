@@ -12,19 +12,27 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import Switch from '@material-ui/core/Switch';
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Toolbar from '@material-ui/core/Toolbar';
 import './SideDrawer.css';
 
 import {GedLib} from "../../DataLoader/GedLib.js";
 import PersonList from "./PersonList.jsx";
 import GedLoader from "./GedLoader.jsx";
-
 import LayoutSelect from "./LayoutSelect.jsx";
+
 import { connect } from "react-redux";
 import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,setGedData ,gedLoadFailed,activateLayout,toggleGraphRunning} from "../../actions/creators.jsx";
 
 
 
-const styles = {
+
+const styles = theme => ({
+
+  root: {
+    paddingRight: theme.spacing.unit,
+  },
+
   list: {
     width: 420,
   },
@@ -41,7 +49,15 @@ const styles = {
     textAlign: 'center',
 
   },
-};
+  toolBar: {
+    paddingLeft :'12px',
+    minHeight: '0px'
+  }
+
+});
+
+
+
 
  class SideDrawer extends Component {
 
@@ -92,40 +108,33 @@ const styles = {
     return (
       <div>
         <Drawer open={this.state.modalShow} >
-          <div  className={classes.list}>
+
+          <Paper className={classes.root}>
             <div className = "inner">
-            <Grid container spacing={24} className={classes.mygrid}>
-              <Grid item xs={9}>
-                <b className ={classes.label}>Data Selection</b>
-              </Grid>
-              <Grid item xs={3}>
+              <Toolbar className={classes.toolBar}>
                 <Button onClick={()=>{ this.toggleDrawer(false);}}
                   className ={classes.label}>Close</Button>
-              </Grid>
-            </Grid>
-            <GedLoader></GedLoader>
-            <PersonList></PersonList>
-            <LayoutSelect></LayoutSelect>
+                <GedLoader></GedLoader>
+                  <Button onClick={()=>{ this.drawLayout();}}
+                    className ={classes.label}>Draw</Button>
+              </Toolbar>
+
+              <Toolbar className={classes.toolBar}>
+                <LayoutSelect></LayoutSelect>                
+              </Toolbar>
 
 
+              <PersonList></PersonList>
 
-            <Grid container spacing={24} className={classes.mygrid}>
-              <Grid item xs={3}>
-                <Button onClick={()=>{ this.drawLayout();}}
-                  className ={classes.label}>Draw</Button>
-              </Grid>
-              <Grid item xs={3}>
-                <Button onClick={()=>{ this.clearLayout();}}
-                  className ={classes.label}>Clear</Button>
-              </Grid>
-              <Grid item xs={3}>
-                  <Switch checked={this.props.graphActive} value="checkedB" color="primary" />
-              </Grid>
-            </Grid>
             </div>
 
-          </div>
+
+
+          </Paper>
         </Drawer>
+
+
+
       </div>
     );
   }

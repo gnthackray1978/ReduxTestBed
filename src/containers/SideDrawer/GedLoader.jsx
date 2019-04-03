@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import {GedLib} from "../../DataLoader/GedLib.js";
 
@@ -108,15 +109,10 @@ class GedLoader extends Component {
    const { classes } = this.props;
 
    return (
-     <Grid container spacing={24} className={classes.mygrid}>
-       <Grid item xs={4}>
-         <Button onClick={()=>{ this.loadGedDefault();}}  className ={classes.label}>Default</Button>
-       </Grid>
-       <Grid item xs={4}>
-         <Button onClick={()=>{ }} className ={classes.label}>Select</Button>
-       </Grid>
-       <Grid item xs={4}/>
-     </Grid>
+     <div>
+       <Button onClick={()=>{ this.loadGedDefault();}}  className ={classes.label}>Default Data</Button>
+       <Button onClick={()=>{ }} className ={classes.label}>Select Data</Button>
+     </div>
 
    );
  }
