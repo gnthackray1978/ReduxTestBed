@@ -23,7 +23,8 @@ import LayoutSelect from "./LayoutSelect.jsx";
 
 import { connect } from "react-redux";
 import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,setGedData ,
-  gedLoadFailed,activateLayout,toggleGraphRunning,setRowsPerPage} from "../../actions/creators.jsx";
+  gedLoadFailed,activateLayout,toggleGraphRunning,setRowsPerPage,
+  setSideDrawerLoaderVisible,setSideDrawerLayoutOptionsVisible,setSideDrawerOptionsVisible} from "../../actions/creators.jsx";
 
 
 
@@ -32,6 +33,7 @@ const styles = theme => ({
 
   root: {
     paddingRight: theme.spacing.unit,
+    minHeight : window.innerHeight -10
   },
 
   list: {
@@ -56,9 +58,6 @@ const styles = theme => ({
   }
 
 });
-
-
-
 
  class SideDrawer extends Component {
 
@@ -105,9 +104,15 @@ const styles = theme => ({
     this.props.activateLayout(false);
    }
 
+   // <Button onClick={()=>{
+   //     this.props.setSideDrawerLoaderVisible(!SideDrawerLoaderVisible);
+   //     this.props.setSideDrawerLayoutOptionsVisible(!SideDrawerLayoutOptionsVisible);
+   //   }}
+   //   className ={classes.label}>Get Data</Button>
+
    render() {
 
-    const { classes } = this.props;
+    const { classes , SideDrawerLayoutOptionsVisible,SideDrawerLoaderVisible,SideDrawerOptionsVisible,ValidToDraw} = this.props;
 
     return (
       <div>
@@ -116,19 +121,56 @@ const styles = theme => ({
           <Paper className={classes.root}>
             <div className = "inner">
               <Toolbar className={classes.toolBar}>
-                <Button onClick={()=>{ this.toggleDrawer(false);}}
-                  className ={classes.label}>Close</Button>
-                <GedLoader></GedLoader>
-                  <Button onClick={()=>{ this.drawLayout();}}
-                    className ={classes.label}>Draw</Button>
+                  <Button onClick={()=>{ this.toggleDrawer(false);}} className ={classes.label}>Close</Button>
+
+                  {(SideDrawerLoaderVisible || !ValidToDraw) && (
+                    <GedLoader></GedLoader>
+                  )}
+
+
+                  {ValidToDraw && (
+                    <Button onClick={()=>{
+                        if(SideDrawerOptionsVisible){
+                          this.props.setSideDrawerLoaderVisible(false);
+                          this.props.setSideDrawerLayoutOptionsVisible(true);
+                        }
+                        else{
+                          this.props.setSideDrawerLoaderVisible(false);
+                          this.props.setSideDrawerLayoutOptionsVisible(false);
+                        }
+
+                        this.props.setSideDrawerOptionsVisible(!SideDrawerOptionsVisible);
+                      }}
+                      className ={classes.label}>Options</Button>
+                  )}
+
+                  {ValidToDraw && (
+                    <Button onClick={()=>{ this.drawLayout();}}
+                      className ={classes.label}>Draw</Button>
+                    )}
+
+
               </Toolbar>
 
-              <Toolbar className={classes.toolBar}>
-                <LayoutSelect></LayoutSelect>
-              </Toolbar>
+              {SideDrawerLayoutOptionsVisible && (
+                <Toolbar className={classes.toolBar}>
+                  <LayoutSelect></LayoutSelect>
+                </Toolbar>
+
+              )}
+
+              {SideDrawerLayoutOptionsVisible && (
+                <PersonList></PersonList>
+              )}
 
 
-              <PersonList></PersonList>
+
+              {SideDrawerOptionsVisible && (
+                  <Toolbar className={classes.toolBar}>
+                     <b>options</b>
+                  </Toolbar>
+              )}
+
 
             </div>
 
@@ -171,7 +213,11 @@ const mapStateToProps = state => {
     graphActiveLayout: state.graphActiveLayout,
     graphActiveSelection : state.graphActiveSelection,
     layout: state.layout,
-    selection: state.selection
+    selection: state.selection,
+    SideDrawerLoaderVisible : state.SideDrawerLoaderVisible,
+    SideDrawerLayoutOptionsVisible :state.SideDrawerLayoutOptionsVisible,
+    SideDrawerOptionsVisible :state.SideDrawerOptionsVisible,
+    ValidToDraw : state.selection.length >0
   };
 };
 
@@ -194,6 +240,18 @@ const mapDispatchToProps = dispatch => {
     },
     setRowsPerPage : () =>{
       dispatch(setRowsPerPage())
+    },
+
+    setSideDrawerLoaderVisible :visible =>{
+      dispatch(setSideDrawerLoaderVisible(visible))
+    },
+
+    setSideDrawerLayoutOptionsVisible :visible=>{
+      dispatch(setSideDrawerLayoutOptionsVisible(visible))
+    },
+
+    setSideDrawerOptionsVisible :visible=>{
+      dispatch(setSideDrawerOptionsVisible(visible))
     }
   };
 };

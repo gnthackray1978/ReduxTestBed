@@ -28422,7 +28422,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reset = exports.setLayoutDefaults = exports.toggleGraphRunning = exports.mapRight = exports.mapLeft = exports.mapDown = exports.mapUp = exports.zoomOut = exports.zoomIn = exports.setGedData = exports.activateLayout = exports.setLayout = exports.setOrder = exports.setSelected = exports.setPage = exports.setRowsPerPage = exports.gedLoadFailed = exports.setContext = exports.gedLoadingStatus = exports.initYearIncrementor = exports.switchControlVisbility = exports.beginSearch = void 0;
+exports.reset = exports.setLayoutDefaults = exports.toggleGraphRunning = exports.mapRight = exports.mapLeft = exports.mapDown = exports.mapUp = exports.zoomOut = exports.zoomIn = exports.setGedData = exports.activateLayout = exports.setLayout = exports.setOrder = exports.setSelected = exports.setPage = exports.setSideDrawerOptionsVisible = exports.setSideDrawerLayoutOptionsVisible = exports.setSideDrawerLoaderVisible = exports.setRowsPerPage = exports.gedLoadFailed = exports.setContext = exports.gedLoadingStatus = exports.initYearIncrementor = exports.switchControlVisbility = exports.beginSearch = void 0;
 
 const beginSearch = term => {
   return async dispatch => {
@@ -28517,6 +28517,39 @@ const setRowsPerPage = rowsPerPage => {
 };
 
 exports.setRowsPerPage = setRowsPerPage;
+
+const setSideDrawerLoaderVisible = visible => {
+  return async dispatch => {
+    dispatch({
+      type: "SET_SDLOADVISIBLE",
+      visible: visible
+    });
+  };
+};
+
+exports.setSideDrawerLoaderVisible = setSideDrawerLoaderVisible;
+
+const setSideDrawerLayoutOptionsVisible = visible => {
+  return async dispatch => {
+    dispatch({
+      type: "SET_SDLAYVISIBLE",
+      visible: visible
+    });
+  };
+};
+
+exports.setSideDrawerLayoutOptionsVisible = setSideDrawerLayoutOptionsVisible;
+
+const setSideDrawerOptionsVisible = visible => {
+  return async dispatch => {
+    dispatch({
+      type: "SET_SDOPTSVISIBLE",
+      visible: visible
+    });
+  };
+};
+
+exports.setSideDrawerOptionsVisible = setSideDrawerOptionsVisible;
 
 const setPage = page => {
   return async dispatch => {
@@ -82208,6 +82241,9 @@ class GedLoader extends _react.Component {
           tp.props.gedLoadFailed('No Data');
         } else {
           tp.props.setGedData(persons, families, range);
+          tp.props.setSideDrawerLoaderVisible(false);
+          tp.props.setSideDrawerLayoutOptionsVisible(true);
+          tp.props.setSideDrawerOptionsVisible(false);
         }
       });
     }).catch(error => console.log('error is', error));
@@ -82279,6 +82315,15 @@ const mapDispatchToProps = dispatch => {
     },
     setGedData: (persons, families, range) => {
       dispatch((0, _creators.setGedData)(persons, families, range));
+    },
+    setSideDrawerLoaderVisible: visible => {
+      dispatch((0, _creators.setSideDrawerLoaderVisible)(visible));
+    },
+    setSideDrawerLayoutOptionsVisible: visible => {
+      dispatch((0, _creators.setSideDrawerLayoutOptionsVisible)(visible));
+    },
+    setSideDrawerOptionsVisible: visible => {
+      dispatch((0, _creators.setSideDrawerOptionsVisible)(visible));
     }
   };
 };
@@ -83225,7 +83270,8 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 const styles = theme => ({
   root: {
-    paddingRight: theme.spacing.unit
+    paddingRight: theme.spacing.unit,
+    minHeight: window.innerHeight - 10
   },
   list: {
     width: 420
@@ -83284,10 +83330,20 @@ class SideDrawer extends _react.Component {
 
   clearLayout(event) {
     this.props.activateLayout(false);
-  }
+  } // <Button onClick={()=>{
+  //     this.props.setSideDrawerLoaderVisible(!SideDrawerLoaderVisible);
+  //     this.props.setSideDrawerLayoutOptionsVisible(!SideDrawerLayoutOptionsVisible);
+  //   }}
+  //   className ={classes.label}>Get Data</Button>
+
 
   render() {
-    const classes = this.props.classes;
+    const _this$props = this.props,
+          classes = _this$props.classes,
+          SideDrawerLayoutOptionsVisible = _this$props.SideDrawerLayoutOptionsVisible,
+          SideDrawerLoaderVisible = _this$props.SideDrawerLoaderVisible,
+          SideDrawerOptionsVisible = _this$props.SideDrawerOptionsVisible,
+          ValidToDraw = _this$props.ValidToDraw;
     return _react.default.createElement("div", null, _react.default.createElement(_Drawer.default, {
       open: this.state.modalShow
     }, _react.default.createElement(_Paper.default, {
@@ -83301,14 +83357,29 @@ class SideDrawer extends _react.Component {
         this.toggleDrawer(false);
       },
       className: classes.label
-    }, "Close"), _react.default.createElement(_GedLoader.default, null), _react.default.createElement(_Button.default, {
+    }, "Close"), (SideDrawerLoaderVisible || !ValidToDraw) && _react.default.createElement(_GedLoader.default, null), ValidToDraw && _react.default.createElement(_Button.default, {
+      onClick: () => {
+        if (SideDrawerOptionsVisible) {
+          this.props.setSideDrawerLoaderVisible(false);
+          this.props.setSideDrawerLayoutOptionsVisible(true);
+        } else {
+          this.props.setSideDrawerLoaderVisible(false);
+          this.props.setSideDrawerLayoutOptionsVisible(false);
+        }
+
+        this.props.setSideDrawerOptionsVisible(!SideDrawerOptionsVisible);
+      },
+      className: classes.label
+    }, "Options"), ValidToDraw && _react.default.createElement(_Button.default, {
       onClick: () => {
         this.drawLayout();
       },
       className: classes.label
-    }, "Draw")), _react.default.createElement(_Toolbar.default, {
+    }, "Draw")), SideDrawerLayoutOptionsVisible && _react.default.createElement(_Toolbar.default, {
       className: classes.toolBar
-    }, _react.default.createElement(_LayoutSelect.default, null)), _react.default.createElement(_PersonList.default, null)))));
+    }, _react.default.createElement(_LayoutSelect.default, null)), SideDrawerLayoutOptionsVisible && _react.default.createElement(_PersonList.default, null), SideDrawerOptionsVisible && _react.default.createElement(_Toolbar.default, {
+      className: classes.toolBar
+    }, _react.default.createElement("b", null, "options"))))));
   }
 
 }
@@ -83336,7 +83407,11 @@ const mapStateToProps = state => {
     graphActiveLayout: state.graphActiveLayout,
     graphActiveSelection: state.graphActiveSelection,
     layout: state.layout,
-    selection: state.selection
+    selection: state.selection,
+    SideDrawerLoaderVisible: state.SideDrawerLoaderVisible,
+    SideDrawerLayoutOptionsVisible: state.SideDrawerLayoutOptionsVisible,
+    SideDrawerOptionsVisible: state.SideDrawerOptionsVisible,
+    ValidToDraw: state.selection.length > 0
   };
 };
 
@@ -83356,6 +83431,15 @@ const mapDispatchToProps = dispatch => {
     },
     setRowsPerPage: () => {
       dispatch((0, _creators.setRowsPerPage)());
+    },
+    setSideDrawerLoaderVisible: visible => {
+      dispatch((0, _creators.setSideDrawerLoaderVisible)(visible));
+    },
+    setSideDrawerLayoutOptionsVisible: visible => {
+      dispatch((0, _creators.setSideDrawerLayoutOptionsVisible)(visible));
+    },
+    setSideDrawerOptionsVisible: visible => {
+      dispatch((0, _creators.setSideDrawerOptionsVisible)(visible));
     }
   };
 };
@@ -83539,6 +83623,21 @@ var _default = function _default() {
   let action = arguments.length > 1 ? arguments[1] : undefined;
 
   switch (action.type) {
+    case "SET_SDLOADVISIBLE":
+      return _objectSpread({}, state, {
+        SideDrawerLoaderVisible: action.visible
+      });
+
+    case "SET_SDLAYVISIBLE":
+      return _objectSpread({}, state, {
+        SideDrawerLayoutOptionsVisible: action.visible
+      });
+
+    case "SET_SDOPTSVISIBLE":
+      return _objectSpread({}, state, {
+        SideDrawerOptionsVisible: action.visible
+      });
+
     case "TEST":
       return _objectSpread({}, state, {
         order: action.order,
@@ -83740,6 +83839,9 @@ var _default = (0, _redux.createStore)(_reducer.default, {
   mapdown: false,
   mapleft: false,
   mapright: false,
+  SideDrawerLoaderVisible: true,
+  SideDrawerLayoutOptionsVisible: false,
+  SideDrawerOptionsVisible: false,
   staticSettings: {
     layoutDefaults: {
       topSpan: 20.0,
@@ -83875,7 +83977,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44110" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "2017" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

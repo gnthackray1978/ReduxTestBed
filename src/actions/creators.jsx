@@ -94,6 +94,32 @@ export const setRowsPerPage = rowsPerPage =>{
     }
   };
 }
+export const setSideDrawerLoaderVisible = visible =>{
+  return async dispatch  => {
+    dispatch({
+      type: "SET_SDLOADVISIBLE",
+      visible :visible
+    });
+  };
+}
+export const setSideDrawerLayoutOptionsVisible = visible =>{
+  return async dispatch  => {
+    dispatch({
+      type: "SET_SDLAYVISIBLE",
+      visible :visible
+    });
+  };
+}
+export const setSideDrawerOptionsVisible = visible =>{
+  return async dispatch  => {
+    dispatch({
+      type: "SET_SDOPTSVISIBLE",
+      visible :visible
+    });
+  };
+}
+
+
 
 export const setPage = page =>{
   return async dispatch  => {

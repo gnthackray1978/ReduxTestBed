@@ -34,6 +34,9 @@ export default createStore(
     mapleft :false,
     mapright :false,
 
+    SideDrawerLoaderVisible : true,
+    SideDrawerLayoutOptionsVisible :false,
+    SideDrawerOptionsVisible :false,
 
     staticSettings : {
       layoutDefaults :{

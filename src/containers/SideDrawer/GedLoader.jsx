@@ -7,7 +7,8 @@ import Button from '@material-ui/core/Button';
 import {GedLib} from "../../DataLoader/GedLib.js";
 
 import { connect } from "react-redux";
-import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,setGedData ,gedLoadFailed} from "../../actions/creators.jsx";
+import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,setGedData ,gedLoadFailed,
+  setSideDrawerLoaderVisible, setSideDrawerLayoutOptionsVisible, setSideDrawerOptionsVisible} from "../../actions/creators.jsx";
 
 
 const styles = {
@@ -69,6 +70,10 @@ class GedLoader extends Component {
                     }
                     else{
                       tp.props.setGedData(persons, families,range);
+                      tp.props.setSideDrawerLoaderVisible(false);
+                      tp.props.setSideDrawerLayoutOptionsVisible(true);
+                      tp.props.setSideDrawerOptionsVisible(false);
+
                     }
 
                 });
@@ -155,6 +160,18 @@ const mapDispatchToProps = dispatch => {
     setGedData: (persons, families,range) => {
       dispatch(setGedData(persons, families,range));
     },
+
+    setSideDrawerLoaderVisible :visible =>{
+      dispatch(setSideDrawerLoaderVisible(visible))
+    },
+
+    setSideDrawerLayoutOptionsVisible :visible=>{
+      dispatch(setSideDrawerLayoutOptionsVisible(visible))
+    },
+
+    setSideDrawerOptionsVisible :visible=>{
+      dispatch(setSideDrawerOptionsVisible(visible))
+    }
   };
 };
 

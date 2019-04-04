@@ -1,5 +1,24 @@
 export default (state = {}, action) => {
   switch (action.type) {
+    case "SET_SDLOADVISIBLE":
+      return {
+      ...state,
+      SideDrawerLoaderVisible : action.visible,
+    };
+    case "SET_SDLAYVISIBLE":
+      return {
+      ...state,
+      SideDrawerLayoutOptionsVisible : action.visible,
+    };
+    case "SET_SDOPTSVISIBLE":
+      return {
+        ...state,
+        SideDrawerOptionsVisible : action.visible,
+    };
+
+
+
+
     case "TEST":
       return {
         ...state,
@@ -111,7 +130,7 @@ export default (state = {}, action) => {
           return {
             ...state,
             layoutDefaults : action.layoutDefaults,
-          };  
+          };
 
     case "ACTIVATE_GRAPH":
           return {
