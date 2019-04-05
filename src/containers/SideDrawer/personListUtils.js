@@ -8,7 +8,10 @@ export const desc = (a, b, orderBy) =>{
   return 0;
 };
 
-export const  stableSort = (array, cmp) =>{
+
+export const  stableSort = ( array, cmp) =>{
+
+
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = cmp(a[0], b[0]);
@@ -16,6 +19,15 @@ export const  stableSort = (array, cmp) =>{
     return a[1] - b[1];
   });
   return stabilizedThis.map(el => el[0]);
+};
+
+
+export const filterRecordSet = (array, filter) =>{
+  console.log('stable sort with filter: ' + filter);
+  if(filter !='')
+    array = array.filter(person => person.name.indexOf(filter) !== -1);
+
+  return array;
 };
 
 export const getSorting = (order, orderBy) =>{

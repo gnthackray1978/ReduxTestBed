@@ -28422,7 +28422,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reset = exports.setLayoutDefaults = exports.toggleGraphRunning = exports.mapRight = exports.mapLeft = exports.mapDown = exports.mapUp = exports.zoomOut = exports.zoomIn = exports.setGedData = exports.activateLayout = exports.setLayout = exports.setOrder = exports.setSelected = exports.setPage = exports.setSideDrawerOptionsVisible = exports.setSideDrawerLayoutOptionsVisible = exports.setSideDrawerLoaderVisible = exports.setRowsPerPage = exports.gedLoadFailed = exports.setContext = exports.gedLoadingStatus = exports.initYearIncrementor = exports.switchControlVisbility = exports.beginSearch = void 0;
+exports.reset = exports.setLayoutDefaults = exports.toggleGraphRunning = exports.mapRight = exports.mapLeft = exports.mapDown = exports.mapUp = exports.zoomOut = exports.zoomIn = exports.setGedData = exports.activateLayout = exports.setLayout = exports.setOrder = exports.setSelected = exports.setPage = exports.setSideDrawerOptionsVisible = exports.setSideDrawerLayoutOptionsVisible = exports.setSideDrawerLoaderVisible = exports.setRowsPerPage = exports.gedLoadFailed = exports.setContext = exports.gedLoadingStatus = exports.initYearIncrementor = exports.switchControlVisbility = exports.setNameFilter = exports.beginSearch = void 0;
 
 const beginSearch = term => {
   return async dispatch => {
@@ -28434,6 +28434,17 @@ const beginSearch = term => {
 };
 
 exports.beginSearch = beginSearch;
+
+const setNameFilter = filter => {
+  return async dispatch => {
+    dispatch({
+      type: "SET_GEDNAMEFILTER",
+      filter: filter
+    });
+  };
+};
+
+exports.setNameFilter = setNameFilter;
 
 const switchControlVisbility = controlVisible => {
   if (controlVisible) {
@@ -81823,7 +81834,7 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getSorting = exports.stableSort = exports.desc = void 0;
+exports.getSorting = exports.filterRecordSet = exports.stableSort = exports.desc = void 0;
 
 const desc = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -81850,6 +81861,14 @@ const stableSort = (array, cmp) => {
 };
 
 exports.stableSort = stableSort;
+
+const filterRecordSet = (array, filter) => {
+  console.log('stable sort with filter: ' + filter);
+  if (filter != '') array = array.filter(person => person.name.indexOf(filter) !== -1);
+  return array;
+};
+
+exports.filterRecordSet = filterRecordSet;
 
 const getSorting = (order, orderBy) => {
   return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
@@ -82051,11 +82070,13 @@ class PersonList extends _react.default.Component {
           orderBy = _this$props2.orderBy,
           selected = _this$props2.selected,
           rowsPerPage = _this$props2.rowsPerPage,
-          page = _this$props2.page; //  console.log('render :' + order +' -'+ orderBy +' -'+ selected +' -'+ rowsPerPage +' -'+ page);
+          page = _this$props2.page,
+          filter = _this$props2.filter; //  console.log('render :' + order +' -'+ orderBy +' -'+ selected +' -'+ rowsPerPage +' -'+ page);
     //
     //<PersonListToolbar numSelected={selected.length} />
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, persons.length - page * rowsPerPage);
+    let personsFiltered = (0, _personListUtils.filterRecordSet)(persons, filter);
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, personsFiltered.length - page * rowsPerPage);
     return _react.default.createElement("div", null, _react.default.createElement("div", {
       className: classes.tableWrapper
     }, _react.default.createElement(_Table.default, {
@@ -82066,8 +82087,8 @@ class PersonList extends _react.default.Component {
       order: order,
       orderBy: orderBy,
       onRequestSort: this.handleRequestSort,
-      rowCount: persons.length
-    }), _react.default.createElement(_TableBody.default, null, (0, _personListUtils.stableSort)(persons, (0, _personListUtils.getSorting)(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
+      rowCount: personsFiltered.length
+    }), _react.default.createElement(_TableBody.default, null, (0, _personListUtils.stableSort)(personsFiltered, (0, _personListUtils.getSorting)(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
       const isSelected = this.isSelected(n.id);
       return _react.default.createElement(_TableRow.default, {
         hover: true,
@@ -82101,14 +82122,20 @@ class PersonList extends _react.default.Component {
       id: "filled-name",
       label: "Name Filter",
       className: classes.textField,
-      value: 'test',
+      InputLabelProps: {
+        shrink: true
+      },
+      onChange: evt => {
+        //console.log('txt changed');
+        this.props.setNameFilter(evt.target.value);
+      },
       margin: "normal",
       variant: "outlined"
     }), _react.default.createElement(_TablePagination.default, {
       className: classes.tablePagination,
       rowsPerPageOptions: [rowsPerPage],
       component: "div",
-      count: persons.length,
+      count: personsFiltered.length,
       rowsPerPage: rowsPerPage,
       page: page,
       backIconButtonProps: {
@@ -82142,7 +82169,8 @@ const mapStateToProps = state => {
         name: x.name,
         date: x.date
       };
-    })
+    }),
+    filter: state.gedPersonListFilter
   };
 };
 
@@ -82159,6 +82187,9 @@ const mapDispatchToProps = dispatch => {
     },
     setOrder: (order, orderBy) => {
       dispatch((0, _creators.setOrder)(order, orderBy));
+    },
+    setNameFilter: filter => {
+      dispatch((0, _creators.setNameFilter)(filter));
     }
   };
 };
@@ -83210,7 +83241,288 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(LayoutSelect));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/Radio":"../node_modules/@material-ui/core/Radio/index.js","@material-ui/core/RadioGroup":"../node_modules/@material-ui/core/RadioGroup/index.js","@material-ui/core/FormControlLabel":"../node_modules/@material-ui/core/FormControlLabel/index.js","@material-ui/core/FormControl":"../node_modules/@material-ui/core/FormControl/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/SideDrawer.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/Radio":"../node_modules/@material-ui/core/Radio/index.js","@material-ui/core/RadioGroup":"../node_modules/@material-ui/core/RadioGroup/index.js","@material-ui/core/FormControlLabel":"../node_modules/@material-ui/core/FormControlLabel/index.js","@material-ui/core/FormControl":"../node_modules/@material-ui/core/FormControl/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/Options.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _styles = require("@material-ui/core/styles");
+
+var _Drawer = _interopRequireDefault(require("@material-ui/core/Drawer"));
+
+var _Button = _interopRequireDefault(require("@material-ui/core/Button"));
+
+var _List = _interopRequireDefault(require("@material-ui/core/List"));
+
+var _Divider = _interopRequireDefault(require("@material-ui/core/Divider"));
+
+var _ListItem = _interopRequireDefault(require("@material-ui/core/ListItem"));
+
+var _ListItemIcon = _interopRequireDefault(require("@material-ui/core/ListItemIcon"));
+
+var _ListItemText = _interopRequireDefault(require("@material-ui/core/ListItemText"));
+
+var _MoveToInbox = _interopRequireDefault(require("@material-ui/icons/MoveToInbox"));
+
+var _Mail = _interopRequireDefault(require("@material-ui/icons/Mail"));
+
+var _Switch = _interopRequireDefault(require("@material-ui/core/Switch"));
+
+var _Grid = _interopRequireDefault(require("@material-ui/core/Grid"));
+
+var _Paper = _interopRequireDefault(require("@material-ui/core/Paper"));
+
+var _Toolbar = _interopRequireDefault(require("@material-ui/core/Toolbar"));
+
+var _TextField = _interopRequireDefault(require("@material-ui/core/TextField"));
+
+var _FormLabel = _interopRequireDefault(require("@material-ui/core/FormLabel"));
+
+var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
+
+var _reactRedux = require("react-redux");
+
+var _creators = require("../../actions/creators.jsx");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+const styles = theme => ({
+  toolBar: {
+    minHeight: '0px'
+  },
+  mygrid: {
+    margin: 0,
+    padding: 0
+  },
+  container: {
+    width: 380,
+    margin: 0,
+    padding: 0
+  },
+  textField: {
+    height: 25,
+    width: 120,
+    marginTop: 3
+  },
+  input1: {
+    height: 5
+  },
+  outerContainer: {
+    marginLeft: 20,
+    marginTop: 7,
+    padding: 0
+  }
+});
+
+class Options extends _react.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {}
+
+  render() {
+    const classes = this.props.classes;
+    return _react.default.createElement("div", null, _react.default.createElement("div", {
+      className: classes.outerContainer
+    }, _react.default.createElement(_Typography.default, {
+      variant: "subtitle1",
+      gutterBottom: true
+    }, "Dates Between"), _react.default.createElement(_Grid.default, {
+      container: true,
+      className: classes.container
+    }, _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 5,
+      className: classes.mygrid
+    }, _react.default.createElement(_TextField.default, {
+      id: "filled-name",
+      label: "Start",
+      className: classes.textField,
+      InputLabelProps: {
+        shrink: true
+      },
+      InputProps: {
+        classes: {
+          input: classes.input1
+        }
+      },
+      margin: "normal",
+      variant: "outlined"
+    })), _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 5
+    }, _react.default.createElement(_TextField.default, {
+      id: "filled-name",
+      label: "End",
+      className: classes.textField,
+      InputLabelProps: {
+        shrink: true
+      },
+      InputProps: {
+        classes: {
+          input: classes.input1
+        }
+      },
+      margin: "normal",
+      variant: "outlined"
+    })))), _react.default.createElement("div", {
+      className: classes.outerContainer
+    }, _react.default.createElement(_Grid.default, {
+      container: true,
+      className: classes.container
+    }, _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 5
+    }, _react.default.createElement(_Typography.default, {
+      variant: "subtitle1",
+      gutterBottom: true
+    }, "Start Date"), _react.default.createElement(_TextField.default, {
+      id: "filled-name",
+      label: "Speed",
+      className: classes.textField,
+      InputLabelProps: {
+        shrink: true
+      },
+      InputProps: {
+        classes: {
+          input: classes.input1
+        }
+      },
+      margin: "normal",
+      variant: "outlined"
+    })), _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 5
+    }, _react.default.createElement(_Typography.default, {
+      variant: "subtitle1",
+      gutterBottom: true
+    }, "Set Speed"), _react.default.createElement(_TextField.default, {
+      id: "filled-name",
+      label: "Speed",
+      className: classes.textField,
+      InputLabelProps: {
+        shrink: true
+      },
+      InputProps: {
+        classes: {
+          input: classes.input1
+        }
+      },
+      margin: "normal",
+      variant: "outlined"
+    })))), _react.default.createElement("div", {
+      className: classes.outerContainer
+    }, _react.default.createElement(_Grid.default, {
+      container: true,
+      className: classes.container
+    }, _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 5
+    }, _react.default.createElement(_Typography.default, {
+      variant: "subtitle1",
+      gutterBottom: true
+    }, "Increment"), _react.default.createElement(_TextField.default, {
+      id: "filled-name",
+      label: "Speed",
+      className: classes.textField,
+      InputLabelProps: {
+        shrink: true
+      },
+      InputProps: {
+        classes: {
+          input: classes.input1
+        }
+      },
+      margin: "normal",
+      variant: "outlined"
+    })))), _react.default.createElement("div", {
+      className: classes.outerContainer
+    }, _react.default.createElement(_Grid.default, {
+      container: true,
+      className: classes.container
+    }, _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 5
+    }, _react.default.createElement(_Typography.default, {
+      variant: "subtitle1",
+      gutterBottom: true
+    }, "Zoom Threshold"), _react.default.createElement(_TextField.default, {
+      id: "filled-name",
+      label: "Speed",
+      className: classes.textField,
+      InputLabelProps: {
+        shrink: true
+      },
+      InputProps: {
+        classes: {
+          input: classes.input1
+        }
+      },
+      margin: "normal",
+      variant: "outlined"
+    })), _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 5
+    }, _react.default.createElement(_Typography.default, {
+      variant: "subtitle1",
+      gutterBottom: true
+    }, "Node Threshold"), _react.default.createElement(_TextField.default, {
+      id: "filled-name",
+      label: "Speed",
+      className: classes.textField,
+      InputLabelProps: {
+        shrink: true
+      },
+      InputProps: {
+        classes: {
+          input: classes.input1
+        }
+      },
+      margin: "normal",
+      variant: "outlined"
+    })))));
+  }
+
+}
+
+const mapStateToProps = state => {
+  return {
+    status: state.status
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setSideDrawerOptionsVisible: function (_setSideDrawerOptionsVisible) {
+      function setSideDrawerOptionsVisible(_x) {
+        return _setSideDrawerOptionsVisible.apply(this, arguments);
+      }
+
+      setSideDrawerOptionsVisible.toString = function () {
+        return _setSideDrawerOptionsVisible.toString();
+      };
+
+      return setSideDrawerOptionsVisible;
+    }(visible => {
+      dispatch(setSideDrawerOptionsVisible(visible));
+    })
+  };
+};
+
+var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(Options));
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Switch":"../node_modules/@material-ui/core/Switch/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Paper":"../node_modules/@material-ui/core/Paper/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","@material-ui/core/TextField":"../node_modules/@material-ui/core/TextField/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","@material-ui/core/Typography":"../node_modules/@material-ui/core/Typography/index.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/SideDrawer.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -83259,6 +83571,8 @@ var _PersonList = _interopRequireDefault(require("./PersonList.jsx"));
 var _GedLoader = _interopRequireDefault(require("./GedLoader.jsx"));
 
 var _LayoutSelect = _interopRequireDefault(require("./LayoutSelect.jsx"));
+
+var _Options = _interopRequireDefault(require("./Options.jsx"));
 
 var _reactRedux = require("react-redux");
 
@@ -83377,9 +83691,7 @@ class SideDrawer extends _react.Component {
       className: classes.label
     }, "Draw")), SideDrawerLayoutOptionsVisible && _react.default.createElement(_Toolbar.default, {
       className: classes.toolBar
-    }, _react.default.createElement(_LayoutSelect.default, null)), SideDrawerLayoutOptionsVisible && _react.default.createElement(_PersonList.default, null), SideDrawerOptionsVisible && _react.default.createElement(_Toolbar.default, {
-      className: classes.toolBar
-    }, _react.default.createElement("b", null, "options"))))));
+    }, _react.default.createElement(_LayoutSelect.default, null)), SideDrawerLayoutOptionsVisible && _react.default.createElement(_PersonList.default, null), SideDrawerOptionsVisible && _react.default.createElement(_Options.default, null)))));
   }
 
 }
@@ -83447,7 +83759,7 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(SideDrawer));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Switch":"../node_modules/@material-ui/core/Switch/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Paper":"../node_modules/@material-ui/core/Paper/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","./SideDrawer.css":"../src/containers/SideDrawer/SideDrawer.css","../../DataLoader/GedLib.js":"../src/DataLoader/GedLib.js","./PersonList.jsx":"../src/containers/SideDrawer/PersonList.jsx","./GedLoader.jsx":"../src/containers/SideDrawer/GedLoader.jsx","./LayoutSelect.jsx":"../src/containers/SideDrawer/LayoutSelect.jsx","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/data.css":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Switch":"../node_modules/@material-ui/core/Switch/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Paper":"../node_modules/@material-ui/core/Paper/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","./SideDrawer.css":"../src/containers/SideDrawer/SideDrawer.css","../../DataLoader/GedLib.js":"../src/DataLoader/GedLib.js","./PersonList.jsx":"../src/containers/SideDrawer/PersonList.jsx","./GedLoader.jsx":"../src/containers/SideDrawer/GedLoader.jsx","./LayoutSelect.jsx":"../src/containers/SideDrawer/LayoutSelect.jsx","./Options.jsx":"../src/containers/SideDrawer/Options.jsx","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/data.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -83636,6 +83948,11 @@ var _default = function _default() {
     case "SET_SDOPTSVISIBLE":
       return _objectSpread({}, state, {
         SideDrawerOptionsVisible: action.visible
+      });
+
+    case "SET_GEDNAMEFILTER":
+      return _objectSpread({}, state, {
+        gedPersonListFilter: action.filter
       });
 
     case "TEST":
@@ -83828,6 +84145,7 @@ var _default = (0, _redux.createStore)(_reducer.default, {
   gedError: '',
   gedLoadingMessage: '',
   gedLoadingMessagesDisplayed: false,
+  gedPersonListFilter: '',
   graphRunning: false,
   graphActive: false,
   graphActiveLayout: 'descendents',
@@ -83977,7 +84295,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "2017" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "3034" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

@@ -15,7 +15,11 @@ export default (state = {}, action) => {
         ...state,
         SideDrawerOptionsVisible : action.visible,
     };
-
+    case "SET_GEDNAMEFILTER":
+      return {
+         ...state,
+         gedPersonListFilter : action.filter,    
+    };
 
 
 

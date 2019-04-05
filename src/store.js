@@ -22,6 +22,7 @@ export default createStore(
     gedError :'',
     gedLoadingMessage : '',
     gedLoadingMessagesDisplayed : false,
+    gedPersonListFilter : '',
     graphRunning : false,
     graphActive : false,
     graphActiveLayout  : 'descendents',
@@ -33,6 +34,7 @@ export default createStore(
     mapdown: false,
     mapleft :false,
     mapright :false,
+
 
     SideDrawerLoaderVisible : true,
     SideDrawerLayoutOptionsVisible :false,

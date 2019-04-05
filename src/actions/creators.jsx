@@ -11,6 +11,15 @@ export const beginSearch = term => {
 
 };
 
+export const setNameFilter = filter =>{
+  return async dispatch  => {
+    dispatch({
+      type: "SET_GEDNAMEFILTER",
+      filter: filter
+    });
+
+  };
+}
 
 export const switchControlVisbility = controlVisible =>{
 

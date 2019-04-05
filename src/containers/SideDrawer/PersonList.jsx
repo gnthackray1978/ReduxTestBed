@@ -21,8 +21,8 @@ import { lighten } from '@material-ui/core/styles/colorManipulator';
 import TextField from '@material-ui/core/TextField';
 import PersonListToolbar from "./PersonListToolbar.jsx";
 import { connect } from "react-redux";
-import {desc,stableSort,getSorting} from "./personListUtils.js";
-import {setData ,setOrder,setSelected,setPage,setRowsPerPage } from "../../actions/creators.jsx";
+import {desc,stableSort,getSorting,filterRecordSet} from "./personListUtils.js";
+import {setData ,setOrder,setSelected,setPage,setRowsPerPage,setNameFilter } from "../../actions/creators.jsx";
 
 const rows = [
   { id: 'date', numeric: true, disablePadding: false, label: 'Birth Year' },
@@ -165,7 +165,7 @@ class PersonList extends React.Component {
   render() {
 
     const { classes } = this.props;
-    const { persons, order, orderBy, selected, rowsPerPage, page } = this.props;
+    const { persons, order, orderBy, selected, rowsPerPage, page,filter } = this.props;
 
 
 
@@ -173,8 +173,11 @@ class PersonList extends React.Component {
 //
         //<PersonListToolbar numSelected={selected.length} />
 
-        
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, persons.length - page * rowsPerPage);
+    let personsFiltered = filterRecordSet(persons, filter);
+
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, personsFiltered.length - page * rowsPerPage);
+
+
 
     return (
       <div>
@@ -188,10 +191,10 @@ class PersonList extends React.Component {
                 orderBy={orderBy}
 
                 onRequestSort={this.handleRequestSort}
-                rowCount={persons.length}
+                rowCount={personsFiltered.length}
               />
               <TableBody>
-                {stableSort(persons, getSorting(order, orderBy))
+                {stableSort(personsFiltered, getSorting(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map(n => {
                     const isSelected = this.isSelected(n.id);
@@ -229,8 +232,13 @@ class PersonList extends React.Component {
             id="filled-name"
             label="Name Filter"
             className={classes.textField}
-            value={'test'}
-
+            InputLabelProps ={{
+                    shrink: true,
+                }}
+            onChange = {(evt)=>{
+              //console.log('txt changed');
+              this.props.setNameFilter(evt.target.value);
+            }}
             margin="normal"
             variant="outlined"
           />
@@ -238,7 +246,7 @@ class PersonList extends React.Component {
             className={classes.tablePagination}
             rowsPerPageOptions={[rowsPerPage]}
             component="div"
-            count={persons.length}
+            count={personsFiltered.length}
             rowsPerPage={rowsPerPage}
             page={page}
             backIconButtonProps={{
@@ -274,7 +282,8 @@ const mapStateToProps = state => {
     orderBy : state.orderBy,
     persons : state.persons.map(x => {
      return { id: x.id, name: x.name, date : x.date};
-    })
+   }),
+   filter : state.gedPersonListFilter
 
   };
 };
@@ -297,6 +306,10 @@ const mapDispatchToProps = dispatch => {
 
     setOrder: (order, orderBy) => {
       dispatch(setOrder(order,orderBy));
+    },
+
+    setNameFilter: (filter) => {
+      dispatch(setNameFilter(filter));
     }
   };
 };

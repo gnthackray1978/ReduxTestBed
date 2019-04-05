@@ -20,7 +20,7 @@ import {GedLib} from "../../DataLoader/GedLib.js";
 import PersonList from "./PersonList.jsx";
 import GedLoader from "./GedLoader.jsx";
 import LayoutSelect from "./LayoutSelect.jsx";
-
+import Options from "./Options.jsx";
 import { connect } from "react-redux";
 import { switchControlVisbility,reset,gedLoadingStatus,initYearIncrementor,setGedData ,
   gedLoadFailed,activateLayout,toggleGraphRunning,setRowsPerPage,
@@ -163,12 +163,8 @@ const styles = theme => ({
                 <PersonList></PersonList>
               )}
 
-
-
               {SideDrawerOptionsVisible && (
-                  <Toolbar className={classes.toolBar}>
-                     <b>options</b>
-                  </Toolbar>
+                <Options></Options>
               )}
 
 
