@@ -18,7 +18,7 @@ import TextField from '@material-ui/core/TextField';
 import FormLabel  from '@material-ui/core/FormLabel';
 import Typography from '@material-ui/core/Typography';
 import { connect } from "react-redux";
-import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
+import {etSideDrawerOptionsVisible,setSubsetFDParams} from "../../actions/creators.jsx";
 
 
   const styles = theme => ({
@@ -48,7 +48,13 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
       marginLeft : 20,
       marginTop:7,
       padding : 0
+    },
+    buttonContainer :{
+      marginLeft : 13,
+      marginTop:50,
+      padding : 0
     }
+
   });
 
    class Options extends Component {
@@ -65,7 +71,17 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
 
      render() {
 
-      const { classes } = this.props;
+       // stiffness :state.stiffness,
+       // repulsion :state.repulsion,
+       // damping : state.damping,
+       // speed :state.speed,
+       // increment :state.increment,
+       // year : state.year,
+       // sublayoutZoom:state.sublayoutZoom,
+       // sublayoutNodeThreshold :state.sublayoutNodeThreshold
+
+      const { classes,gedRange ,stiffness,repulsion,damping,speed,increment,
+        year,sublayoutZoom,sublayoutNodeThreshold} = this.props;
 
       return (
         <div>
@@ -77,7 +93,7 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                  <Grid item xs={5}  className = {classes.mygrid}>
                    <TextField
                      id="filled-name"
-                     label="Start"
+                     label="Start Year"
                      className={classes.textField}
                      InputLabelProps ={{
                        shrink: true,
@@ -85,7 +101,7 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                      InputProps ={{
                        classes: { input: classes.input1 }
                      }}
-
+                     value = {gedRange.s}
                      margin="normal"
                      variant="outlined"
                    />
@@ -93,7 +109,7 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                  <Grid item xs={5}>
                    <TextField
                      id="filled-name"
-                     label="End"
+                     label="End Year"
                      className={classes.textField}
                      InputLabelProps ={{
                       shrink: true,
@@ -101,7 +117,7 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                      InputProps ={{
                       classes: { input: classes.input1 }
                      }}
-
+                     value = {gedRange.e}
                      margin="normal"
                      variant="outlined"
                    />
@@ -120,7 +136,8 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                 </Typography>
                 <TextField
                   id="filled-name"
-                  label="Speed"
+                  label="Run From Year"
+                  ref = "runfromyear"
                   className={classes.textField}
                   InputLabelProps ={{
                     shrink: true,
@@ -128,7 +145,7 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                   InputProps ={{
                     classes: { input: classes.input1 }
                   }}
-
+                  defaultValue = {year}
                   margin="normal"
                   variant="outlined"
                 />
@@ -139,7 +156,8 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                 </Typography>
                 <TextField
                   id="filled-name"
-                  label="Speed"
+                  label="Set Speed"
+                  ref = "speed"
                   className={classes.textField}
                   InputLabelProps ={{
                     shrink: true,
@@ -147,7 +165,7 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                   InputProps ={{
                     classes: { input: classes.input1 }
                   }}
-
+                  defaultValue = {speed}
                   margin="normal"
                   variant="outlined"
                 />
@@ -163,7 +181,8 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                  </Typography>
                  <TextField
                    id="filled-name"
-                   label="Speed"
+                   label="Increment"
+                   ref = "increment"
                    className={classes.textField}
                    InputLabelProps ={{
                      shrink: true,
@@ -171,7 +190,7 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                    InputProps ={{
                      classes: { input: classes.input1 }
                    }}
-
+                   defaultValue = {increment}
                    margin="normal"
                    variant="outlined"
                  />
@@ -190,7 +209,8 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                   </Typography>
                   <TextField
                     id="filled-name"
-                    label="Speed"
+                    label="Zoom Threshold"
+                    ref = "zoomthreshold"
                     className={classes.textField}
                     InputLabelProps ={{
                       shrink: true,
@@ -199,6 +219,7 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                       classes: { input: classes.input1 }
                     }}
 
+                    defaultValue ={sublayoutZoom}
                     margin="normal"
                     variant="outlined"
                   />
@@ -209,7 +230,8 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                   </Typography>
                   <TextField
                     id="filled-name"
-                    label="Speed"
+                    label="Node Threshold"
+                    ref = "threshold"
                     className={classes.textField}
                     InputLabelProps ={{
                       shrink: true,
@@ -217,13 +239,101 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
                     InputProps ={{
                       classes: { input: classes.input1 }
                     }}
+                    defaultValue ={sublayoutNodeThreshold}
+                    margin="normal"
+                    variant="outlined"
+                  />
+                </Grid>
+               </Grid>
+             </div>
 
+
+             <div className = {classes.outerContainer}>
+               <Grid container className = {classes.container}>
+                 <Grid item xs={5}>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Stiffness
+                  </Typography>
+                  <TextField
+                    id="filled-name"
+                    ref = "stiffness"
+                    label="Stiffness"
+                    className={classes.textField}
+                    InputLabelProps ={{
+                      shrink: true,
+                    }}
+                    InputProps ={{
+                      classes: { input: classes.input1 }
+                    }}
+                    defaultValue ={stiffness}
+                    margin="normal"
+                    variant="outlined"
+                  />
+                 </Grid>
+                <Grid item xs={5}>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Repulsion
+                  </Typography>
+                  <TextField
+                    id="filled-name"
+                    ref ="repulsion"
+                    label="Repulsion"
+                    className={classes.textField}
+                    InputLabelProps ={{
+                      shrink: true,
+                    }}
+                    InputProps ={{
+                      classes: { input: classes.input1 }
+                    }}
+                    defaultValue ={repulsion}
                     margin="normal"
                     variant="outlined"
                   />
                 </Grid>
               </Grid>
               </div>
+
+
+              <div className = {classes.outerContainer}>
+                <Grid container className = {classes.container}>
+                  <Grid item xs={5}>
+                   <Typography variant="subtitle1" gutterBottom>
+                     Damping
+                   </Typography>
+                   <TextField
+                     id="filled-name"
+                     ref ="damping"
+                     label="Damping"
+                     className={classes.textField}
+                     InputLabelProps ={{
+                       shrink: true,
+                     }}
+                     InputProps ={{
+                       classes: { input: classes.input1 }
+                     }}
+                     value ={damping}
+                     margin="normal"
+                     variant="outlined"
+                   />
+                  </Grid>
+
+               </Grid>
+               </div>
+
+
+             <div className = {classes.buttonContainer}>
+               <Button variant="contained" color="secondary" onClick={(evt)=>{
+                    this.props.setSubsetFDParams(this.refs.runfromyear.props.value || this.refs.runfromyear.props.defaultValue,
+                                                 this.refs.speed.props.value || this.refs.speed.props.defaultValue,
+                                                 this.refs.increment.props.value || this.refs.increment.props.defaultValue,
+                                                 this.refs.zoomthreshold.props.value || this.refs.zoomthreshold.props.defaultValue,
+                                                 this.refs.threshold.props.value || this.refs.threshold.props.defaultValue,
+                                                 this.refs.stiffness.props.value || this.refs.stiffness.props.defaultValue,
+                                                 this.refs.repulsion.props.value || this.refs.repulsion.props.defaultValue,
+                                                 this.refs.damping.props.value || this.refs.damping.props.defaultValue,
+                    );
+                   }} >Update Params</Button>
+            </div>
 
         </div>
       );
@@ -232,9 +342,20 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
 
 
 
+
   const mapStateToProps = state => {
     return {
       status: state.status,
+      gedRange : state.gedDataRange,
+      stiffness :state.fdSettings.stiffness,
+      repulsion :state.fdSettings.repulsion,
+      damping : state.fdSettings.damping,
+      speed :state.fdSettings.speed,
+      increment :state.fdSettings.increment,
+      year : state.fdSettings.year,
+      sublayoutZoom:state.fdSettings.sublayoutZoom,
+      sublayoutNodeThreshold :state.fdSettings.sublayoutNodeThreshold
+
     };
   };
 
@@ -242,6 +363,9 @@ import {etSideDrawerOptionsVisible} from "../../actions/creators.jsx";
     return {
       setSideDrawerOptionsVisible :visible=>{
         dispatch(setSideDrawerOptionsVisible(visible))
+      },
+      setSubsetFDParams : (runfrom, speed, increment, zoomthreshold,nodethreshold, stiffness, repulsion, damping) =>{
+        dispatch(setSubsetFDParams(runfrom, speed, increment, zoomthreshold,nodethreshold, stiffness, repulsion, damping))
       }
     };
   };

@@ -28422,7 +28422,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.reset = exports.setLayoutDefaults = exports.toggleGraphRunning = exports.mapRight = exports.mapLeft = exports.mapDown = exports.mapUp = exports.zoomOut = exports.zoomIn = exports.setGedData = exports.activateLayout = exports.setLayout = exports.setOrder = exports.setSelected = exports.setPage = exports.setSideDrawerOptionsVisible = exports.setSideDrawerLayoutOptionsVisible = exports.setSideDrawerLoaderVisible = exports.setRowsPerPage = exports.gedLoadFailed = exports.setContext = exports.gedLoadingStatus = exports.initYearIncrementor = exports.switchControlVisbility = exports.setNameFilter = exports.beginSearch = void 0;
+exports.reset = exports.setLayoutDefaults = exports.toggleGraphRunning = exports.mapRight = exports.mapLeft = exports.mapDown = exports.mapUp = exports.zoomOut = exports.zoomIn = exports.setGedData = exports.activateLayout = exports.setLayout = exports.setOrder = exports.setSelected = exports.setPage = exports.setSideDrawerOptionsVisible = exports.setSideDrawerLayoutOptionsVisible = exports.setSideDrawerLoaderVisible = exports.setRowsPerPage = exports.gedLoadFailed = exports.setContext = exports.gedLoadingStatus = exports.initYearIncrementor = exports.switchControlVisbility = exports.setSubsetFDParams = exports.setNameFilter = exports.beginSearch = void 0;
 
 const beginSearch = term => {
   return async dispatch => {
@@ -28445,6 +28445,24 @@ const setNameFilter = filter => {
 };
 
 exports.setNameFilter = setNameFilter;
+
+const setSubsetFDParams = (runfrom, speed, increment, zoomthreshold, nodethreshold, stiffness, repulsion, damping) => {
+  return async dispatch => {
+    dispatch({
+      type: "SET_SUBSETFDPARAMS",
+      runfrom: runfrom,
+      speed: speed,
+      increment: increment,
+      zoomthreshold: zoomthreshold,
+      nodethreshold: nodethreshold,
+      stiffness: stiffness,
+      repulsion: repulsion,
+      damping: damping
+    });
+  };
+};
+
+exports.setSubsetFDParams = setSubsetFDParams;
 
 const switchControlVisbility = controlVisible => {
   if (controlVisible) {
@@ -83320,6 +83338,11 @@ const styles = theme => ({
     marginLeft: 20,
     marginTop: 7,
     padding: 0
+  },
+  buttonContainer: {
+    marginLeft: 13,
+    marginTop: 50,
+    padding: 0
   }
 });
 
@@ -83331,7 +83354,25 @@ class Options extends _react.Component {
   componentDidMount() {}
 
   render() {
-    const classes = this.props.classes;
+    // stiffness :state.stiffness,
+    // repulsion :state.repulsion,
+    // damping : state.damping,
+    // speed :state.speed,
+    // increment :state.increment,
+    // year : state.year,
+    // sublayoutZoom:state.sublayoutZoom,
+    // sublayoutNodeThreshold :state.sublayoutNodeThreshold
+    const _this$props = this.props,
+          classes = _this$props.classes,
+          gedRange = _this$props.gedRange,
+          stiffness = _this$props.stiffness,
+          repulsion = _this$props.repulsion,
+          damping = _this$props.damping,
+          speed = _this$props.speed,
+          increment = _this$props.increment,
+          year = _this$props.year,
+          sublayoutZoom = _this$props.sublayoutZoom,
+          sublayoutNodeThreshold = _this$props.sublayoutNodeThreshold;
     return _react.default.createElement("div", null, _react.default.createElement("div", {
       className: classes.outerContainer
     }, _react.default.createElement(_Typography.default, {
@@ -83346,7 +83387,7 @@ class Options extends _react.Component {
       className: classes.mygrid
     }, _react.default.createElement(_TextField.default, {
       id: "filled-name",
-      label: "Start",
+      label: "Start Year",
       className: classes.textField,
       InputLabelProps: {
         shrink: true
@@ -83356,6 +83397,7 @@ class Options extends _react.Component {
           input: classes.input1
         }
       },
+      value: gedRange.s,
       margin: "normal",
       variant: "outlined"
     })), _react.default.createElement(_Grid.default, {
@@ -83363,7 +83405,7 @@ class Options extends _react.Component {
       xs: 5
     }, _react.default.createElement(_TextField.default, {
       id: "filled-name",
-      label: "End",
+      label: "End Year",
       className: classes.textField,
       InputLabelProps: {
         shrink: true
@@ -83373,6 +83415,7 @@ class Options extends _react.Component {
           input: classes.input1
         }
       },
+      value: gedRange.e,
       margin: "normal",
       variant: "outlined"
     })))), _react.default.createElement("div", {
@@ -83388,7 +83431,8 @@ class Options extends _react.Component {
       gutterBottom: true
     }, "Start Date"), _react.default.createElement(_TextField.default, {
       id: "filled-name",
-      label: "Speed",
+      label: "Run From Year",
+      ref: "runfromyear",
       className: classes.textField,
       InputLabelProps: {
         shrink: true
@@ -83398,6 +83442,7 @@ class Options extends _react.Component {
           input: classes.input1
         }
       },
+      defaultValue: year,
       margin: "normal",
       variant: "outlined"
     })), _react.default.createElement(_Grid.default, {
@@ -83408,7 +83453,8 @@ class Options extends _react.Component {
       gutterBottom: true
     }, "Set Speed"), _react.default.createElement(_TextField.default, {
       id: "filled-name",
-      label: "Speed",
+      label: "Set Speed",
+      ref: "speed",
       className: classes.textField,
       InputLabelProps: {
         shrink: true
@@ -83418,6 +83464,7 @@ class Options extends _react.Component {
           input: classes.input1
         }
       },
+      defaultValue: speed,
       margin: "normal",
       variant: "outlined"
     })))), _react.default.createElement("div", {
@@ -83433,7 +83480,8 @@ class Options extends _react.Component {
       gutterBottom: true
     }, "Increment"), _react.default.createElement(_TextField.default, {
       id: "filled-name",
-      label: "Speed",
+      label: "Increment",
+      ref: "increment",
       className: classes.textField,
       InputLabelProps: {
         shrink: true
@@ -83443,6 +83491,7 @@ class Options extends _react.Component {
           input: classes.input1
         }
       },
+      defaultValue: increment,
       margin: "normal",
       variant: "outlined"
     })))), _react.default.createElement("div", {
@@ -83458,7 +83507,8 @@ class Options extends _react.Component {
       gutterBottom: true
     }, "Zoom Threshold"), _react.default.createElement(_TextField.default, {
       id: "filled-name",
-      label: "Speed",
+      label: "Zoom Threshold",
+      ref: "zoomthreshold",
       className: classes.textField,
       InputLabelProps: {
         shrink: true
@@ -83468,6 +83518,7 @@ class Options extends _react.Component {
           input: classes.input1
         }
       },
+      defaultValue: sublayoutZoom,
       margin: "normal",
       variant: "outlined"
     })), _react.default.createElement(_Grid.default, {
@@ -83478,7 +83529,8 @@ class Options extends _react.Component {
       gutterBottom: true
     }, "Node Threshold"), _react.default.createElement(_TextField.default, {
       id: "filled-name",
-      label: "Speed",
+      label: "Node Threshold",
+      ref: "threshold",
       className: classes.textField,
       InputLabelProps: {
         shrink: true
@@ -83488,16 +83540,110 @@ class Options extends _react.Component {
           input: classes.input1
         }
       },
+      defaultValue: sublayoutNodeThreshold,
       margin: "normal",
       variant: "outlined"
-    })))));
+    })))), _react.default.createElement("div", {
+      className: classes.outerContainer
+    }, _react.default.createElement(_Grid.default, {
+      container: true,
+      className: classes.container
+    }, _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 5
+    }, _react.default.createElement(_Typography.default, {
+      variant: "subtitle1",
+      gutterBottom: true
+    }, "Stiffness"), _react.default.createElement(_TextField.default, {
+      id: "filled-name",
+      ref: "stiffness",
+      label: "Stiffness",
+      className: classes.textField,
+      InputLabelProps: {
+        shrink: true
+      },
+      InputProps: {
+        classes: {
+          input: classes.input1
+        }
+      },
+      defaultValue: stiffness,
+      margin: "normal",
+      variant: "outlined"
+    })), _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 5
+    }, _react.default.createElement(_Typography.default, {
+      variant: "subtitle1",
+      gutterBottom: true
+    }, "Repulsion"), _react.default.createElement(_TextField.default, {
+      id: "filled-name",
+      ref: "repulsion",
+      label: "Repulsion",
+      className: classes.textField,
+      InputLabelProps: {
+        shrink: true
+      },
+      InputProps: {
+        classes: {
+          input: classes.input1
+        }
+      },
+      defaultValue: repulsion,
+      margin: "normal",
+      variant: "outlined"
+    })))), _react.default.createElement("div", {
+      className: classes.outerContainer
+    }, _react.default.createElement(_Grid.default, {
+      container: true,
+      className: classes.container
+    }, _react.default.createElement(_Grid.default, {
+      item: true,
+      xs: 5
+    }, _react.default.createElement(_Typography.default, {
+      variant: "subtitle1",
+      gutterBottom: true
+    }, "Damping"), _react.default.createElement(_TextField.default, {
+      id: "filled-name",
+      ref: "damping",
+      label: "Damping",
+      className: classes.textField,
+      InputLabelProps: {
+        shrink: true
+      },
+      InputProps: {
+        classes: {
+          input: classes.input1
+        }
+      },
+      value: damping,
+      margin: "normal",
+      variant: "outlined"
+    })))), _react.default.createElement("div", {
+      className: classes.buttonContainer
+    }, _react.default.createElement(_Button.default, {
+      variant: "contained",
+      color: "secondary",
+      onClick: evt => {
+        this.props.setSubsetFDParams(this.refs.runfromyear.props.value || this.refs.runfromyear.props.defaultValue, this.refs.speed.props.value || this.refs.speed.props.defaultValue, this.refs.increment.props.value || this.refs.increment.props.defaultValue, this.refs.zoomthreshold.props.value || this.refs.zoomthreshold.props.defaultValue, this.refs.threshold.props.value || this.refs.threshold.props.defaultValue, this.refs.stiffness.props.value || this.refs.stiffness.props.defaultValue, this.refs.repulsion.props.value || this.refs.repulsion.props.defaultValue, this.refs.damping.props.value || this.refs.damping.props.defaultValue);
+      }
+    }, "Update Params")));
   }
 
 }
 
 const mapStateToProps = state => {
   return {
-    status: state.status
+    status: state.status,
+    gedRange: state.gedDataRange,
+    stiffness: state.fdSettings.stiffness,
+    repulsion: state.fdSettings.repulsion,
+    damping: state.fdSettings.damping,
+    speed: state.fdSettings.speed,
+    increment: state.fdSettings.increment,
+    year: state.fdSettings.year,
+    sublayoutZoom: state.fdSettings.sublayoutZoom,
+    sublayoutNodeThreshold: state.fdSettings.sublayoutNodeThreshold
   };
 };
 
@@ -83515,7 +83661,10 @@ const mapDispatchToProps = dispatch => {
       return setSideDrawerOptionsVisible;
     }(visible => {
       dispatch(setSideDrawerOptionsVisible(visible));
-    })
+    }),
+    setSubsetFDParams: (runfrom, speed, increment, zoomthreshold, nodethreshold, stiffness, repulsion, damping) => {
+      dispatch((0, _creators.setSubsetFDParams)(runfrom, speed, increment, zoomthreshold, nodethreshold, stiffness, repulsion, damping));
+    }
   };
 };
 
@@ -83955,6 +84104,20 @@ var _default = function _default() {
         gedPersonListFilter: action.filter
       });
 
+    case "SET_SUBSETFDPARAMS":
+      return _objectSpread({}, state, {
+        fdSettings: _objectSpread({}, state.fdSettings, {
+          stiffness: action.stiffness,
+          repulsion: action.repulsion,
+          damping: action.damping,
+          speed: action.speed,
+          increment: action.increment,
+          year: action.runfrom,
+          sublayoutZoom: action.zoomthreshold,
+          sublayoutNodeThreshold: action.nodethreshold
+        })
+      });
+
     case "TEST":
       return _objectSpread({}, state, {
         order: action.order,
@@ -84295,7 +84458,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "3034" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "1473" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

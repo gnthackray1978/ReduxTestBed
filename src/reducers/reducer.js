@@ -18,10 +18,24 @@ export default (state = {}, action) => {
     case "SET_GEDNAMEFILTER":
       return {
          ...state,
-         gedPersonListFilter : action.filter,    
+         gedPersonListFilter : action.filter,
     };
 
-
+    case "SET_SUBSETFDPARAMS":
+      return {
+         ...state,
+         fdSettings :{
+           ...state.fdSettings,
+           stiffness :action.stiffness,
+           repulsion :action.repulsion,
+           damping : action.damping,
+           speed :action.speed,
+           increment :action.increment,
+           year : action.runfrom,
+           sublayoutZoom:action.zoomthreshold,
+           sublayoutNodeThreshold : action.nodethreshold
+         }
+    };
 
     case "TEST":
       return {

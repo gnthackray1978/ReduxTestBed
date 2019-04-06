@@ -21,6 +21,24 @@ export const setNameFilter = filter =>{
   };
 }
 
+export const setSubsetFDParams = (runfrom, speed, increment, zoomthreshold,nodethreshold, stiffness, repulsion, damping) =>{
+  return async dispatch  => {
+    dispatch({
+      type: "SET_SUBSETFDPARAMS",
+      runfrom: runfrom,
+      speed: speed,
+      increment: increment,
+      zoomthreshold: zoomthreshold,
+      nodethreshold: nodethreshold,
+      stiffness: stiffness,
+      repulsion: repulsion,
+      damping: damping,
+    });
+
+  };
+}
+
+
 export const switchControlVisbility = controlVisible =>{
 
   if(controlVisible){
