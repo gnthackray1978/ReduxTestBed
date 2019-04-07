@@ -17,6 +17,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import TextField from '@material-ui/core/TextField';
 import FormLabel  from '@material-ui/core/FormLabel';
 import Typography from '@material-ui/core/Typography';
+import StatefullTextField from "./StatefullTextField.jsx";
+import {DateFunctions} from "../../DateFunctions.js";
 import { connect } from "react-redux";
 import {etSideDrawerOptionsVisible,setSubsetFDParams} from "../../actions/creators.jsx";
 
@@ -68,7 +70,9 @@ import {etSideDrawerOptionsVisible,setSubsetFDParams} from "../../actions/creato
 
      }
 
-
+     changed (val, type){
+       console.log(type + ' ' + val);
+     }
      render() {
 
        // stiffness :state.stiffness,
@@ -123,52 +127,19 @@ import {etSideDrawerOptionsVisible,setSubsetFDParams} from "../../actions/creato
                    />
                  </Grid>
                </Grid>
-
-           </div>
+          </div>
 
 
 
            <div className = {classes.outerContainer}>
              <Grid container className = {classes.container}>
                <Grid item xs={5}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Start Date
-                </Typography>
-                <TextField
-                  id="filled-name"
-                  label="Run From Year"
-                  ref = "runfromyear"
-                  className={classes.textField}
-                  InputLabelProps ={{
-                    shrink: true,
-                  }}
-                  InputProps ={{
-                    classes: { input: classes.input1 }
-                  }}
-                  defaultValue = {year}
-                  margin="normal"
-                  variant="outlined"
-                />
+                 <StatefullTextField label = 'Start Date' value = {this.props.year} changed = {(val,type)=>this.setState({year: DateFunctions.YearDate(val)})}>
+                 </StatefullTextField>
                </Grid>
               <Grid item xs={5}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Set Speed
-                </Typography>
-                <TextField
-                  id="filled-name"
-                  label="Set Speed"
-                  ref = "speed"
-                  className={classes.textField}
-                  InputLabelProps ={{
-                    shrink: true,
-                  }}
-                  InputProps ={{
-                    classes: { input: classes.input1 }
-                  }}
-                  defaultValue = {speed}
-                  margin="normal"
-                  variant="outlined"
-                />
+                <StatefullTextField label = 'Speed' value = {this.props.speed} changed = {(val,type)=>this.setState({speed: Number(val)})}>
+                </StatefullTextField>
               </Grid>
             </Grid>
             </div>
@@ -176,26 +147,9 @@ import {etSideDrawerOptionsVisible,setSubsetFDParams} from "../../actions/creato
             <div className = {classes.outerContainer}>
               <Grid container className = {classes.container}>
                 <Grid item xs={5}>
-                 <Typography variant="subtitle1" gutterBottom>
-                   Increment
-                 </Typography>
-                 <TextField
-                   id="filled-name"
-                   label="Increment"
-                   ref = "increment"
-                   className={classes.textField}
-                   InputLabelProps ={{
-                     shrink: true,
-                   }}
-                   InputProps ={{
-                     classes: { input: classes.input1 }
-                   }}
-                   defaultValue = {increment}
-                   margin="normal"
-                   variant="outlined"
-                 />
+                  <StatefullTextField label = 'Increment' value = {this.props.increment} changed = {(val,type)=>this.setState({increment:  Number(val)})}>
+                  </StatefullTextField>
                 </Grid>
-
              </Grid>
              </div>
 
@@ -204,45 +158,12 @@ import {etSideDrawerOptionsVisible,setSubsetFDParams} from "../../actions/creato
              <div className = {classes.outerContainer}>
                <Grid container className = {classes.container}>
                  <Grid item xs={5}>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Zoom Threshold
-                  </Typography>
-                  <TextField
-                    id="filled-name"
-                    label="Zoom Threshold"
-                    ref = "zoomthreshold"
-                    className={classes.textField}
-                    InputLabelProps ={{
-                      shrink: true,
-                    }}
-                    InputProps ={{
-                      classes: { input: classes.input1 }
-                    }}
-
-                    defaultValue ={sublayoutZoom}
-                    margin="normal"
-                    variant="outlined"
-                  />
+                   <StatefullTextField label = 'Zoom Threshold' value = {this.props.sublayoutZoom} changed = {(val,type)=>this.setState({sublayoutZoom: Number(val)})}>
+                   </StatefullTextField>
                  </Grid>
                 <Grid item xs={5}>
-                  <Typography variant="subtitle1" gutterBottom>
-                     Node Threshold
-                  </Typography>
-                  <TextField
-                    id="filled-name"
-                    label="Node Threshold"
-                    ref = "threshold"
-                    className={classes.textField}
-                    InputLabelProps ={{
-                      shrink: true,
-                    }}
-                    InputProps ={{
-                      classes: { input: classes.input1 }
-                    }}
-                    defaultValue ={sublayoutNodeThreshold}
-                    margin="normal"
-                    variant="outlined"
-                  />
+                  <StatefullTextField label = 'Node Threshold' value = {this.props.sublayoutNodeThreshold} changed = {(val,type)=>this.setState({sublayoutNodeThreshold: Number(val)})}>
+                  </StatefullTextField>
                 </Grid>
                </Grid>
              </div>
@@ -251,44 +172,12 @@ import {etSideDrawerOptionsVisible,setSubsetFDParams} from "../../actions/creato
              <div className = {classes.outerContainer}>
                <Grid container className = {classes.container}>
                  <Grid item xs={5}>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Stiffness
-                  </Typography>
-                  <TextField
-                    id="filled-name"
-                    ref = "stiffness"
-                    label="Stiffness"
-                    className={classes.textField}
-                    InputLabelProps ={{
-                      shrink: true,
-                    }}
-                    InputProps ={{
-                      classes: { input: classes.input1 }
-                    }}
-                    defaultValue ={stiffness}
-                    margin="normal"
-                    variant="outlined"
-                  />
+                   <StatefullTextField label = 'Stiffness' value = {this.props.stiffness} changed = {(val,type)=>this.setState({stiffness:  Number(val)})}>
+                   </StatefullTextField>
                  </Grid>
                 <Grid item xs={5}>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Repulsion
-                  </Typography>
-                  <TextField
-                    id="filled-name"
-                    ref ="repulsion"
-                    label="Repulsion"
-                    className={classes.textField}
-                    InputLabelProps ={{
-                      shrink: true,
-                    }}
-                    InputProps ={{
-                      classes: { input: classes.input1 }
-                    }}
-                    defaultValue ={repulsion}
-                    margin="normal"
-                    variant="outlined"
-                  />
+                  <StatefullTextField label = 'Repulsion' value = {this.props.repulsion} changed = {(val,type)=>this.setState({repulsion:  Number(val)})}>
+                  </StatefullTextField>
                 </Grid>
               </Grid>
               </div>
@@ -297,24 +186,8 @@ import {etSideDrawerOptionsVisible,setSubsetFDParams} from "../../actions/creato
               <div className = {classes.outerContainer}>
                 <Grid container className = {classes.container}>
                   <Grid item xs={5}>
-                   <Typography variant="subtitle1" gutterBottom>
-                     Damping
-                   </Typography>
-                   <TextField
-                     id="filled-name"
-                     ref ="damping"
-                     label="Damping"
-                     className={classes.textField}
-                     InputLabelProps ={{
-                       shrink: true,
-                     }}
-                     InputProps ={{
-                       classes: { input: classes.input1 }
-                     }}
-                     value ={damping}
-                     margin="normal"
-                     variant="outlined"
-                   />
+                    <StatefullTextField label = 'Damping' value = {this.props.damping} changed = {(val,type)=>this.setState({damping: parseFloat(val)})}>
+                    </StatefullTextField>
                   </Grid>
 
                </Grid>
@@ -323,15 +196,20 @@ import {etSideDrawerOptionsVisible,setSubsetFDParams} from "../../actions/creato
 
              <div className = {classes.buttonContainer}>
                <Button variant="contained" color="secondary" onClick={(evt)=>{
-                    this.props.setSubsetFDParams(this.refs.runfromyear.props.value || this.refs.runfromyear.props.defaultValue,
-                                                 this.refs.speed.props.value || this.refs.speed.props.defaultValue,
-                                                 this.refs.increment.props.value || this.refs.increment.props.defaultValue,
-                                                 this.refs.zoomthreshold.props.value || this.refs.zoomthreshold.props.defaultValue,
-                                                 this.refs.threshold.props.value || this.refs.threshold.props.defaultValue,
-                                                 this.refs.stiffness.props.value || this.refs.stiffness.props.defaultValue,
-                                                 this.refs.repulsion.props.value || this.refs.repulsion.props.defaultValue,
-                                                 this.refs.damping.props.value || this.refs.damping.props.defaultValue,
+                   //setSubsetFDParams(runfrom, speed, increment,
+                   // zoomthreshold,nodethreshold, stiffness, repulsion, damping)
+                   if(this.state != null){
+                    this.props.setSubsetFDParams(this.state.year || this.props.year,
+                                                 this.state.speed || this.props.speed,
+                                                 this.state.increment || this.props.increment,
+                                                 this.state.sublayoutZoom || this.props.sublayoutZoom,
+                                                 this.state.sublayoutNodeThreshold || this.props.sublayoutNodeThreshold,
+                                                 this.state.stiffness || this.props.stiffness,
+                                                this.state.repulsion || this.props.repulsion,
+                                                this.state.damping || this.props.damping,
                     );
+                  }
+
                    }} >Update Params</Button>
             </div>
 
@@ -347,6 +225,7 @@ import {etSideDrawerOptionsVisible,setSubsetFDParams} from "../../actions/creato
     return {
       status: state.status,
       gedRange : state.gedDataRange,
+
       stiffness :state.fdSettings.stiffness,
       repulsion :state.fdSettings.repulsion,
       damping : state.fdSettings.damping,

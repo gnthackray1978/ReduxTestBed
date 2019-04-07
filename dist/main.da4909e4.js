@@ -83259,7 +83259,7 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(LayoutSelect));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/Radio":"../node_modules/@material-ui/core/Radio/index.js","@material-ui/core/RadioGroup":"../node_modules/@material-ui/core/RadioGroup/index.js","@material-ui/core/FormControlLabel":"../node_modules/@material-ui/core/FormControlLabel/index.js","@material-ui/core/FormControl":"../node_modules/@material-ui/core/FormControl/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/Options.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/Radio":"../node_modules/@material-ui/core/Radio/index.js","@material-ui/core/RadioGroup":"../node_modules/@material-ui/core/RadioGroup/index.js","@material-ui/core/FormControlLabel":"../node_modules/@material-ui/core/FormControlLabel/index.js","@material-ui/core/FormControl":"../node_modules/@material-ui/core/FormControl/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/StatefullTextField.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -83346,12 +83346,163 @@ const styles = theme => ({
   }
 });
 
+class StatefullTextField extends _react.default.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: 'Enter text'
+    };
+  }
+
+  componentWillReceiveProps() {
+    console.log('componentWillReceiveProps: ' + this.props.value);
+    if (this.state.value == 'Enter text') this.setState({
+      value: this.props.value
+    });
+  }
+
+  componentDidMount() {
+    console.log('componentDidMount: ' + this.props.value);
+    this.setState({
+      value: this.props.value
+    });
+  }
+
+  render() {
+    const classes = this.props.classes;
+    return _react.default.createElement("div", null, _react.default.createElement(_Typography.default, {
+      variant: "subtitle1",
+      gutterBottom: true
+    }, this.props.label), _react.default.createElement(_TextField.default, {
+      id: "option",
+      label: this.props.label,
+      value: this.state.value,
+      onChange: event => {
+        this.setState({
+          value: event.target.value
+        });
+        this.props.changed(event.target.value, this.props.label);
+      },
+      className: classes.textField,
+      InputLabelProps: {
+        shrink: true
+      },
+      InputProps: {
+        classes: {
+          input: classes.input1
+        }
+      },
+      margin: "normal",
+      variant: "outlined"
+    }));
+  }
+
+}
+
+var _default = (0, _styles.withStyles)(styles)(StatefullTextField);
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Switch":"../node_modules/@material-ui/core/Switch/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Paper":"../node_modules/@material-ui/core/Paper/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","@material-ui/core/TextField":"../node_modules/@material-ui/core/TextField/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","@material-ui/core/Typography":"../node_modules/@material-ui/core/Typography/index.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/Options.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _styles = require("@material-ui/core/styles");
+
+var _Drawer = _interopRequireDefault(require("@material-ui/core/Drawer"));
+
+var _Button = _interopRequireDefault(require("@material-ui/core/Button"));
+
+var _List = _interopRequireDefault(require("@material-ui/core/List"));
+
+var _Divider = _interopRequireDefault(require("@material-ui/core/Divider"));
+
+var _ListItem = _interopRequireDefault(require("@material-ui/core/ListItem"));
+
+var _ListItemIcon = _interopRequireDefault(require("@material-ui/core/ListItemIcon"));
+
+var _ListItemText = _interopRequireDefault(require("@material-ui/core/ListItemText"));
+
+var _MoveToInbox = _interopRequireDefault(require("@material-ui/icons/MoveToInbox"));
+
+var _Mail = _interopRequireDefault(require("@material-ui/icons/Mail"));
+
+var _Switch = _interopRequireDefault(require("@material-ui/core/Switch"));
+
+var _Grid = _interopRequireDefault(require("@material-ui/core/Grid"));
+
+var _Paper = _interopRequireDefault(require("@material-ui/core/Paper"));
+
+var _Toolbar = _interopRequireDefault(require("@material-ui/core/Toolbar"));
+
+var _TextField = _interopRequireDefault(require("@material-ui/core/TextField"));
+
+var _FormLabel = _interopRequireDefault(require("@material-ui/core/FormLabel"));
+
+var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
+
+var _StatefullTextField = _interopRequireDefault(require("./StatefullTextField.jsx"));
+
+var _DateFunctions = require("../../DateFunctions.js");
+
+var _reactRedux = require("react-redux");
+
+var _creators = require("../../actions/creators.jsx");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+const styles = theme => ({
+  toolBar: {
+    minHeight: '0px'
+  },
+  mygrid: {
+    margin: 0,
+    padding: 0
+  },
+  container: {
+    width: 380,
+    margin: 0,
+    padding: 0
+  },
+  textField: {
+    height: 25,
+    width: 120,
+    marginTop: 3
+  },
+  input1: {
+    height: 5
+  },
+  outerContainer: {
+    marginLeft: 20,
+    marginTop: 7,
+    padding: 0
+  },
+  buttonContainer: {
+    marginLeft: 13,
+    marginTop: 50,
+    padding: 0
+  }
+});
+
 class Options extends _react.Component {
   constructor(props) {
     super(props);
   }
 
   componentDidMount() {}
+
+  changed(val, type) {
+    console.log(type + ' ' + val);
+  }
 
   render() {
     // stiffness :state.stiffness,
@@ -83426,47 +83577,21 @@ class Options extends _react.Component {
     }, _react.default.createElement(_Grid.default, {
       item: true,
       xs: 5
-    }, _react.default.createElement(_Typography.default, {
-      variant: "subtitle1",
-      gutterBottom: true
-    }, "Start Date"), _react.default.createElement(_TextField.default, {
-      id: "filled-name",
-      label: "Run From Year",
-      ref: "runfromyear",
-      className: classes.textField,
-      InputLabelProps: {
-        shrink: true
-      },
-      InputProps: {
-        classes: {
-          input: classes.input1
-        }
-      },
-      defaultValue: year,
-      margin: "normal",
-      variant: "outlined"
+    }, _react.default.createElement(_StatefullTextField.default, {
+      label: "Start Date",
+      value: this.props.year,
+      changed: (val, type) => this.setState({
+        year: _DateFunctions.DateFunctions.YearDate(val)
+      })
     })), _react.default.createElement(_Grid.default, {
       item: true,
       xs: 5
-    }, _react.default.createElement(_Typography.default, {
-      variant: "subtitle1",
-      gutterBottom: true
-    }, "Set Speed"), _react.default.createElement(_TextField.default, {
-      id: "filled-name",
-      label: "Set Speed",
-      ref: "speed",
-      className: classes.textField,
-      InputLabelProps: {
-        shrink: true
-      },
-      InputProps: {
-        classes: {
-          input: classes.input1
-        }
-      },
-      defaultValue: speed,
-      margin: "normal",
-      variant: "outlined"
+    }, _react.default.createElement(_StatefullTextField.default, {
+      label: "Speed",
+      value: this.props.speed,
+      changed: (val, type) => this.setState({
+        speed: Number(val)
+      })
     })))), _react.default.createElement("div", {
       className: classes.outerContainer
     }, _react.default.createElement(_Grid.default, {
@@ -83475,25 +83600,12 @@ class Options extends _react.Component {
     }, _react.default.createElement(_Grid.default, {
       item: true,
       xs: 5
-    }, _react.default.createElement(_Typography.default, {
-      variant: "subtitle1",
-      gutterBottom: true
-    }, "Increment"), _react.default.createElement(_TextField.default, {
-      id: "filled-name",
+    }, _react.default.createElement(_StatefullTextField.default, {
       label: "Increment",
-      ref: "increment",
-      className: classes.textField,
-      InputLabelProps: {
-        shrink: true
-      },
-      InputProps: {
-        classes: {
-          input: classes.input1
-        }
-      },
-      defaultValue: increment,
-      margin: "normal",
-      variant: "outlined"
+      value: this.props.increment,
+      changed: (val, type) => this.setState({
+        increment: Number(val)
+      })
     })))), _react.default.createElement("div", {
       className: classes.outerContainer
     }, _react.default.createElement(_Grid.default, {
@@ -83502,47 +83614,21 @@ class Options extends _react.Component {
     }, _react.default.createElement(_Grid.default, {
       item: true,
       xs: 5
-    }, _react.default.createElement(_Typography.default, {
-      variant: "subtitle1",
-      gutterBottom: true
-    }, "Zoom Threshold"), _react.default.createElement(_TextField.default, {
-      id: "filled-name",
+    }, _react.default.createElement(_StatefullTextField.default, {
       label: "Zoom Threshold",
-      ref: "zoomthreshold",
-      className: classes.textField,
-      InputLabelProps: {
-        shrink: true
-      },
-      InputProps: {
-        classes: {
-          input: classes.input1
-        }
-      },
-      defaultValue: sublayoutZoom,
-      margin: "normal",
-      variant: "outlined"
+      value: this.props.sublayoutZoom,
+      changed: (val, type) => this.setState({
+        sublayoutZoom: Number(val)
+      })
     })), _react.default.createElement(_Grid.default, {
       item: true,
       xs: 5
-    }, _react.default.createElement(_Typography.default, {
-      variant: "subtitle1",
-      gutterBottom: true
-    }, "Node Threshold"), _react.default.createElement(_TextField.default, {
-      id: "filled-name",
+    }, _react.default.createElement(_StatefullTextField.default, {
       label: "Node Threshold",
-      ref: "threshold",
-      className: classes.textField,
-      InputLabelProps: {
-        shrink: true
-      },
-      InputProps: {
-        classes: {
-          input: classes.input1
-        }
-      },
-      defaultValue: sublayoutNodeThreshold,
-      margin: "normal",
-      variant: "outlined"
+      value: this.props.sublayoutNodeThreshold,
+      changed: (val, type) => this.setState({
+        sublayoutNodeThreshold: Number(val)
+      })
     })))), _react.default.createElement("div", {
       className: classes.outerContainer
     }, _react.default.createElement(_Grid.default, {
@@ -83551,47 +83637,21 @@ class Options extends _react.Component {
     }, _react.default.createElement(_Grid.default, {
       item: true,
       xs: 5
-    }, _react.default.createElement(_Typography.default, {
-      variant: "subtitle1",
-      gutterBottom: true
-    }, "Stiffness"), _react.default.createElement(_TextField.default, {
-      id: "filled-name",
-      ref: "stiffness",
+    }, _react.default.createElement(_StatefullTextField.default, {
       label: "Stiffness",
-      className: classes.textField,
-      InputLabelProps: {
-        shrink: true
-      },
-      InputProps: {
-        classes: {
-          input: classes.input1
-        }
-      },
-      defaultValue: stiffness,
-      margin: "normal",
-      variant: "outlined"
+      value: this.props.stiffness,
+      changed: (val, type) => this.setState({
+        stiffness: Number(val)
+      })
     })), _react.default.createElement(_Grid.default, {
       item: true,
       xs: 5
-    }, _react.default.createElement(_Typography.default, {
-      variant: "subtitle1",
-      gutterBottom: true
-    }, "Repulsion"), _react.default.createElement(_TextField.default, {
-      id: "filled-name",
-      ref: "repulsion",
+    }, _react.default.createElement(_StatefullTextField.default, {
       label: "Repulsion",
-      className: classes.textField,
-      InputLabelProps: {
-        shrink: true
-      },
-      InputProps: {
-        classes: {
-          input: classes.input1
-        }
-      },
-      defaultValue: repulsion,
-      margin: "normal",
-      variant: "outlined"
+      value: this.props.repulsion,
+      changed: (val, type) => this.setState({
+        repulsion: Number(val)
+      })
     })))), _react.default.createElement("div", {
       className: classes.outerContainer
     }, _react.default.createElement(_Grid.default, {
@@ -83600,32 +83660,23 @@ class Options extends _react.Component {
     }, _react.default.createElement(_Grid.default, {
       item: true,
       xs: 5
-    }, _react.default.createElement(_Typography.default, {
-      variant: "subtitle1",
-      gutterBottom: true
-    }, "Damping"), _react.default.createElement(_TextField.default, {
-      id: "filled-name",
-      ref: "damping",
+    }, _react.default.createElement(_StatefullTextField.default, {
       label: "Damping",
-      className: classes.textField,
-      InputLabelProps: {
-        shrink: true
-      },
-      InputProps: {
-        classes: {
-          input: classes.input1
-        }
-      },
-      value: damping,
-      margin: "normal",
-      variant: "outlined"
+      value: this.props.damping,
+      changed: (val, type) => this.setState({
+        damping: parseFloat(val)
+      })
     })))), _react.default.createElement("div", {
       className: classes.buttonContainer
     }, _react.default.createElement(_Button.default, {
       variant: "contained",
       color: "secondary",
       onClick: evt => {
-        this.props.setSubsetFDParams(this.refs.runfromyear.props.value || this.refs.runfromyear.props.defaultValue, this.refs.speed.props.value || this.refs.speed.props.defaultValue, this.refs.increment.props.value || this.refs.increment.props.defaultValue, this.refs.zoomthreshold.props.value || this.refs.zoomthreshold.props.defaultValue, this.refs.threshold.props.value || this.refs.threshold.props.defaultValue, this.refs.stiffness.props.value || this.refs.stiffness.props.defaultValue, this.refs.repulsion.props.value || this.refs.repulsion.props.defaultValue, this.refs.damping.props.value || this.refs.damping.props.defaultValue);
+        //setSubsetFDParams(runfrom, speed, increment,
+        // zoomthreshold,nodethreshold, stiffness, repulsion, damping)
+        if (this.state != null) {
+          this.props.setSubsetFDParams(this.state.year || this.props.year, this.state.speed || this.props.speed, this.state.increment || this.props.increment, this.state.sublayoutZoom || this.props.sublayoutZoom, this.state.sublayoutNodeThreshold || this.props.sublayoutNodeThreshold, this.state.stiffness || this.props.stiffness, this.state.repulsion || this.props.repulsion, this.state.damping || this.props.damping);
+        }
       }
     }, "Update Params")));
   }
@@ -83671,7 +83722,7 @@ const mapDispatchToProps = dispatch => {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)((0, _styles.withStyles)(styles)(Options));
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Switch":"../node_modules/@material-ui/core/Switch/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Paper":"../node_modules/@material-ui/core/Paper/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","@material-ui/core/TextField":"../node_modules/@material-ui/core/TextField/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","@material-ui/core/Typography":"../node_modules/@material-ui/core/Typography/index.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/SideDrawer.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","@material-ui/core/styles":"../node_modules/@material-ui/core/styles/index.js","@material-ui/core/Drawer":"../node_modules/@material-ui/core/Drawer/index.js","@material-ui/core/Button":"../node_modules/@material-ui/core/Button/index.js","@material-ui/core/List":"../node_modules/@material-ui/core/List/index.js","@material-ui/core/Divider":"../node_modules/@material-ui/core/Divider/index.js","@material-ui/core/ListItem":"../node_modules/@material-ui/core/ListItem/index.js","@material-ui/core/ListItemIcon":"../node_modules/@material-ui/core/ListItemIcon/index.js","@material-ui/core/ListItemText":"../node_modules/@material-ui/core/ListItemText/index.js","@material-ui/icons/MoveToInbox":"../node_modules/@material-ui/icons/MoveToInbox.js","@material-ui/icons/Mail":"../node_modules/@material-ui/icons/Mail.js","@material-ui/core/Switch":"../node_modules/@material-ui/core/Switch/index.js","@material-ui/core/Grid":"../node_modules/@material-ui/core/Grid/index.js","@material-ui/core/Paper":"../node_modules/@material-ui/core/Paper/index.js","@material-ui/core/Toolbar":"../node_modules/@material-ui/core/Toolbar/index.js","@material-ui/core/TextField":"../node_modules/@material-ui/core/TextField/index.js","@material-ui/core/FormLabel":"../node_modules/@material-ui/core/FormLabel/index.js","@material-ui/core/Typography":"../node_modules/@material-ui/core/Typography/index.js","./StatefullTextField.jsx":"../src/containers/SideDrawer/StatefullTextField.jsx","../../DateFunctions.js":"../src/DateFunctions.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/creators.jsx":"../src/actions/creators.jsx"}],"../src/containers/SideDrawer/SideDrawer.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -84458,7 +84509,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "1473" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "25545" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
